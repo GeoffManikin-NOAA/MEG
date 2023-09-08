@@ -1,0 +1,283 @@
+#!/bin/ksh --login
+#
+#BSUB -oo /ptmpp2/Geoffrey.Manikin/output/hiresw.out
+#BSUB -eo /ptmpp2/Geoffrey.Manikin/output/hiresw.out
+#BSUB -J hiresw_nagrib
+#BSUB -n 1
+#BSUB -R span[ptile=1]
+#BSUB -W 06:00
+#BSUB -q "dev"
+#BSUB -R "affinity[core(16):distribute=balance]"
+#BSUB -P HRRR-T2O
+#BSUB -x
+#BSUB -a poe
+#
+
+set -x
+
+set -x
+
+mkdir /stmpp1/Geoffrey.Manikin/nagrib
+rm /stmpp1/Geoffrey.Manikin/nagrib/*
+cd /stmpp1/Geoffrey.Manikin/nagrib
+cp /meso/save/Geoffrey.Manikin/gempak/nagrib/*129*l .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymdh=2020021912
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+COMOUT=/meso/save/Geoffrey.Manikin/meg
+COMOUT=/meso/noscrub/Geoffrey.Manikin/feb20ncstorm
+DAPATH=/gpfs/hps/nco/ops/com/hiresw/prod/hiresw.${ymd}
+#DAPATH=/stmpp1/Geoffrey.Manikin/hold2
+
+export DAPATH
+. /nwprod/gempak/.gempak
+
+fhrs="03 06 09 12 15 18 21 24 27 30 33 36 39 42 45 48"
+#fhrs="03 06 09 12 15 18"
+for fhr in $fhrs
+do
+
+if [ $fhr -lt 10 ]; then
+ typeset -Z1 fhrr
+else
+ typeset -Z2 fhrr
+fi
+
+echo $fhr
+fhrr=$fhr
+fhr3=`expr $fhr - 3`
+
+echo $fhr $fhrr
+cp ${DAPATH}/hiresw.t${cyc}z.nmmb_5km.f${fhr}.conus.grib2 conusnmmb.t${cyc}z.awp5kmf${fhr}.grib2
+/nwprod/util/exec/cnvgrib -g21 conusnmmb.t${cyc}z.awp5kmf${fhr}.grib2 nmmb${fhr}
+wgrib nmmb${fhr} | grep kpds5=61:kpds6=1:kpds7=0:TR=4:P1=${fhr3}:P2=${fhrr} | wgrib nmmb${fhr} -i -grib -o new.fil
+
+   nagrib << EOF
+GBFILE  = new.fil 
+INDXFL  =
+GDOUTF  = dummyhires1.grd 
+PROJ    =
+GRDAREA =
+KXKY    = 
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+exit
+EOF
+done
+mv dummyhires1.grd ${COMOUT}/hireswnmmbpcp_${ymdh}
+
+for fhr in $fhrs
+do
+
+if [ $fhr -lt 10 ]; then
+ typeset -Z1 fhrr
+else
+ typeset -Z2 fhrr
+fi
+
+echo $fhr
+fhrr=$fhr
+fhr3=`expr $fhr - 3`
+
+cp ${DAPATH}/hiresw.t${cyc}z.arw_5km.f${fhr}.conus.grib2 conusarw.t${cyc}z.awp5kmf${fhr}.grib2 
+/nwprod/util/exec/cnvgrib -g21 conusarw.t${cyc}z.awp5kmf${fhr}.grib2 arw${fhr}
+wgrib arw${fhr} | grep kpds5=61:kpds6=1:kpds7=0:TR=4:P1=${fhr3}:P2=${fhrr} | wgrib arw${fhr} -i -grib -o new.fil
+
+   nagrib << EOF
+GBFILE  = new.fil
+INDXFL  =
+GDOUTF  = dummyhires2.grd
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+exit
+EOF
+
+rm new.fil
+done
+mv dummyhires2.grd ${COMOUT}/hireswarwpcp_${ymdh}
+
+for fhr in $fhrs
+do
+
+if [ $fhr -lt 10 ]; then
+ typeset -Z1 fhrr
+else
+ typeset -Z2 fhrr
+fi
+
+echo $fhr
+fhrr=$fhr
+fhr3=`expr $fhr - 3`
+
+cp ${DAPATH}/hiresw.t${cyc}z.arw_5km.f${fhr}.conusmem2.grib2 conusarw2.t${cyc}z.awp5kmf${fhr}.grib2
+/nwprod/util/exec/cnvgrib -g21 conusarw2.t${cyc}z.awp5kmf${fhr}.grib2 2arw${fhr}
+wgrib 2arw${fhr} | grep kpds5=61:kpds6=1:kpds7=0:TR=4:P1=${fhr3}:P2=${fhrr} | wgrib 2arw${fhr} -i -grib -o new.fil
+
+  nagrib << EOF
+GBFILE  = new.fil
+INDXFL  =
+GDOUTF  = dummyhires3.grd
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+exit
+EOF
+rm new.fil
+done
+mv dummyhires3.grd ${COMOUT}/hireswarw2pcp_${ymdh}
+exit
+
+fhrs="00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36"
+for fhr in $fhrs
+do
+
+cp ${DAPATH}/hiresw.t${cyc}z.arw_5km.f${fhr}.conus.grib2 conusarw.t${cyc}z.awp5kmf${fhr}.grib2 
+/nwprod/util/exec/cnvgrib -g21 conusarw.t${cyc}z.awp5kmf${fhr}.grib2 arw${fhr}
+cp ${DAPATH}/hiresw.t${cyc}z.nmmb_5km.f${fhr}.conus.grib2 conusnmmb.t${cyc}z.awp5kmf${fhr}.grib2 
+/nwprod/util/exec/cnvgrib -g21 conusnmmb.t${cyc}z.awp5kmf${fhr}.grib2 nmmb${fhr}
+cp ${DAPATH}/hiresw.t${cyc}z.arw_5km.f${fhr}.conusmem2.grib2 conusarw2.t${cyc}z.awp5kmf${fhr}.grib2
+/nwprod/util/exec/cnvgrib -g21 conusarw2.t${cyc}z.awp5kmf${fhr}.grib2 2arw${fhr}
+
+wgrib nmmb${fhr} | grep kpds5=211:kpds6=105 | wgrib nmmb${fhr} -i -grib -o new2.fil
+wgrib nmmb${fhr} | grep kpds5=212:kpds6=200 | wgrib nmmb${fhr} -i -grib -o new3.fil
+wgrib nmmb${fhr} | grep kpds5=227:kpds6=106 | wgrib nmmb${fhr} -i -grib -o new4.fil
+wgrib nmmb${fhr} | grep kpds5=236:kpds6=106 | wgrib nmmb${fhr} -i -grib -o new5.fil
+wgrib nmmb${fhr} | grep kpds5=11:kpds6=105 | wgrib nmmb${fhr} -i -grib -o new6.fil
+
+wgrib arw${fhr} | grep kpds5=211:kpds6=105 | wgrib arw${fhr} -i -grib -o new7.fil
+wgrib arw${fhr} | grep kpds5=212:kpds6=200 | wgrib arw${fhr} -i -grib -o new8.fil
+wgrib arw${fhr} | grep kpds5=227:kpds6=106 | wgrib arw${fhr} -i -grib -o new9.fil
+wgrib arw${fhr} | grep kpds5=236:kpds6=106 | wgrib arw${fhr} -i -grib -o new10.fil
+wgrib arw${fhr} | grep kpds5=11:kpds6=105 | wgrib arw${fhr} -i -grib -o new11.fil
+
+wgrib 2arw${fhr} | grep kpds5=211:kpds6=105 | wgrib 2arw${fhr} -i -grib -o new12.fil
+wgrib 2arw${fhr} | grep kpds5=212:kpds6=200 | wgrib 2arw${fhr} -i -grib -o new13.fil
+wgrib 2arw${fhr} | grep kpds5=227:kpds6=106 | wgrib 2arw${fhr} -i -grib -o new14.fil
+wgrib 2arw${fhr} | grep kpds5=236:kpds6=106 | wgrib 2arw${fhr} -i -grib -o new15.fil
+wgrib 2arw${fhr} | grep kpds5=11:kpds6=105 | wgrib 2arw${fhr} -i -grib -o new16.fil
+
+   nagrib << EOF
+GBFILE  = new2.fil
+INDXFL  =
+GDOUTF  = dummyhires4.grd
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+GBFILE  = new3.fil
+r
+
+GBFILE  = new4.fil
+r
+
+GBFILE  = new5.fil
+r
+
+GBFILE  = new6.fil
+r
+
+exit
+EOF
+
+   nagrib << EOF
+GBFILE  = new7.fil
+INDXFL  =
+GDOUTF  = dummyhires5.grd
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+GBFILE  = new8.fil
+r
+
+GBFILE  = new9.fil
+r
+
+GBFILE  = new10.fil
+r
+
+GBFILE  = new11.fil
+r
+
+exit
+EOF
+
+   nagrib << EOF
+GBFILE  = new12.fil
+INDXFL  =
+GDOUTF  = dummyhires6.grd
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+GBFILE  = new13.fil
+r
+
+GBFILE  = new14.fil
+r
+
+GBFILE  = new15.fil
+r
+
+GBFILE  = new16.fil
+r
+
+exit
+EOF
+
+rm new*.fil
+done
+
+mv dummyhires4.grd ${COMOUT}/hireswnmmb_${ymdh}
+mv dummyhires5.grd ${COMOUT}/hireswarw_${ymdh}
+mv dummyhires6.grd ${COMOUT}/hireswarw2_${ymdh}
+
+
+exit

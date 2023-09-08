@@ -1,0 +1,131 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/2mt
+rm /stmpp1/Geoffrey.Manikin/meg/2mt/*
+cd /stmpp1/Geoffrey.Manikin/meg/2mt
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=2012080400
+ymd=`echo $ymdh | cut -c1-8`
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+
+times="21"
+for fhr in $times; do
+
+fmdl1=/ptmpp1p1/Geoffrey.Manikin/gfs/gfs40_${ymdh}f0${fhr}
+fmdl2=/ptmpp1p1/Geoffrey.Manikin/gfs/gfsexp_${ymdh}f0${fhr}
+
+    gdplot2 << EOF
+
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 2 
+ GVCORD   = hght 
+ GDPFUN   = tmpf 
+ CINT     = 4 
+ LINE     = 1 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   OPS GFS 2-M  TEMP 
+ DEVICE   = GIF|2mtmodels_f0${fhr}.gif|850;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-95;25;/1;1;1;1
+ GAREA    = il- 
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/V/UL/.04;0.4/0.8;.03/2 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 20;25;30;35;40;45;50;55;60;65;70;75;80;85;90;95;100;105;110;115
+ FLINE    = 0;12;30;29;28;4;25;26;27;24;23;22;21;5;20;10;17;16;2;15;32
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhr
+ TITLE    = 1/-1/~  GFS TEST 2-M TEMP 
+ PANEL    = b
+ CLRBAR   = 0
+ CLEAR    = n
+r
+
+ex
+EOF
+
+    gdcntr << EOF
+ GDFILE   = $fmdl2 + $fmdl1
+ GDATTIM  = f${fhr}
+ GLEVEL   = 2
+ GVCORD   = hght
+ GFUNC    = sub(tmpf+2,tmpf)
+ CINT     = 2
+ LINE     = 1
+ MAP      = 1
+ WIND     = bk1/0.7/2/122
+ TITLE    = 1//~ 2-M TMPF (F)   OPS - EXP
+ DEVICE   = GIF|2mtdiff_f0${fhr}.gif | 500;550
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-95.;25./2;2;1;1
+ GAREA    = 21.;-121.;51.;-65.
+ CLEAR    = y
+ PANEL    = 0
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/H/UL/.1;.9/.8;.02/-1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = -20;-16;-12;-8;-4;4;8;12;16;20
+ FLINE    = 30;28;26;27;22;0;5;10;17;2;15
+ CTYPE    = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ex
+EOF
+gpend
+done
+
+for fhr in $times; do
+
+/usrx/local/im_beta/bin/convert -crop 0x0 2mtmodels_f0${fhr}.gif 2mt1.gif
+/usrx/local/im_beta/bin/convert -crop 0x0 2mtdiff_f0${fhr}.gif 2mt2.gif
+
+CONV=/usrx/local/imajik/bin
+$CONV/montage -geometry 800x850 2mt1.gif 2mt2.gif gfs2mt2_${ymdh}f${fhr}.gif
+done
+
+. /u/Geoffrey.Manikin/.Utils
+export w1=wd20mg
+export w2=$rzdm
+
+ftp -n -v << EOF > /meso/save/Geoffrey.Manikin/casework/rzftp.out
+open emcrzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/meg/cases/$ymd
+mput gfs*gif 
+bye
+EOF
+
+rm *gif
+exit

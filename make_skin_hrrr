@@ -1,0 +1,63 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+ymdh=2017061318
+ymd=`echo $ymdh | cut -c1-8`
+month=`echo $ymdh | cut -c5-6`
+day=`echo $ymdh | cut -c7-8`
+cyc=`echo $ymdh | cut -c9-10`
+dayoweek=hold5
+
+mkdir /stmpp1/Geoffrey.Manikin/gempak.rap13/
+cd /stmpp1/Geoffrey.Manikin/gempak.rap13/
+cp /meso/save/Geoffrey.Manikin/gempak.rap13/coltbl.xwp .
+
+times="00 01 02 03 06 09 12 15 18"
+times="00"
+for fhr in $times; do
+
+fmdl=/com2/nawips/prod/hrrr.${ymd}/hrrr_${ymd}${cyc}f0${fhr}00
+echo $fmdl
+echo $fmdl2
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl
+ GDATTIM  = f$fhr
+ GLEVEL   = 0
+ GVCORD   = none 
+ GDPFUN   = tmpf 
+ CINT     = 5
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/ ${fhr}-HR HRRR SKIN TEMP 
+ DEVICE   = GIF|compareskin_${cyc}f${fhr}.gif|900;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-104.;25./2;2;1;1
+ GAREA    = 34.;-126.;54.;-82. 
+ CLEAR    = y
+ PANEL    = 0
+ TEXT     = 1.2/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/H/UL/.05;0.95/.9;.03/-2
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 10;15;20;25;30;35;40;45;50;55;60;65;70;75;80;85;90;95;100;105;110
+ FLINE    = 0;11;12;30;29;28;4;25;26;27;24;23;22;21;5;20;10;17;16;2;15;14
+ TYPE     = f/c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ex
+EOF
+gpend
+done
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

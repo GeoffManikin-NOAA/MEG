@@ -1,0 +1,60 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/refd
+rm /stmpp1/Geoffrey.Manikin/meg/refd/*
+cd /stmpp1/Geoffrey.Manikin/meg/refd
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=2017122200
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+dayoweek=hold7
+counter=11
+
+hours="00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36"
+hours="00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30"
+
+for fhr in $hours; do
+fmdl1=/ptmpd2/Geoffrey.Manikin/com/nawips/prod/nam.${ymd}/nam12_${ymdh}
+fmdl1=/com2/nawips/prod/nam.${ymd}/nam12_${ymdh}f0${fhr}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 1000 
+ GVCORD   = hght 
+ GDPFUN   = refd 
+ CINT     = 5 
+ LINE     = 0 
+ DEVICE   = GIF|namrefd_${ymdh}f${counter}.gif | 800;850
+ PROJ     = lcc/25.;-79.;25./2;2;1;1
+ GAREA    = me+ 
+ TITLE    = 1//~  NAM  1 KM REFL 
+ CLEAR    = y
+ SCALE    = 0
+ PANEL    = 0
+ HILO     = 0
+ HLSYM    = 0 
+ CLRBAR   = 1/H/UL/.06;0.97/0.8;.03/1
+ TEXT     = 1.1/11/2
+ FINT     = 5;10;15;20;25;30;35;40;45;50;55;60;65;70
+ FLINE    = 0;27;26;4;21;22;23;5;20;17;16;15;14;7;29
+
+ TYPE     = f 
+r
+
+ex
+EOF
+
+counter=`expr $counter + 1`
+done
+gpend
+convert -loop 0 -delay 60 nam*gif nam_refdloop_${ymdh}.gif
+scp *loop*gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+#scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+#rm *gif
+exit

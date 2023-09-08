@@ -1,0 +1,69 @@
+#!/bin/sh
+echo 'into'
+
+ymdh=2023062812
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+gfsver=v16.3
+
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/meg
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/meg/500z
+rm /lfs/h2/emc/stmp/geoffrey.manikin/meg/500z/*
+cd /lfs/h2/emc/stmp/geoffrey.manikin/meg/500z
+cp /lfs/h2/emc/vpppg/save/geoffrey.manikin/meg/coltbl.xwp .
+
+fmdl1=/lfs/h1/ops/prod/com/gfs/${gfsver}/gfs.${ymd}/${cyc}/atmos/gempak/gfs_0p25_${ymdh}f000
+fmdl1=/lfs/h2/emc/vpppg/noscrub/geoffrey.manikin/smoke/gfs_0p25_${ymdh}f000
+echo $fmdl1
+
+#fmdl1=/lfs/h2/emc/vpppg/noscrub/geoffrey.manikin/floods22/gfs_0p25_${ymdh}f000
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f00
+ GLEVEL   = 500
+ GVCORD   = pres
+ GDPFUN   = quo(hght,10) 
+ CINT     = 6 
+ LINE     = 4/1/4/1 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   GFS 500 mb  HGT/WND 
+ DEVICE   = GIF|500verf_${ymdh}.gif | 800;850
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-80.;25./2;2;1;1
+# GAREA    = 24.;-100.;50.;-60. 
+ GAREA    = 18.;-120.;64.;-42.
+ GAREA    = 26.;-104.;56.;-58. 
+# GAREA    = ky- 
+ CLEAR    = y
+ PANEL    = 0
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 
+ HLSYM    = 1//21;//HW
+ CLRBAR   = 0 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 
+ FLINE    = 0 
+ TYPE     = c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDPFUN   = kntv(wnd)
+ WIND     = BK1/0.7/2/122
+ TYPE     = b
+ CLEAR    = n
+ SKIP     = /7;7
+r
+ex
+EOF
+
+gpend
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test8/.
+
+exit

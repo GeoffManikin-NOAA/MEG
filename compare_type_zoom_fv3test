@@ -1,0 +1,108 @@
+#!/bin/ksh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/type
+rm /stmpp1/Geoffrey.Manikin/meg/type/*
+cd /stmpp1/Geoffrey.Manikin/meg/type
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`cut -c 7-14 /com/date/t${cyc}z`
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+
+ymdh=2019021512
+ymd=`echo $ymdh | cut -c1-8`
+dayoweek=hold9
+
+times="102 108 114 120"
+for fhr in $times; do
+
+typeset -Z3 fhr
+fmdl1=/meso/noscrub/Geoffrey.Manikin/fv3.${ymd}/fv3_0p25_${ymdh}f${fhr}
+fmdl2=/meso/noscrub/Geoffrey.Manikin/fv3rt3.${ymd}/fv3rt3_0p25_${ymdh}f${fhr}
+
+     gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0
+ GVCORD   = none 
+ GDPFUN   = wxtr 
+ CINT     = 4 
+ LINE     = 1 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   FV3 PCP TYPE 
+ DEVICE   = GIF|${ymdh}_fv3testttpe_f${fhr}.gif|850;950
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-80;25;/1;1;1;1
+ GAREA    = 33.;-88.;43.;-74. 
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 0 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 0.11;10
+ FLINE    = 0;3
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDPFUN   = wxts
+ CLEAR    = n
+ FLINE    = 0;26
+r
+
+ GDPFUN   = wxtp
+ FLINE    = 0;29
+r
+
+ GDPFUN   = wxtz
+ FLINE    = 0;2
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhr
+ TITLE    = 1/-1/~   FV3GFS FULL TEST PCP TYPE 
+ PANEL    = b
+ CLRBAR   = 0
+ CLEAR    = n
+ GDPFUN   = wxtr
+ FLINE    = 0;3
+r
+
+ GDPFUN   = wxts
+ CLEAR    = n
+ FLINE    = 0;26
+r
+
+ GDPFUN   = wxtp
+ FLINE    = 0;29
+r
+
+ GDPFUN   = wxtz
+ FLINE    = 0;2
+r
+
+ex
+EOF
+
+gpend
+done
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

@@ -1,0 +1,79 @@
+#!/bin/ksh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/500v
+rm /stmpp1/Geoffrey.Manikin/meg/500v/*
+cd /stmpp1/Geoffrey.Manikin/meg/500v
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=2017052000
+ymd1=`echo $ymdh | cut -c1-8`
+cyc1=`echo $ymdh | cut -c9-10`
+dayoweek=hold5
+hours="120"
+for fhr1 in $hours; do
+
+typeset -Z3 fhr1
+DAPATH2=/ptmpd2/Geoffrey.Manikin/com2/nawips/prod
+DAPATH=/com2/nawips/prod
+fmdl1=${DAPATH2}/gfs.${ymd1}/gfs_0p50_${ymdh}f000
+echo $fmdl1
+
+validtime="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -$fhr1 -1`"
+ymdf=`echo $validtime | cut -c1-8`
+ymdhf=`echo $validtime | cut -c1-10`
+fmdl2=${DAPATH2}/gfs.${ymdf}/gfs_0p50_${ymdhf}f${fhr1}
+echo $fmdl2
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f00
+ GLEVEL   = 500
+ GVCORD   = pres 
+ GDPFUN   = quo(hght,10) 
+ CINT     = 6 
+ LINE     = 2/1/2/0 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 0 
+ DEVICE   = GIF|gfs500ver_${ymdh}v${fhr1}.gif|750;900
+ SATFIL   =
+ RADFIL   =
+# PROJ     = lcc/25;-90;25;/1;1;1;1
+ PROJ     = ced/0;0;0 
+# GAREA    = 3.;-180;72.;-2 
+ GAREA    = -90;-180;90;180 
+ CLEAR    = y
+ PANEL    = 0
+ TEXT     = 0.8/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 2//21;//HW
+ CLRBAR   = 0
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     =  
+ FLINE    = 0
+ TYPE     = c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhr1
+ CLEAR    = n
+ LINE     = 4/1/2/0
+ TITLE    = 1/-1/~   GFS 500 mb Z 
+r
+
+ex
+EOF
+
+done
+gpend
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

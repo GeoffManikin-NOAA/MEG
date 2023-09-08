@@ -1,0 +1,123 @@
+#/bin/ksh
+
+set -x
+
+cyc=$1
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+#ymdh=2013040200
+ymd=`echo $ymdh | cut -c1-8`
+
+DAPATH=/com/nam/prod/nam.${ymd}
+
+export DAPATH DAPATH2
+. /nwprod/gempak/.gempak
+
+fhrs="24"
+
+for fhr in $fhrs
+do
+
+nagrib << EOF
+GBFILE  = ${DAPATH}/nam.t${cyc}z.awip32${fhr}.tm00
+INDXFL  =
+GDOUTF  = dummy.grd 
+PROJ    =
+GRDAREA =
+KXKY    = 
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+exit
+EOF
+
+   gddelt << EOF
+ GDFILE   = dummy.grd 
+ GDATTIM  = f${fhr}
+ GLEVEL   = all 
+ GVCORD   = pres
+ GFUNC    = all
+r
+
+ GVCORD   = pdly
+r
+
+ GVCORD   = dpth
+r
+
+ GVCORD   = mwsl
+r
+
+ GVCORD   = trop
+r
+
+ GVCORD   = sgma
+r
+ 
+ GVCORD   = frzl
+r
+
+ GVCORD   = topa
+r
+
+ GVCORD   = dtcl
+r
+ 
+ GVCORD   = dbcl
+r
+
+ GVCORD   = stcl
+r
+ 
+ GVCORD   = sbcl
+r
+
+ GFUNC    = hght
+ GVCORD   = all
+r
+
+ex
+EOF
+
+done
+mv dummy.grd nam1_${ymdh}
+
+for fhr in $fhrs
+do
+
+nagrib << EOF
+GBFILE  = ${DAPATH}/nam.t${cyc}z.awip32${fhr}.tm00
+INDXFL  =
+GDOUTF  = dummy.grd
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+ex
+EOF
+
+   gddelt << EOF
+ GDFILE   = dummy.grd
+ GDATTIM  = f${fhr}
+ GLEVEL   = all
+ GVCORD   = all 
+ GFUNC    = dwpk 
+r
+
+exit
+EOF
+done
+mv dummy.grd nam2_${ymdh}
+exit

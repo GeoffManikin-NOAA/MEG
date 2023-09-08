@@ -1,0 +1,87 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+ymdh=2014012021
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+stnm=725030
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/snd
+rm /stmpp1/Geoffrey.Manikin/meg/snd/*
+cd /stmpp1/Geoffrey.Manikin/meg/snd
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+#ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+#ymd=`cut -c 7-14 /com/date/t${cyc}z`
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+dayoweek=Mon
+
+fmdl1=/com/sref/prod/sref.${ymd}/${cyc}/gempak/em_ctl.${ymdh}.snd
+fmdl2=/com/sref/prod/sref.${ymd}/${cyc}/gempak/nmm_ctl.${ymdh}.snd
+
+times="27 30"
+#times="00 03 06 09 12 15 18"
+for time in $times; do
+
+validtime="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} $time -1 x`"
+echo validtime = $validtime
+dattim=`echo $validtime | cut -c5-11`
+echo dattim = $dattim
+
+if [ $time -lt 10 ]
+then
+fhr=0${time}
+else
+fhr=$time
+fi
+
+    snprof << EOF
+ SNFILE   = $fmdl1
+ DATTIM   = $dattim
+ AREA     = @${stnm}
+ SNPARM   = tmpc;dwpc
+ LINE     = 2;4/1/7
+ PTYPE    = skewt
+ VCOORD   = PRES
+ STNDEX   = cape;cins
+ STNCOL   = 24
+ WIND     = bk1
+ WINPOS   = 1
+ MARKER   = 0
+ BORDER   = 1//2
+ TITLE    = 1//  EM CTL 
+ DEVICE   = gif|${cyc}srefsnd${stnm}_$fhr.gif | 800;850
+ YAXIS    = 1050/300/50/1;1;1
+ XAXIS    = -40/20/5/;1
+ FILTER   = 0.9 
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 0.8 
+ THTALN   = 8/3/1/250/500/5
+ THTELN   = 23/1/1/250/500/5
+ MIXRLN   = 17/10/2/0/40./1.
+r
+
+ SNFILE   = $fmdl2
+ CLEAR    = n
+ TITLE    = 1//  NMM CTL 
+ PANEL    = b
+r
+
+ex
+EOF
+
+done
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+#scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/cases/${ymd}/.
+exit

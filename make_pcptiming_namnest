@@ -1,0 +1,130 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc1=$1
+stnm=724050
+
+mkdir /stmp/wx20mg/meg
+mkdir /stmp/wx20mg/meg/meteograms
+rm /stmp/wx20mg/meg/meteograms/*
+cd /stmp/wx20mg/meg/meteograms
+cp /meso/save/wx20mg/casework/coltbl.xwp .
+
+ymdh1=`cut -c 7-16 /com/date/t${cyc1}z`
+ymdh1=2012121912
+ymd1=`echo $ymdh1 | cut -c1-8`
+ymdh2="`/meso/save/wx20mg/meteograms.nam/advtime ${ymdh1} -6 -1`"
+ymdh3="`/meso/save/wx20mg/meteograms.nam/advtime ${ymdh1} -12 -1`"
+ymdh4="`/meso/save/wx20mg/meteograms.nam/advtime ${ymdh1} -18 -1`"
+ymdh5="`/meso/save/wx20mg/meteograms.nam/advtime ${ymdh1} -24 -1`"
+ymdh6="`/meso/save/wx20mg/meteograms.nam/advtime ${ymdh1} -30 -1`"
+ymd2=`echo $ymdh2 | cut -c1-8`
+ymd3=`echo $ymdh3 | cut -c1-8`
+ymd4=`echo $ymdh4 | cut -c1-8`
+ymd5=`echo $ymdh5 | cut -c1-8`
+ymd6=`echo $ymdh6 | cut -c1-8`
+cyc2=`echo $ymdh2 | cut -c9-10`
+cyc3=`echo $ymdh3 | cut -c9-10`
+cyc4=`echo $ymdh4 | cut -c9-10`
+cyc5=`echo $ymdh5 | cut -c9-10`
+cyc6=`echo $ymdh6 | cut -c9-10`
+day1=`echo $ymdh1 | cut -c7-8`
+day2=`echo $ymdh2 | cut -c7-8`
+day3=`echo $ymdh3 | cut -c7-8`
+day4=`echo $ymdh4 | cut -c7-8`
+day5=`echo $ymdh5 | cut -c7-8`
+day6=`echo $ymdh6 | cut -c7-8`
+
+ymdhend="`/meso/save/wx20mg/meteograms.nam/advtime ${ymdh1} 48 -1`"
+dayend=`echo $ymdhend | cut -c7-8`
+cycend=`echo $ymdhend | cut -c9-10`
+
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+
+fmdl1=/com/nawips/prod/nam.${ymd1}/nam_conusnest_${ymdh1}.sfc
+fmdl2=/com/nawips/prod/nam.${ymd2}/nam_conusnest_${ymdh2}.sfc
+fmdl3=/com/nawips/prod/nam.${ymd3}/nam_conusnest_${ymdh3}.sfc
+fmdl4=/com/nawips/prod/nam.${ymd4}/nam_conusnest_${ymdh4}.sfc
+fmdl5=/com/nawips/prod/nam.${ymd5}/nam_conusnest_${ymdh5}.sfc
+fmdl6=/com/nawips/prod/nam.${ymd6}/nam_conusnest_${ymdh6}.sfc
+
+sfgram << EOF > /dev/null
+SFFILE	= $fmdl6 
+DATTIM	= ${day6}/${cyc6}-${dayend}/${cycend} 
+STATION = @$stnm
+TRACE1  = p01i:1:5/4/0;0.3;0.1
+NTRACE	= 1
+TAXIS	= ${day1}/${cyc1}-${dayend}/${cycend}
+BORDER	= 1//2
+MARKER	= 0
+TITLE   = 1/-5/ ${day6}/${cyc6}z  NAM NEST TOTAL PCP 
+CLEAR	= yes
+DEVICE  = GIF|meteogram.gif | 900;800
+PANEL	= 0;0.72;1;1 
+TEXT	= medium/22/2////HW 
+r
+
+sfgram << EOF > /dev/null
+SFFILE  = $fmdl5
+CLEAR   = no
+PANEL   = 0;0.58;1;0.86
+TITLE   = 1/-5/ ${day5}/${cyc5}z  TOTAL PCP
+r
+
+sfgram << EOF > /dev/null
+SFFILE  = $fmdl4
+PANEL   = 0;0.44;1;0.72
+TITLE   = 1/-5/ ${day4}/${cyc4}z TOTAL PCP
+r
+
+SFFILE  = $fmdl3
+PANEL   = 0;0.30;1;0.58
+TITLE   = 1/-5/ ${day3}/${cyc3}z TOTAL PCP
+r
+
+SFFILE  = $fmdl2
+PANEL   = 0;0.16;1;0.44
+TITLE   = 1/-5/ ${day2}/${cyc2}z TOTAL PCP
+r
+
+SFFILE  = $fmdl1
+PANEL   = 0;0.02;1;0.30
+TITLE   = 1/-5/ ${day1}/${cyc1}z TOTAL PCP
+r
+
+
+
+ex
+EOF
+gpend
+
+/usrx/local/im_beta/bin/convert -crop 0x0 meteogram.gif ${ymdh1}namnestpcp_${stnm}.meteogram.gif
+
+. /u/wx20mg/.Utils
+export w1=wd20mg
+export w2=$rzdm
+
+ftp -n -v << EOF > /meso/save/wx20mg/meg/rzftp.out
+open emcrzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/today
+mput *${stnm}*gif
+bye
+EOF
+
+ftp -n -v << EOF > /meso/save/wx20mg/meg/rzftp.out
+open emcrzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/${dayoweek}
+mput *${stnm}*gif
+bye
+EOF
+
+exit

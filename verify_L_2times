@@ -1,0 +1,563 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+storm="sandy18l"
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/slp
+rm /stmpp1/Geoffrey.Manikin/meg/slp/*
+cd /stmpp1/Geoffrey.Manikin/meg/slp
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+verymdh=2012102912
+verymd=`echo $verymdh | cut -c1-8`
+verday=`echo $verymdh | cut -c7-8`
+verhr=`echo $verymdh | cut -c9-10`
+dayoweek=Mon
+
+ymdh=2012102912
+ymd=20121029
+fhr1=00
+fhr2=`expr $fhr1 + 3`
+typeset -Z2 fhr2
+verymdh2="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${verymdh} $fhr2 -1`"
+verymd2=`echo $verymdh2 | cut -c1-8`
+fhr3=`expr $fhr1 + 6`
+typeset -Z2 fhr3
+verymdh3="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${verymdh} $fhr3 -1`"
+verymd3=`echo $verymdh3 | cut -c1-8`
+fhr4=`expr $fhr1 + 9`
+typeset -Z2 fhr4
+verymdh4="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${verymdh} $fhr4 -1`"
+verymd4=`echo $verymdh4 | cut -c1-8`
+fhr5=`expr $fhr1 + 12`
+typeset -Z2 fhr5
+verymdh5="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${verymdh} $fhr5 -1`"
+verymd5=`echo $verymdh5 | cut -c1-8`
+
+
+
+fmdl1=/com/nawips/prod/nam.${ymd}/nam40_${ymdh}f0${fhr1}
+fmdl2=/com/nawips/prod/nam.${ymd}/nam40_${ymdh}f0${fhr2}
+fmdl3=/com/nawips/prod/nam.${ymd}/nam40_${ymdh}f0${fhr3}
+fmdl4=/com/nawips/prod/nam.${ymd}/nam40_${ymdh}f0${fhr4}
+fmdl5=/com/nawips/prod/nam.${ymd}/nam40_${ymdh}f0${fhr5}
+fmdl6=/com/nawips/prod/gdas.${verymd}/gdas_${verymdh}f000
+fmdl7=/com/nawips/prod/gdas.${verymd3}/gdas_${verymdh3}f000
+fmdl8=/com/nawips/prod/gdas.${verymd5}/gdas_${verymdh5}f000
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr1
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = pmsl 
+ CINT     = 0 
+ LINE     = 0 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/ NAM $ymdh RED-f00 BLUE-f03  GREEN-f06  PUR-f09  ORG-f12
+ DEVICE   = GIF|lowplot1.gif|850;950
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-95;25;/1;1;1;1
+# GAREA    = 34.;-80.;42;-64. 
+ GAREA    = md
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 0.8/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = ;2/;S13#/;920-1005/5/1;1/yes
+ HLSYM    = 1;1/3/1;1/3;2/HW
+ CLRBAR   = 0
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 0 
+ FLINE    = 0
+ TYPE     = c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhr2
+ CLEAR    = n
+ TITLE    = 0 
+ HILO     = ;4/;S13#/;920-1000/5/1;1/yes 
+r
+
+ GDFILE   = $fmdl3
+ GDATTIM  = f$fhr3
+ HILO     = ;3/;S13#/;920-1000/5/1;1/yes
+r
+
+ GDFILE   = $fmdl4
+ GDATTIM  = f$fhr4
+ CLEAR    = n
+ TITLE    = 0
+ HILO     = ;29/;S13#/;920-1000/5/1;1/yes
+r
+
+ GDFILE   = $fmdl5
+ GDATTIM  = f$fhr5
+ HILO     = ;17/;S13#/;920-1000/5/1;1/yes
+r
+
+ GDFILE   = $fmdl6
+ PANEL    = b
+ GDATTIM  = f00 
+ HILO     = ;2/;S13#/;920-1000/5/1;1/yes
+ TITLE    = 1/-1/ GDAS $ymdh RED-12z  GREEN-18z   ORG-00z
+r
+
+ GDFILE   = $fmdl7
+ PANEL    = b
+ GDATTIM  = f00
+ HILO     = ;3/;S13#/;920-1000/5/1;1/yes
+ TITLE    = 0
+r
+
+ GDFILE   = $fmdl8
+ GDATTIM  = f00
+ HILO     = ;17/;S13#/;920-1000/5/1;1/yes
+r
+
+ex
+EOF
+
+fmdl1=/com/nawips/prod/gfs.${ymd}/gfs40_${ymdh}f0${fhr1}
+fmdl2=/com/nawips/prod/gfs.${ymd}/gfs40_${ymdh}f0${fhr2}
+fmdl3=/com/nawips/prod/gfs.${ymd}/gfs40_${ymdh}f0${fhr3}
+fmdl4=/com/nawips/prod/gfs.${ymd}/gfs40_${ymdh}f0${fhr4}
+fmdl5=/com/nawips/prod/gfs.${ymd}/gfs40_${ymdh}f0${fhr5}
+  
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr1
+ GLEVEL   = 0
+ GVCORD   = none
+ GDPFUN   = pmsl
+ CINT     = 0
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/ GFS $ymdh RED-f00  BLUE-f03  GREEN-f06  PUR-f09  ORG-f12
+ DEVICE   = GIF|lowplot2.gif|850;950
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-75;25;/1;1;1;1
+ GAREA    = 34.;-80.;42;-64.
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 0.8/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = ;2/;S13#/;920-1000/5/1;1/yes
+ HLSYM    = 1;1/3/1;1/3;2/HW
+ CLRBAR   = 0
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 0
+ FLINE    = 0
+ TYPE     = c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhr2
+ CLEAR    = n
+ TITLE    = 0
+ HILO     = ;4/;S13#/;920-1000/5/1;1/yes
+r
+
+ GDFILE   = $fmdl3
+ GDATTIM  = f$fhr3
+ HILO     = ;3/;S13#/;920-1000/5/1;1/yes
+r
+
+ GDFILE   = $fmdl4
+ GDATTIM  = f$fhr4
+ HILO     = ;29/;S13#/;920-1000/5/1;1/yes
+r
+
+ GDFILE   = $fmdl5
+ GDATTIM  = f$fhr5
+ HILO     = ;17/;S13#/;920-1000/5/1;1/yes
+r
+
+ GDFILE   = $fmdl6
+ PANEL    = b
+ GDATTIM  = f00
+ HILO     = ;2/;S13#/;920-1000/5/1;1/yes
+ TITLE    = 1/-1/ GDAS $ymdh RED-12z  GREEN-18z   ORG-00z
+r
+
+ GDFILE   = $fmdl7
+ PANEL    = b
+ GDATTIM  = f00
+ HILO     = ;3/;S13#/;920-1000/5/1;1/yes
+ TITLE    = 0
+r
+
+ GDFILE   = $fmdl8
+ GDATTIM  = f00
+ HILO     = ;17/;S13#/;920-1000/5/1;1/yes
+r
+
+ex
+EOF
+
+fmdl1=/com/nawips/prod/nam.${ymd}/nam_conusnest_${ymdh}f0${fhr1}
+fmdl2=/com/nawips/prod/nam.${ymd}/nam_conusnest_${ymdh}f0${fhr2}
+fmdl3=/com/nawips/prod/nam.${ymd}/nam_conusnest_${ymdh}f0${fhr3}
+fmdl4=/com/nawips/prod/nam.${ymd}/nam_conusnest_${ymdh}f0${fhr4}
+fmdl5=/com/nawips/prod/nam.${ymd}/nam_conusnest_${ymdh}f0${fhr5}
+  
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr1
+ GLEVEL   = 0
+ GVCORD   = none
+ GDPFUN   = pmsl
+ CINT     = 0
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/ NAM 4km  $ymdh RED-f00  BLUE-f03  GREEN-f06  PUR-f09  ORG-f12
+ DEVICE   = GIF|lowplot3.gif|850;950
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-75;25;/1;1;1;1
+ GAREA    = 34.;-80.;42;-64.
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 0.8/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = ;2/;S13#/;920-1000/5/1;1/yes
+ HLSYM    = 1;1/3/1;1/3;2/HW
+ CLRBAR   = 0
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 0
+ FLINE    = 0
+ TYPE     = c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhr2
+ CLEAR    = n
+ TITLE    = 0
+ HILO     = ;4/;S13#/;920-1000/5/1;1/yes
+r
+
+ GDFILE   = $fmdl3
+ GDATTIM  = f$fhr3
+ HILO     = ;3/;S13#/;920-1000/5/1;1/yes
+r
+
+ GDFILE   = $fmdl4
+ GDATTIM  = f$fhr4
+ HILO     = ;29/;S13#/;920-1000/5/1;1/yes
+r
+
+ GDFILE   = $fmdl5
+ GDATTIM  = f$fhr5
+ HILO     = ;17/;S13#/;920-1000/5/1;1/yes
+r
+
+ GDFILE   = $fmdl6
+ PANEL    = b
+ GDATTIM  = f00
+ HILO     = ;2/;S13#/;920-1000/5/1;1/yes
+ TITLE    = 1/-1/ GDAS $ymdh RED-12z  GREEN-18z   ORG-00z
+r
+
+ GDFILE   = $fmdl7
+ PANEL    = b
+ GDATTIM  = f00
+ HILO     = ;3/;S13#/;920-1000/5/1;1/yes
+ TITLE    = 0
+r
+
+ GDFILE   = $fmdl8
+ GDATTIM  = f00
+ HILO     = ;17/;S13#/;920-1000/5/1;1/yes
+r
+
+ex
+EOF
+
+fmdl1=/ptmpp1/Geoffrey.Manikin/rap/rap13_${ymdh}f0${fhr1}
+fmdl2=/ptmpp1/Geoffrey.Manikin/rap/rap13_${ymdh}f0${fhr2}
+fmdl3=/ptmpp1/Geoffrey.Manikin/rap/rap13_${ymdh}f0${fhr3}
+fmdl4=/ptmpp1/Geoffrey.Manikin/rap/rap13_${ymdh}f0${fhr4}
+fmdl5=/ptmpp1/Geoffrey.Manikin/rap/rap13_${ymdh}f0${fhr5}
+ 
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr1
+ GLEVEL   = 0
+ GVCORD   = none
+ GDPFUN   = mmsl
+ CINT     = 0
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/ RAP  $ymdh RED-f00  BLUE-f03  GREEN-f06  PUR-f09  ORG-f12
+ DEVICE   = GIF|lowplot4.gif|850;950
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-75;25;/1;1;1;1
+ GAREA    = 34.;-80.;42;-64.
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 0.8/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = ;2/;S13#/;920-1000/5/1;1/yes
+ HLSYM    = 1;1/3/1;1/3;2/HW
+ CLRBAR   = 0
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 0
+ FLINE    = 0
+ TYPE     = c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhr2
+ CLEAR    = n
+ TITLE    = 0
+ HILO     = ;4/;S13#/;920-1000/5/1;1/yes
+r
+
+ GDFILE   = $fmdl3
+ GDATTIM  = f$fhr3
+ HILO     = ;3/;S13#/;920-1000/5/1;1/yes
+r
+
+ GDFILE   = $fmdl4
+ GDATTIM  = f$fhr4
+ HILO     = ;29/;S13#/;920-1000/5/1;1/yes
+r
+
+ GDFILE   = $fmdl5
+ GDATTIM  = f$fhr5
+ HILO     = ;17/;S13#/;920-1000/5/1;1/yes
+r
+
+ GDFILE   = $fmdl6
+ GDPFUN   = pmsl
+ PANEL    = b
+ GDATTIM  = f00
+ HILO     = ;2/;S13#/;920-1000/5/1;1/yes
+ TITLE    = 1/-1/ GDAS $ymdh RED-12z  GREEN-18z   ORG-00z
+r
+
+ GDFILE   = $fmdl7
+ PANEL    = b
+ GDATTIM  = f00
+ HILO     = ;3/;S13#/;920-1000/5/1;1/yes
+ TITLE    = 0
+r
+
+ GDFILE   = $fmdl8
+ GDATTIM  = f00
+ HILO     = ;17/;S13#/;920-1000/5/1;1/yes
+r
+
+ex
+EOF
+
+fmdl1=/meso/save/Geoffrey.Manikin/meg/namb_${ymdh}
+ 
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr1
+ GLEVEL   = 0
+ GVCORD   = none
+ GDPFUN   = pmsl
+ CINT     = 0
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/ NAMB  $ymdh RED-f00  BLUE-f03  GREEN-f06  PUR-f09  ORG-f12
+ DEVICE   = GIF|lowplot5.gif|850;950
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-75;25;/1;1;1;1
+ GAREA    = 34.;-80.;42;-64.
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 0.8/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = ;2/;S13#/;920-1000/5/1;1/yes
+ HLSYM    = 1;1/3/1;1/3;2/HW
+ CLRBAR   = 0
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 0
+ FLINE    = 0
+ TYPE     = c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDATTIM  = f$fhr2
+ CLEAR    = n
+ TITLE    = 0
+ HILO     = ;4/;S13#/;920-1000/5/1;1/yes
+r
+
+ GDATTIM  = f$fhr3
+ HILO     = ;3/;S13#/;920-1000/5/1;1/yes
+r
+
+ GDATTIM  = f$fhr4
+ HILO     = ;29/;S13#/;920-1000/5/1;1/yes
+r
+
+ GDATTIM  = f$fhr5
+ HILO     = ;17/;S13#/;920-1000/5/1;1/yes
+r
+
+ GDFILE   = $fmdl6
+ PANEL    = b
+ GDATTIM  = f00
+ HILO     = ;2/;S13#/;920-1000/5/1;1/yes
+ TITLE    = 1/-1/ GDAS $ymdh RED-12z  GREEN-18z   ORG-00z
+r
+
+ GDFILE   = $fmdl7
+ PANEL    = b
+ GDATTIM  = f00
+ HILO     = ;3/;S13#/;920-1000/5/1;1/yes
+ TITLE    = 0
+r
+
+ GDFILE   = $fmdl8
+ GDATTIM  = f00
+ HILO     = ;17/;S13#/;920-1000/5/1;1/yes
+r
+
+ex
+EOF
+
+fmdl1=/meso/save/Geoffrey.Manikin/meg/namx_${ymdh}
+ 
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr1
+ GLEVEL   = 0
+ GVCORD   = none
+ GDPFUN   = pmsl
+ CINT     = 0
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/ NAMX  $ymdh RED-f00  BLUE-f03  GREEN-f06  PUR-f09  ORG-f12
+ DEVICE   = GIF|lowplot6.gif|850;950
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-75;25;/1;1;1;1
+ GAREA    = 34.;-80.;42;-64.
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 0.8/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = ;2/;S13#/;920-1000/5/1;1/yes
+ HLSYM    = 1;1/3/1;1/3;2/HW
+ CLRBAR   = 0
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 0
+ FLINE    = 0
+ TYPE     = c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDATTIM  = f$fhr2
+ CLEAR    = n
+ TITLE    = 0
+ HILO     = ;4/;S13#/;920-1000/5/1;1/yes
+r
+
+ GDATTIM  = f$fhr3
+ HILO     = ;3/;S13#/;920-1000/5/1;1/yes
+r
+
+ GDATTIM  = f$fhr4
+ HILO     = ;29/;S13#/;920-1000/5/1;1/yes
+r
+
+ GDATTIM  = f$fhr5
+ HILO     = ;17/;S13#/;920-1000/5/1;1/yes
+r
+
+ GDFILE   = $fmdl6
+ PANEL    = b
+ GDATTIM  = f00
+ HILO     = ;2/;S13#/;920-1000/5/1;1/yes
+ TITLE    = 1/-1/ GDAS $ymdh RED-12z  GREEN-18z   ORG-00z
+r
+
+ GDFILE   = $fmdl7
+ PANEL    = b
+ GDATTIM  = f00
+ HILO     = ;3/;S13#/;920-1000/5/1;1/yes
+ TITLE    = 0
+r
+
+ GDFILE   = $fmdl8
+ GDATTIM  = f00
+ HILO     = ;17/;S13#/;920-1000/5/1;1/yes
+r
+
+ex
+EOF
+
+gpend
+
+/usrx/local/im_beta/bin/convert -crop 0x0 lowplot1.gif namcoast_${ymd}.gif
+/usrx/local/im_beta/bin/convert -crop 0x0 lowplot2.gif gfscoast_${ymd}.gif
+/usrx/local/im_beta/bin/convert -crop 0x0 lowplot3.gif nestcoast_${ymd}.gif
+/usrx/local/im_beta/bin/convert -crop 0x0 lowplot4.gif rapcoast_${ymd}.gif
+/usrx/local/im_beta/bin/convert -crop 0x0 lowplot5.gif nambcoast_${ymd}.gif
+/usrx/local/im_beta/bin/convert -crop 0x0 lowplot6.gif namxcoast_${ymd}.gif
+
+. /u/Geoffrey.Manikin/.Utils
+export w1=wd20mg
+export w2=$rzdm
+
+ftp -n -v << EOF > /meso/save/Geoffrey.Manikin/casework/rzftp2.out
+open emcrzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/today
+mput *coast*gif
+bye
+EOF
+
+ftp -n -v << EOF > /meso/save/Geoffrey.Manikin/casework/rzftp.out
+open emcrzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/${dayoweek}
+mput *coast*gif
+bye
+EOF
+
+exit

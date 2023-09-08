@@ -1,0 +1,127 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /ptmpp1/wx20mg/animate
+rm /ptmpp1/wx20mg/animate/*
+cd /ptmpp1/wx20mg/animate
+
+. /u/wx20mg/.Utils
+export w1=wd20mg
+export w2=$rzdm
+
+ftp -n -i << EOF > /meso/save/wx20mg/gempak.rap13/animate.out
+open rzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/rap/para/09z 
+prompt
+mget slp*animate*
+bye
+EOF
+
+ftp -n -i << EOF > /meso/save/wx20mg/gempak.rap13/animate.out
+open rzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/rap/para/09z
+prompt
+mget pcp*animate*
+bye
+EOF
+
+ftp -n -i << EOF > /meso/save/wx20mg/gempak.rap13/animate.out
+open rzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/rap/para/09z
+prompt
+mget diff.animate*
+bye
+EOF
+
+ftp -n -i << EOF > /meso/save/wx20mg/gempak.rap13/animate.out
+open rzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/rap/para/09z
+prompt
+mget inc.animate*
+bye
+EOF
+
+mv slp.animate.html tmp.animate.html
+mv pcp.animate.html tmp2.animate.html
+mv diff.animate.html tmp3.animate.html
+mv inc.animate.html tmp4.animate.html
+
+cycles="00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23"
+prev=09
+for cyc in $cycles; do
+
+echo $prev
+files="10e 10c 10w 250 2m 2dew 2dewzoom 2mt 2mtzoom 500 700 850 850t 850w 925 best capezoom cape cins diff gust hel lift jet vis viszoom rich1 rich2 rich3 top topc frzh blrh pwtr sndm msav slp base basezoom type skin refc refd"
+for name in $files; do
+cp tmp.animate.html ${name}.animate.html
+echo $name
+vi ${name}.animate.html << EOF > /dev/null
+:1,\$ s/${prev}f/${cyc}f
+:wq
+EOF
+vi ${name}.animate.html << EOF > /dev/null
+:1,\$ s/slp/${name}
+:wq
+EOF
+done
+
+files="pcp cpcp pcpdiff"
+for name in $files; do
+cp tmp2.animate.html ${name}.animate.html
+echo $name
+vi ${name}.animate.html << EOF > /dev/null
+:1,\$ s/pcp/${name}
+:wq
+EOF
+vi ${name}.animate.html << EOF > /dev/null
+:1,\$ s/${prev}f/${cyc}f
+:wq
+EOF
+done
+
+files="diff diff12"
+for name in $files; do
+cp tmp3.animate.html ${name}.animate.html
+echo $name
+vi ${name}.animate.html << EOF > /dev/null
+:1,\$ s/diff/${name}
+:wq
+EOF
+vi ${name}.animate.html << EOF > /dev/null
+:1,\$ s/${prev}f/${cyc}f
+:wq
+EOF
+done
+
+cp tmp4.animate.html inc.animate.html
+vi inc.animate.html << EOF > /dev/null
+:1,\$ s/${prev}f/${cyc}f
+:wq
+EOF
+
+. /u/wx20mg/.Utils
+export w1=wd20mg
+export w2=$rzdm
+
+ftp -n -i << EOF > /meso/save/wx20mg/gempak.rap13/ftp.out
+open rzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/rap/para/${cyc}z
+prompt
+mput *animate* 
+bye
+EOF
+done
+
+exit

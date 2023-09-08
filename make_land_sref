@@ -1,0 +1,112 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmp/Geoffrey.Manikin/meg
+mkdir /stmp/Geoffrey.Manikin/meg/landsrefmem
+rm /stmp/Geoffrey.Manikin/meg/landsrefmem/*
+cd /stmp/Geoffrey.Manikin/meg/landsrefmem
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`echo $ymdh | cut -c1-8`
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+
+ymdh=2014010521
+ymd=`echo $ymdh | cut -c1-8`
+dayoweek=Sun
+
+DAPATH=/com/sref/prod/sref.${ymd}/${cyc}/pgrb/
+
+cp ${DAPATH}/sref_nmb.t${cyc}z.pgrb212.ctl.f00 nmb.grd
+cp ${DAPATH}/sref_nmm.t${cyc}z.pgrb212.ctl.f00 nmm.grd
+cp ${DAPATH}/sref_em.t${cyc}z.pgrb212.ctl.f00 em.grd
+
+wgrib nmb.grd | grep kpds5=81:kpds6=1:kpds7=0:TR=0 | wgrib nmb.grd -i -grib -o mdl1
+wgrib nmm.grd | grep kpds5=81:kpds6=1:kpds7=0:TR=0 | wgrib nmm.grd -i -grib -o mdl2
+wgrib em.grd | grep kpds5=81:kpds6=1:kpds7=0:TR=0 | wgrib em.grd -i -grib -o mdl3
+
+rm *grd
+
+nagrib << EOF
+GBFILE  = mdl1 
+INDXFL  =
+GDOUTF  = mdl1.gem 
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+GBFILE  = mdl2
+GDOUTF  = mdl2.gem
+r
+
+GBFILE  = mdl3
+GDOUTF  = mdl3.gem
+r
+
+exit
+EOF
+
+    gdplot2 << EOF
+ GDFILE   = mdl1.gem
+ GDATTIM  = f00 
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = land 
+ CINT     = 1 
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1//  NMB CTL LAND MASK   $ymd ${cyc}z  F00
+ DEVICE   = GIF|srefland_${ymdh}f$00.gif | 800;850
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-75;25;/1;1;1;1
+ GAREA    = 40.;-89.;49.;-74. 
+ CLEAR    = y
+ PANEL    = ul 
+ TEXT     = 0.7/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 0
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 0.5 
+ FLINE    = 21;26 
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ CLEAR    = n
+ GDFILE   = mdl2.gem
+ TITLE    = 1// NMM  LAND MASK    $ymd ${cyc}z  F00 
+ PANEL    = ur 
+r
+
+ GDFILE   = mdl3.gem
+ TITLE    = 1// EM LAND MASK   $ymd ${cyc}z  F00  
+ PANEL    = ll 
+r
+
+ex
+EOF
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

@@ -1,0 +1,67 @@
+#!/bin/ksh
+echo 'into'
+
+ymdh=2021062712
+ymd=`echo $ymdh | cut -c1-8`
+
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/meg/snd
+rm /gpfs/dell1/stmp/Geoffrey.Manikin/meg/snd/*
+cd /gpfs/dell1/stmp/Geoffrey.Manikin/meg/snd
+cp /gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/coltbl.xwp .
+
+times="36"
+station="34.02;-99.1"
+station="47.25;-122.5"
+
+for fhr in $times; do
+validtime="`/gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/advtime ${ymd}${cyc} $fhr -1 x`"
+dattim=`echo $validtime | cut -c5-11`
+
+typeset -Z3 fhr
+#fmdl1=/gpfs/hps/nco/ops/com/nawips/prod/nams.${ymd}/nam_0p25_${ymdh}f${fhr}
+fmdl1=/gpfs/dell1/ptmp/Geoffrey.Manikin/nam/nam32_${ymdh}f${fhr}
+echo $fmdl1
+
+    gdprof << EOF
+ GPOINT   = $station
+ GDATTIM  = f${fhr}
+ GVCORD   = pres 
+ GFUNC    = tmpc 
+ GVECT    = none 
+ GDFILE   = $fmdl1
+ LINE     = 2/1/6
+ MARKER   = 0
+ BORDER   = 1
+ PTYPE    = skewt 
+ SCALE    = 0
+ YAXIS    = 1050/200/50/1;1;1
+ XAXIS    = -20/50/5/;1
+ WIND     = bk1/0.7/2/122
+ REFVEC   =  
+ WINPOS   = 0
+ FILTER   = YES
+ TITLE    = 1/-1/~   NAM 
+ PANEL    = 0
+ CLEAR    = y
+ TEXT     = 1.0/21/1/SW
+ DEVICE   = GIF|namgridsnd3_${ymdh}f0${fhr}.gif | 750;900
+ OUTPUT   = t
+ THTALN   = 8/3/1/250/500/5
+ THTELN   = 23/1/1/250/500/5
+ MIXRLN   = 17/10/2/0/40./1.
+r
+
+ CLEAR    = n
+ GFUNC    = dwpc
+ LINE     = 3/1/6
+r
+
+ex
+EOF
+
+gpend
+done
+
+gpend
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test8/.
+exit

@@ -1,0 +1,55 @@
+#!/bin/ksh
+echo 'into'
+
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/gempak
+rm /gpfs/dell1/stmp/Geoffrey.Manikin/gempak/*
+cd /gpfs/dell1/stmp/Geoffrey.Manikin/gempak
+cp /gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/coltbl.xwp .
+
+ymdh=2022061416
+ymd=`echo $ymdh | cut -c1-8`
+dayoweek=hold3
+
+hours="00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15"
+hours="00 01 02"
+for fhr in $hours; do
+
+DAPATH=/gpfs/hps/nco/ops/com/hrrr/prod/hrrr.${ymd}/conus/gempak
+fmdl1=${DAPATH}/hrrr_${ymdh}f0${fhr}00
+
+#fmdl1=/ptmpd2/Geoffrey.Manikin/com/nawips/prod/hrrr.${ymd}/hrrrsubh_${ymdh}f${fhr}
+echo $fmdl1
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = refc 
+ CINT     = 5 
+ LINE     = 0 
+ DEVICE   = GIF|hrrrrefc_${ymdh}f${fhr}.gif | 800;850
+ PROJ     = lcc/25.;-82.;25./2;2;1;1
+ GAREA    = 40.8;-89.6;43.0;-86.2
+ GAREA    = ga
+# \$MAPFIL = county
+ TITLE    = 1//~  HRRR  COMPOSITE REFL 
+ CLEAR    = y
+ SCALE    = 0
+ PANEL    = 0
+ HILO     = 0
+ HLSYM    = 0 
+ CLRBAR   = 1/H/UL/.06;0.97/0.8;.03/1
+ TEXT     = 1.1/11/2
+ FINT     = 5;10;15;20;25;30;35;40;45;50;55;60;65;70
+ FLINE    = 0;27;26;4;21;22;23;5;20;17;16;15;14;7;29
+ TYPE     = f 
+r
+
+ex
+EOF
+done
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

@@ -1,0 +1,79 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/circ
+rm /stmpp1/Geoffrey.Manikin/meg/circ/*
+cd /stmpp1/Geoffrey.Manikin/meg/circ
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+
+ymdh=2017011012
+ymd=`echo $ymdh | cut -c1-8`
+month=`echo $ymdh | cut -c5-6`
+day=`echo $ymdh | cut -c7-8`
+dayoweek=hold5
+
+#DAPATH1=/com/nawips/prod/nam.${ymd}
+DAPATH1=/ptmpd2/Geoffrey.Manikin/com2/nawips/prod/nam.${ymd}
+DAPATH2=/ptmpd2/Geoffrey.Manikin/hold/nam.${ymd}
+times="15"
+for fhr in $times; do
+
+fmdl1=${DAPATH1}/nam32_${ymdh}f0${fhr}
+fmdl2=${DAPATH2}/nam_conusnest_${ymdh}f0${fhr}
+
+    gdcross << EOF
+# CXSTNS   =  40.65;-75.43 > 41.25;-70.07
+# CXSTNS   = 38.88;-79.85 > 38.60;-73.75
+ CXSTNS  = 44.60;-127.50 > 46.10;-118.28
+ GDATTIM  =  f${fhr}
+ GVCORD   =  pres
+ GFUNC    =  tmpc 
+ GVECT    =  circ(wnd;omeg) 
+ GDFILE   =  $fmdl1 
+# WIND     =  bm6//2
+ WIND     =  am6//2//.75
+# REFVEC   =  10
+ REFVEC   =  5;.05;.2
+ PTYPE    =  log
+ YAXIS    = 1000/200/100/1;0;0
+ CINT     =  5
+ SCALE    =  0 
+ LINE     =  1/1/1
+ BORDER   =  1
+ TITLE    =  1//~    NAM
+ CLEAR    =  yes
+ DEVICE   =  GIF|namcrosstemp_${ymdh}f0${fhr}.gif|850;950
+ TEXT     =  1
+ PANEL    =  0
+ CLRBAR   =  1/h/cc/.5;.03/.8;.01
+ CONTUR   =  3
+ FINT     =  6/-54/12
+ FLINE    =  30-8-2
+ CTYPE    =  f
+r
+
+ GDFILE   =  $fmdl2
+ CLEAR    =  yes
+ DEVICE   =  GIF|nestcrosstemp_${ymdh}f0${fhr}.gif|850;950
+ TITLE    =  1//~   NAM4 
+r
+
+ex
+EOF
+gpend
+done
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit
+

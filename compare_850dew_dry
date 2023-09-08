@@ -1,0 +1,126 @@
+#!/bin/ksh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/850dewz
+rm /stmpp1/Geoffrey.Manikin/meg/850dewz/*
+cd /stmpp1/Geoffrey.Manikin/meg/850dewz
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=2018041012
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+dayoweek=hold6
+
+times="00 03 06 09 12 15 18 21 24"
+times="00 03 06 09 12"
+#times="00 06 09 12"
+times="00 03 06 09 12"
+times="00"
+#times="162 168 174 180"
+
+for fhr in $times; do
+
+typeset -Z3 fhr
+fmdl1=/com2/nawips/prod/nam.${ymd}/nam32_${ymdh}f${fhr}
+fmdl2=/gpfs/hps/nco/ops/com/nawips/prod/gfs.${ymd}/gfs_0p25_${ymdh}f${fhr}
+#fmdl1=/ptmpp1/Geoffrey.Manikin/hold2/nam12_${ymdh}f0${fhr}
+#fmdl2=/ptmpp1/Geoffrey.Manikin/hold2/gfs_0p25_${ymdh}f0${fhr}
+
+     gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 850 
+ GVCORD   = pres 
+ GDPFUN   = dwpc 
+ CINT     = 4 
+ LINE     = 1 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   NAM 850mb  DWPC 
+ DEVICE   = GIF|850dewmodels_f0${fhr}.gif|850;950
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-108;25;/1;1;1;1
+ GAREA    = 33.;-108.;51.;-84. 
+ GAREA    = 18.;-122.;40.;-94. 
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/V/UL/.01;0.4/0.8;.03/2 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = -90;-85;-80;-75;-70;-65;-60;-55;-50;-45;-40;-35;-30;-25;-20;-15;-10;-5;0;5;10
+ FINT     = -120;-110;-100;-90;-80;-70;-60;-55;-50;-45;-40;-35;-30;-25;-20;-15;-10;-5;0;5;10
+ FLINE    = 0;11;9;12;7;30;29;28;4;25;26;27;24;23;22;21;5;20;10;17;16;2;15;14;32
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhr
+ TITLE    = 1/-1/~  GFS 850 mb  DWPC
+ PANEL    = b
+ CLRBAR   = 0
+ CLEAR    = n
+r
+
+ex
+EOF
+
+    gdcntr << EOF
+ GDFILE   = $fmdl2 + $fmdl1
+ GDATTIM  = f${fhr}
+ GLEVEL   = 850  
+ GVCORD   = pres 
+ GFUNC    = sub(dwpc+2,dwpc)
+ CINT     = 2 
+ LINE     = 1
+ MAP      = 1
+ WIND     = bk1/0.7/2/122
+ TITLE    = 1//~  850 mb  DWPC   NAM - GFS
+ DEVICE   = GIF|850dewdiff_f0${fhr}.gif | 500;550
+ SATFIL   =
+ RADFIL   =
+ CLEAR    = y
+ PANEL    = 0
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/H/UL/.1;.96/.8;.02/-1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = -20;-16;-12;-8;-4;4;8;12;16;20
+ FINT     = -35;-28;-21;-14;-7;7;14;21;28;35
+ FLINE    = 30;28;26;27;22;0;5;10;17;2;15
+ CTYPE    = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ex
+EOF
+gpend
+done
+
+for fhr in $times; do
+
+CONV=/usrx/local/ImageMagick/6.8.3-3/bin
+$CONV/convert -crop 0x0 850dewmodels_f0${fhr}.gif 850dew1.gif
+$CONV/convert -crop 0x0 850dewdiff_f0${fhr}.gif 850dew2.gif
+$CONV/montage -geometry 800x850 850dew1.gif 850dew2.gif ${ymdh}_850dewzz${fhr}.gif
+done
+
+scp ${ymdh}*gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+#mv ${cyc}*gif /stmpp1/Geoffrey.Manikin/meg/holdshort/.
+rm *gif
+exit

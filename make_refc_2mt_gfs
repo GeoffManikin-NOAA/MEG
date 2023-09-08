@@ -1,0 +1,67 @@
+#!/bin/ksh
+echo 'into'
+
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/meg
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/meg/refc/
+rm /lfs/h2/emc/stmp/geoffrey.manikin/meg/refc/*
+cd /lfs/h2/emc/stmp/geoffrey.manikin/meg/refc
+cp /lfs/h2/emc/vpppg/save/geoffrey.manikin/meg/coltbl.xwp .
+
+ymdh=2022080312
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+dayoweek=hold
+
+hours="00 01 02 03 04 05 06 07 08 09 10 11 12"
+hours="00 01 02 03 04 05 06"
+hours="168 171 174 177 180"
+hours="30 31 32  33 34 35 36"
+for fhr in $hours; do
+
+typeset -Z3 fhr
+DAPATH=/lfs/h1/ops/prod/com/gfs/v16.2/gfs.${ymd}/${cyc}/atmos/gempak
+fmdl1=${DAPATH}/gfs_0p25_${ymdh}f${fhr}
+echo $fmdl1
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = refc 
+ CINT     = 5 
+ LINE     = 0 
+ DEVICE   = GIF|gfsrefc2mt_${ymdh}f${fhr}.gif | 800;850
+ PROJ     = lcc/25.;-98.;25./2;2;1;1
+ GAREA    = sd 
+ TITLE    = 1//~  GFS  COMPOSITE REFL 
+ CLEAR    = y
+ SCALE    = 0
+ PANEL    = t
+ HILO     = 0
+ HLSYM    = 0 
+ CLRBAR   = 1/V/UL/.05;0.94/0.8;.03/1
+ TEXT     = 1.1/11/2
+ FINT     = 5;10;15;20;25;30;35;40;45;50;55;60;65;70
+ FLINE    = 0;27;26;4;21;22;23;5;20;17;16;15;14;7;29
+ TYPE     = f 
+r
+
+ GLEVEL   = 2
+ GVCORD   = hght
+ GDPFUN   = tmpf
+ CLEAR    = n
+ PANEL    = b
+ FINT     = 61;64;67;70;73;75;79;82;85;88;91;94;97;100;103;106;109;112
+# FINT     = -34;-28;-22;-16;-10;-4;2;8;14;20;26;32;38;44;50;56;62;68;74;80;86
+ FLINE    = 0;12;30;29;28;4;25;26;27;24;23;22;21;5;20;10;17;16;2;15;14;32
+r
+
+ex
+EOF
+done
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test8/.
+exit

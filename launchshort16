@@ -1,0 +1,16 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+cd /stmpp1/Geoffrey.Manikin/meg
+
+/meso/save/Geoffrey.Manikin/meg/compare_24pcp_nest ${cyc} &
+/meso/save/Geoffrey.Manikin/meg/make_slp_nest ${cyc} &
+wait
+
+echo beforeexit16
+exit
+
+

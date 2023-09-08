@@ -1,0 +1,90 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/5004
+rm /stmpp1/Geoffrey.Manikin/meg/5004/*
+cd /stmpp1/Geoffrey.Manikin/meg/5004
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`cut -c 7-14 /com/date/t${cyc}z`
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+
+times="00 12 24 36 48 60 72 84"
+for fhr in $times; do
+
+fmdl1=/com/nawips/prod/nam.${ymd}/nam40_${ymdh}f0${fhr}
+fmdl2=/com2/nawips/prod/gfs.${ymd}/gfs40_${ymdh}f0${fhr}
+fmdl3=/com2/nawips/prod/ecmwf.${ymd}/ecmwf_hr_${ymdh}f0${fhr}
+fmdl4=/com/nawips/prod/ukmet.${ymd}/ukmet_hr_${ymdh}f0${fhr}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 500
+ GVCORD   = pres
+ GDPFUN   = quo(hght,10) 
+ CINT     = 6 
+ LINE     = 4/1/3/2 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   NAM 500 mb HGT 
+ DEVICE   = GIF|${cyc}500_4mods${fhr}.gif|850;950
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-95;25;/1;1;1;1
+ GAREA    = 12.;-132.;62.;-58. 
+ CLEAR    = y
+ PANEL    = ul 
+ TEXT     = 0.9/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 1//21;//HW
+ CLRBAR   = 0
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 0 
+ FLINE    = 0
+ TYPE     = c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl2
+ LINE     = 23/1/3/2
+ CLEAR    = n
+ TITLE    = 1/-1/~   GFS 500 mb HGT  
+ PANEL    = ll 
+r
+
+ GDFILE   = $fmdl3
+ LINE     = 2/1/3/2
+ TITLE    = 1/-1/~   ECMWF 500 mb HGT 
+ PANEL    = ur
+r
+
+ GDFILE   = $fmdl4
+ LINE     = 17/1/3/2
+ TITLE    = 1/-1/~   UKMET 500 mb HGT
+ PANEL    = lr
+r
+
+ex
+EOF
+
+done
+gpend
+
+#mv ${cyc}*gif /stmpp1/Geoffrey.Manikin/meg/holdshort/.
+scp ${cyc}*gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+scp ${cyc}*gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/today/.
+exit

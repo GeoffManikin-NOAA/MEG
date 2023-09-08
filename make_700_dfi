@@ -1,0 +1,151 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+ymd=`cut -c 7-14 /com/date/t${cyc}z`
+cyc=`cut -c 15-16 /com/date/t${cyc}z`
+
+ymd=20120320
+cyc=21
+
+mkdir /stmpp1/wx20mg/gempak.rap13/700
+cd /stmpp1/wx20mg/gempak.rap13/700
+cp /meso/save/wx20mg/casework/coltbl.xwp .
+
+times="00"
+
+for fhr in $times; do
+
+fmdl1=/stmpp1/wx20mg/rappost/rap_${ymd}${cyc}f0${fhr}
+fmdl2=/stmpp1/wx20mg/rappost/raptest_${ymd}${cyc}f0${fhr}
+
+echo $fmdl
+echo $fmdl2
+
+    gdplot2 << EOF
+
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 700 
+ GVCORD   = pres 
+ GDPFUN   = relh 
+ CINT     = 50;60;70;80;90 
+ LINE     = 0 
+ MAP      = 1
+ WIND     = 0 
+ TITLE    = 0 
+ DEVICE   = GIF|compare700_${ymd}${cyc}f${fhr}.gif|850;850
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-95.;25./2;2;1;1
+ GAREA    = grid
+ CLEAR    = y
+ PANEL    = 0.;.51;1.;1.
+ TEXT     = 1.0/1/1
+ SCALE    = 0 
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0 
+ CLRBAR   = 1/V/UL/.15;0.5/.8;.03/-1 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 50;60;70;80;90 
+ FLINE    = 0;5;19;21;22;23 
+ TYPE     = f/c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDPFUN   = omeg 
+ CINT     = 3/-100/-5
+ LINE     = 4/1/3/0
+ TITLE    = 0
+ CLEAR    = n
+ SCALE    = 3
+ HILO     = 0
+ HLSYM    = 0
+ FINT     = 0
+ FLINE    = 0
+ CTYPE    = c
+r
+
+ TITLE    = 1/1/ ${fhr}-HR RAP POST-DFI FCST 700 RH/OMEGA
+ TEXT     = 1.1/11/2
+r
+
+ TITLE    = 7/-1/ FCST MADE ${cyc}Z  ${month}/$day    rising motion in blue
+ TEXT     = 1.1/11/1/SW
+r
+
+
+ GDFILE   = $fmdl2
+ TITLE    = 1/1/ ${fhr}-HR RAP PRE-DFI  FCST 700 RH/OMEGA
+ TEXT     = 1.1/11/2
+ PANEL    = 0;0;1;.49
+ GAREA    = 16.;-126.;55.;-57.
+ CINT     = -2000/-2000/-2000
+r
+
+ GDATTIM  = f$fhr
+ GLEVEL   = 700
+ GVCORD   = pres
+ GDPFUN   = relh
+ CINT     = 50;60;70;80;90
+ LINE     = 0
+ MAP      = 1
+ TITLE    = 0
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-95.;25./2;2;1;1
+ TEXT     = 1.0/1/1
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 0
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 50;60;70;80;90
+ FLINE    = 0;5;19;21;22;23
+ CTYPE    = f/c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDPFUN   = omeg
+ LINE     = 4/1/3/0
+ CINT     = 3/-100/-5
+ TITLE    = 0
+ CLEAR    = n
+ SCALE    = 3
+ HILO     = 0
+ HLSYM    = 0
+ FINT     = 0
+ FLINE    = 0
+ CTYPE    = c
+r
+
+exit
+EOF
+
+gpend
+done
+
+. /u/wx20mg/.Utils
+export w1=wd20mg
+export w2=$rzdm
+export w3=emcmmb
+export w4=$web
+
+ftp -n -v << EOF > /meso/save/wx20mg/gempak.rap13/rzftp.out
+open rzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/rap/snd
+prompt
+mput *.gif
+bye
+EOF
+
+exit

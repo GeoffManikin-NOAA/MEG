@@ -1,0 +1,56 @@
+#!/bin/sh
+echo 'into'
+
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/urma
+rm /lfs/h2/emc/stmp/geoffrey.manikin/urma/*
+cd /lfs/h2/emc/stmp/geoffrey.manikin/urma
+cp /lfs/h2/emc/vpppg/save/geoffrey.manikin/meg/coltbl.xwp .
+
+ymdh=2022122318
+ymd=`echo $ymdh | cut -c1-8`
+
+fmdl=/lfs/h1/ops/prod/com/urma/v2.9/urma2p5.${ymd}/gempak/urma2p5_${ymdh}f000
+fmdl=/lfs/h2/emc/vpppg/noscrub/geoffrey.manikin/urma/urma2p5_${ymdh}f000
+echo $fmdl
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl
+ GDATTIM  = last 
+ GLEVEL   = 10 
+ GVCORD   = hght 
+ GDPFUN   = knts(gust)
+ CINT     = 4 
+ LINE     = 0 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~ URMA ANALYSIS WIND GUST 
+ DEVICE   = GIF|urmagust_${ymdh}.gif|750;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-82.;25./2;2;1;1
+# GAREA    = 37.6;-111.2;47.8;-91.
+ GAREA    = 39.;-92.;48.;-70.
+ CLEAR    = y
+ PANEL    = 0
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0 
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/H/UL/.04;0.95/.8;.02/2 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 4;11;12;17;22;27;32;37;42;47;52
+ FLINE    = 0;11;28;29;26;27;22;5;17;2;15;25
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ex
+EOF
+
+gpend
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test/.
+exit

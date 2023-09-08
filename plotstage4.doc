@@ -1,0 +1,38 @@
+
+Plotting Stage IV Data
+
+1)  Make an /stmpp1/Geoffrey.Manikin/precip  directory
+2)  Into that directory, copy /com2/pcpanl/prod/pcpanl.YYYYMMDD/ST4*gz  for all dates needed.
+    Note that there are 1h, 6h, and 24h totals.   Any of these can be used, depending on need.
+3)  gunzip *  in that directory
+4)  type the following:
+    export NCARG_ROOT=/meso/save/Corey.Guastini/ncl
+    export PATH=${PATH}:${HOME}/bin:/nwprod/util/exec:
+    export PATH=${PATH}:/nwprod/util/ush:${NCARG_ROOT}/bin
+5)  A sample script is  plot6h_stageiv.ncl  to plot the 6-hour totals
+
+  The following variables can be adjusted to the needs of the case
+
+  a = addfile("/stmpp1/Geoffrey.Manikin/precip/ST4."+modelstrings+".06h","r")
+
+  ;start of period you want
+  scriptyyyymmddhh="2017082800"
+
+  ;how long you want accumulation window to be in hours
+  acch=12
+
+  ;bounds for plot
+  minlat=24.0
+  maxlat=34.0
+  minlon=-102.0
+  maxlon=-88.0
+
+  res@cnLevels=(/.1,.5,1.0,2.0,4.0,6.0,8.0,10.0,15.0,20.0,25.0,30.0,35.0,40.0,50.0,60.0/)
+  res@lbLabelStrings=(/"0.1","0.5","1.0","2.0","4.0","6.0","8.0","10.0","15.0","20.0","25.0","30.0","35.0","40.0","50.0","60.0"/)
+
+  res@cnFillColors=(/"transparent","lawngreen","green3","green4","blue1","dodgerblue1","cyan1","mediumpurple3","darkorchid3","darkorchid4","red2","red3","orangered2","darkorange2","lightsalmon1","yellow1","black"/)
+   [color info is available  at http://www.ncl.ucar.edu/Document/Graphics/named_colors.shtml ]
+
+  system("scp "+ms+"precipverf*.gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/hold5/")
+
+6) ncl plot6h_stageiv.ncl   to run the program

@@ -1,0 +1,222 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc1=$1
+stnm=725030
+
+mkdir /stmp/wx20mg/meg
+mkdir /stmp/wx20mg/meg/meteograms
+rm /stmp/wx20mg/meg/meteograms/*
+cd /stmp/wx20mg/meg/meteograms
+cp /meso/save/wx20mg/casework/coltbl.xwp .
+
+ymdh1=`cut -c 7-16 /com/date/t${cyc1}z`
+ymdh1=2012071212
+ymd1=`echo $ymdh1 | cut -c1-8`
+ymdh2="`/meso/save/wx20mg/meteograms.nam/advtime ${ymdh1} -6 -1`"
+ymdh3="`/meso/save/wx20mg/meteograms.nam/advtime ${ymdh1} -12 -1`"
+ymdh4="`/meso/save/wx20mg/meteograms.nam/advtime ${ymdh1} -18 -1`"
+ymd2=`echo $ymdh2 | cut -c1-8`
+ymd3=`echo $ymdh3 | cut -c1-8`
+ymd4=`echo $ymdh4 | cut -c1-8`
+cyc2=`echo $ymdh2 | cut -c9-10`
+cyc3=`echo $ymdh3 | cut -c9-10`
+cyc4=`echo $ymdh4 | cut -c9-10`
+day1=`echo $ymdh1 | cut -c7-8`
+
+ymdhend="`/meso/save/wx20mg/meteograms.nam/advtime ${ymdh1} 84 -1`"
+dayend=`echo $ymdhend | cut -c7-8`
+cycend=`echo $ymdhend | cut -c9-10`
+
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+
+fmdl1=/com/nawips/prod/gfs.${ymd1}/gfs_${ymdh1}.sfc
+fmdl2=/com/nawips/prod/gfs.${ymd2}/gfs_${ymdh2}.sfc
+fmdl3=/com/nawips/prod/gfs.${ymd3}/gfs_${ymdh3}.sfc
+fmdl4=/com/nawips/prod/gfs.${ymd4}/gfs_${ymdh4}.sfc
+
+sfgram << EOF > /dev/null
+SFFILE	= $fmdl1 
+DATTIM	= ${day1}/${cyc1}-${dayend}/${cycend} 
+STATION = @$stnm
+TRACE1  = t2ms:1:4/2/10;40;4
+NTRACE	= 1
+TAXIS	= ${day1}/${cyc1}-${dayend}/${cycend}
+BORDER	= 1//2
+MARKER	= 0
+TITLE   = 1/-7/ TEMPERATURE
+CLEAR	= yes
+DEVICE  = GIF|meteogram.gif | 900;800
+PANEL	= 0;0.55;1;1 
+TEXT	= medium/22/2////HW 
+r
+
+ex
+EOF
+
+sfgram << EOF > /dev/null
+SFFILE   = ${fmdl1}_aux
+TRACE1  = td2m:1:4/23/3;24;3 
+CLEAR   = no
+PANEL   = 0;0.29;1;0.74
+TITLE   = 1/-7/DEW POINT
+r
+
+ex
+EOF
+
+sfgram << EOF > /dev/null
+SFFILE  = ${fmdl1}
+TRACE1  = p01i:1:4/24/0;0.50;0.25/0.10;0.25 
+PANEL   = 0;0.02;1;0.47
+TITLE   = 1/-7/ TOTAL PCP
+r
+
+sfgram << EOF > /dev/null
+SFFILE  = $fmdl2
+DATTIM  = ${day1}/${cyc1}-${dayend}/${cycend}
+STATION = @$stnm
+TRACE1  = t2ms:1:4/11/10;40;4 
+NTRACE  = 1
+TAXIS   = ${day1}/${cyc1}-${dayend}/${cycend}
+BORDER  = 1//2
+MARKER  = 0
+TITLE   = 1/-7/ TEMPERATURE
+CLEAR   = no 
+DEVICE  = GIF|meteogram.gif | 900;800
+PANEL   = 0;0.55;1;1
+TEXT    = medium/22/2////HW
+r
+
+ex
+EOF
+
+sfgram << EOF > /dev/null
+SFFILE  = ${fmdl2}_aux
+DATTIM  = ${day1}/${cyc1}-${dayend}/${cycend}
+TRACE1  = td2m:1:4/22/3;24;3
+CLEAR   = no
+PANEL   = 0;0.29;1;0.74
+TITLE   = 1/-7/DEW POINT
+r
+
+ex
+EOF
+
+sfgram << EOF > /dev/null
+SFFILE  = ${fmdl2}
+TRACE1  = p01i:1:4/25/0;0.50;0.25/0.10;0.25
+PANEL   = 0;0.02;1;0.47
+TITLE   = 1/-7/ TOTAL PCP
+r
+
+sfgram << EOF > /dev/null
+SFFILE  = $fmdl3
+DATTIM  = ${day1}/${cyc1}-${dayend}/${cycend}
+STATION = @$stnm
+TRACE1  = t2ms:1:4/17/10;40;4
+NTRACE  = 1
+TAXIS   = ${day1}/${cyc1}-${dayend}/${cycend}
+BORDER  = 1//2
+MARKER  = 0
+TITLE   = 1/-7/ TEMPERATURE
+CLEAR   = no
+DEVICE  = GIF|meteogram.gif | 900;800
+PANEL   = 0;0.55;1;1
+TEXT    = medium/22/2////HW
+r
+
+ex
+EOF
+
+sfgram << EOF > /dev/null
+SFFILE  = ${fmdl3}_aux
+DATTIM  = ${day1}/${cyc1}-${dayend}/${cycend}
+TRACE1  = td2m:1:4/21/3;24;3
+CLEAR   = no
+PANEL   = 0;0.29;1;0.74
+TITLE   = 1/-7/DEW POINT
+r
+
+ex
+EOF
+
+sfgram << EOF > /dev/null
+SFFILE  = ${fmdl3}
+TRACE1  = p01i:1:4/26/0;0.50;0.25/0.10;0.25
+PANEL   = 0;0.02;1;0.47
+TITLE   = 1/-7/ TOTAL PCP
+r
+
+sfgram << EOF > /dev/null
+SFFILE  = $fmdl4
+DATTIM  = ${day1}/${cyc1}-${dayend}/${cycend}
+STATION = @$stnm
+TRACE1  = t2ms:1:4/10/10;40;4
+NTRACE  = 1
+TAXIS   = ${day1}/${cyc1}-${dayend}/${cycend}
+BORDER  = 1//2
+MARKER  = 0
+TITLE   = 1/-7/ TEMPERATURE
+CLEAR   = no
+DEVICE  = GIF|meteogram.gif | 900;800
+PANEL   = 0;0.55;1;1
+TEXT    = medium/22/2////HW
+r
+
+ex
+EOF
+
+sfgram << EOF > /dev/null
+SFFILE  = ${fmdl4}_aux
+DATTIM  = ${day1}/${cyc1}-${dayend}/${cycend}
+TRACE1  = td2m:1:4/20/3;24;3
+CLEAR   = no
+PANEL   = 0;0.29;1;0.74
+TITLE   = 1/-7/DEW POINT
+r
+
+ex
+EOF
+
+sfgram << EOF > /dev/null
+SFFILE  = ${fmdl4}
+TRACE1  = p01i:1:4/28/0;0.50;0.25/0.10;0.25
+PANEL   = 0;0.02;1;0.47
+TITLE   = 1/-7/ TOTAL PCP
+r
+
+ex
+EOF
+gpend
+
+/usrx/local/im_beta/bin/convert -crop 0x0 meteogram.gif ${ymdh1}gfs_${stnm}.meteogram.gif
+
+. /u/wx20mg/.Utils
+export w1=wd20mg
+export w2=$rzdm
+
+ftp -n -v << EOF > /meso/save/wx20mg/meg/rzftp.out
+open emcrzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/today
+mput *${stnm}*gif
+bye
+EOF
+
+ftp -n -v << EOF > /meso/save/wx20mg/meg/rzftp.out
+open emcrzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/${dayoweek}
+mput *${stnm}*gif
+bye
+EOF
+
+exit

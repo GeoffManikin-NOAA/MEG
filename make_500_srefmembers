@@ -1,0 +1,186 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/500srefmem
+rm /stmpp1/Geoffrey.Manikin/meg/500srefmem/*
+cd /stmpp1/Geoffrey.Manikin/meg/500srefmem
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`echo $ymdh | cut -c1-8`
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+
+ymdh=2018031021
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+dayoweek=hold10
+
+hours="51 57 63"
+models="arw nmb"
+members="ctl p1 p2 p3 p4 p5 p6 n1 n2 n3 n4 n5 n6"
+
+for fhr in $hours; do
+for mdl in $models; do
+                      
+fmdl1=/com2/nawips/prod/sref.${ymd}/sref132_${ymdh}_${mdl}_ctl
+fmdl2=/com2/nawips/prod/sref.${ymd}/sref132_${ymdh}_${mdl}_p1 
+fmdl3=/com2/nawips/prod/sref.${ymd}/sref132_${ymdh}_${mdl}_p2 
+fmdl4=/com2/nawips/prod/sref.${ymd}/sref132_${ymdh}_${mdl}_p3 
+fmdl5=/com2/nawips/prod/sref.${ymd}/sref132_${ymdh}_${mdl}_p4 
+fmdl6=/com2/nawips/prod/sref.${ymd}/sref132_${ymdh}_${mdl}_p5 
+fmdl7=/com2/nawips/prod/sref.${ymd}/sref132_${ymdh}_${mdl}_p6
+fmdl8=/com2/nawips/prod/sref.${ymd}/sref132_${ymdh}_${mdl}_n1
+fmdl9=/com2/nawips/prod/sref.${ymd}/sref132_${ymdh}_${mdl}_n2
+fmdl10=/com2/nawips/prod/sref.${ymd}/sref132_${ymdh}_${mdl}_n3
+fmdl11=/com2/nawips/prod/sref.${ymd}/sref132_${ymdh}_${mdl}_n4
+fmdl12=/com2/nawips/prod/sref.${ymd}/sref132_${ymdh}_${mdl}_n5
+fmdl13=/com2/nawips/prod/sref.${ymd}/sref132_${ymdh}_${mdl}_n6
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f${fhr} 
+ GLEVEL   = 500 
+ GVCORD   = pres 
+ GDPFUN   = quo(hght,10) 
+ CINT     = 6 
+ LINE     = 4/1/3/3
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1//  $mdl CTL 500 Z  $ymd ${cyc}z  F${fhr}
+ DEVICE   = GIF|sref${mdl}5001_${ymdh}f${fhr}.gif | 800;850
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-85;25;/1;1;1;1
+# GAREA    = 24.;-155.;68.;-75.
+ GAREA   = 23.;-108.;55.;-60. 
+ CLEAR    = y
+ PANEL    = m1 
+ TEXT     = 0.7/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 0
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 0 
+ FLINE    = 0
+ TYPE     = c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ CLEAR    = n
+ GDFILE   = $fmdl2
+ TITLE    = 1// $mdl P1 500 Z  $ymd ${cyc}z  F${fhr} 
+ PANEL    = m2 
+r
+
+ GDFILE   = $fmdl3
+ TITLE    = 1// $mdl P2 500 Z  $ymd ${cyc}z  F${fhr}  
+ PANEL    = m3 
+r
+
+ GDFILE   = $fmdl4
+ TITLE    = 1// $mdl P3 500 Z  $ymd ${cyc}z  F${fhr}  
+ PANEL    = m4
+r
+
+ GDFILE   = $fmdl5
+ TITLE    = 1// $mdl P4 500 Z  $ymd ${cyc}z  F${fhr}  
+ PANEL    = m5
+r
+
+ GDFILE   = $fmdl6
+ TITLE    = 1// $mdl P5 500 Z  $ymd ${cyc}z  F${fhr}  
+ PANEL    = m6
+ CLRBAR   = 0
+r
+
+ GDFILE   = $fmdl7
+ TITLE    = 1// $mdl P6 500 Z  $ymd ${cyc}z  F${fhr}  
+ PANEL    = m7
+ CLRBAR   = 1/H/UL/.99;.6/1.4;.06/2
+r
+
+ GDFILE   = $fmdl1
+ GDATTIM  = f${fhr}
+ GLEVEL   = 500
+ GVCORD   = pres
+ GDPFUN   = quo(hght,10)
+ CINT     = 6
+ LINE     = 4/1/3/3
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1//  $mdl CTL 500 Z  $ymd ${cyc}z  F${fhr}
+ DEVICE   = GIF|sref${mdl}5002_${ymdh}f${fhr}.gif | 800;850
+ SATFIL   =
+ RADFIL   =
+ CLEAR    = y
+ PANEL    = m1
+ TEXT     = 0.7/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 0
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 0
+ FLINE    = 0
+ TYPE     = c
+ LUTFIL   =
+ STNPLT   =
+r
+
+CLEAR    = n
+ GDFILE   = $fmdl8
+ TITLE    = 1// $mdl N1 500 Z  $ymd ${cyc}z  F${fhr}
+ PANEL    = m2
+r
+
+ GDFILE   = $fmdl9
+ TITLE    = 1// $mdl N2 500 Z  $ymd ${cyc}z  F${fhr}
+ PANEL    = m3
+r
+
+ GDFILE   = $fmdl10
+ TITLE    = 1// $mdl N3 500 Z  $ymd ${cyc}z  F${fhr}
+ PANEL    = m4
+r
+
+ GDFILE   = $fmdl11
+ TITLE    = 1// $mdl N4 500 Z  $ymd ${cyc}z  F${fhr}
+ PANEL    = m5
+r
+
+ GDFILE   = $fmdl12
+ TITLE    = 1// $mdl N5 500 Z  $ymd ${cyc}z  F${fhr}
+ PANEL    = m6
+ CLRBAR   = 0
+r
+
+ GDFILE   = $fmdl13
+ TITLE    = 1// $mdl N6 500 Z  $ymd ${cyc}z  F${fhr}
+ PANEL    = m7
+ CLRBAR   = 1/H/UL/.99;.6/1.4;.06/2
+r
+
+ex
+EOF
+done
+done
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

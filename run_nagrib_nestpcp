@@ -1,0 +1,105 @@
+#/bin/ksh
+
+set -x
+
+cyc=$1
+
+mkdir /ptmpp1/Geoffrey.Manikin/nestpcp
+rm /ptmpp1/Geoffrey.Manikin/nestpcp/*
+cd /ptmpp1/Geoffrey.Manikin/nestpcp
+cp /meso/save/Geoffrey.Manikin/gempak/nagrib2/*tbl .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+#ymdh=2015103000
+ymd=`echo $ymdh | cut -c1-8`
+
+HOMEPATH=/meso/save/Geoffrey.Manikin/meg
+DAPATH=/gpfs/dell1/nco/ops/com/nam/prod/nam.${ymd}
+DAPATH2=/ptmpp2/Eric.Rogers/com/nam/para/nam.${ymd}
+#DAPATH2=/com/nam/para/nam.${ymd}
+#DAPATH=/ptmpp2/Geoffrey.Manikin/hold
+#DAPATH2=/ptmp/Geoffrey.Manikin/hold2
+
+export DAPATH
+. /nwprod/gempak/.gempak
+
+fhrs="03 06 09 12 15 18 21 24 27 30 33 36 39 42 45 48 51 54 57 60"
+for fhr in $fhrs
+do
+
+wgrib -i -d 16 ${DAPATH}/nam.t${cyc}z.conusnest.hiresf${fhr}.tm00 -grib -o new.fil
+wgrib -i -d 17 ${DAPATH}/nam.t${cyc}z.conusnest.hiresf${fhr}.tm00 -grib -o newc.fil
+
+  nagrib << EOF
+GBFILE  = new.fil 
+INDXFL  =
+GDOUTF  = dummynest.grd 
+PROJ    =
+GRDAREA =
+KXKY    = 
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+GBFILE  = newc.fil
+r
+
+exit
+EOF
+
+rm new*.fil
+done
+mv dummynest.grd ${HOMEPATH}/namnestpcp_${ymdh}
+gpend
+
+for fhr in $fhrs
+do
+
+wgrib2 -d 88 ${DAPATH2}/nam.t${cyc}z.conusnest.camfld${fhr}.tm00.grib2 -grib new.fil
+wgrib2 -d 2 ${DAPATH2}/nam.t${cyc}z.conusnest.camfld${fhr}.tm00.grib2 -grib new2.fil
+wgrib2 -d 30 ${DAPATH2}/nam.t${cyc}z.conusnest.camfld${fhr}.tm00.grib2 -grib new3.fil
+wgrib2 -d 32 ${DAPATH2}/nam.t${cyc}z.conusnest.camfld${fhr}.tm00.grib2 -grib new4.fil
+wgrib2 -d 89 ${DAPATH2}/nam.t${cyc}z.conusnest.camfld${fhr}.tm00.grib2 -grib new5.fil
+
+  nagrib2 << EOF
+GBFILE  = new.fil 
+INDXFL  =
+GDOUTF  = dummynest2.grd
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+ GBFILE = new2.fil
+r
+
+ GBFILE = new3.fil
+r
+
+ GBFILE = new4.fil
+r
+
+ GBFILE = new5.fil
+r
+
+exit
+EOF
+#rm new*
+done
+gpend
+mv dummynest2.grd ${HOMEPATH}/namxnestpcp_${ymdh}
+exit
+

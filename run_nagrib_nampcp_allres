@@ -1,0 +1,64 @@
+#/bin/ksh
+
+set -x
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/pcp
+rm /stmpp1/Geoffrey.Manikin/pcp/*
+cd /stmpp1/Geoffrey.Manikin/pcp
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymdh=2015020912
+ymd=`echo $ymdh | cut -c1-8`
+
+DAPATH=/com/nam/prod/nam.${ymd}
+#DAPATH=/ptmp/Geoffrey.Manikin/hold
+
+export DAPATH DAPATH
+. /nwprod/gempak/.gempak
+
+fhrs="12 24 36 48 60 72 84"
+for fhr in $fhrs
+do
+
+fhr6=`expr $fhr - 6`
+fhr12=`expr $fhr - 12`
+typeset -Z3 fhr fhr12
+
+wgrib ${DAPATH}/nam.t${cyc}z.awip12${fhr}.tm00 | grep kpds5=61:kpds6=1:kpds7=0:TR=4:P1=${fhr12}:P2=${fhr} | wgrib ${DAPATH}/nam.t${cyc}z.awip12${fhr}.tm00 -i -grib -o mdl1 
+
+wgrib ${DAPATH}/nam.t${cyc}z.awip20${fhr}.tm00 | grep kpds5=61:kpds6=1:kpds7=0:TR=4:P1=${fhr12}:P2=${fhr} | wgrib ${DAPATH}/nam.t${cyc}z.awip20${fhr}.tm00 -i -grib -o mdl2
+
+wgrib ${DAPATH}/nam.t${cyc}z.awip3d${fhr}.tm00 | grep kpds5=61:kpds6=1:kpds7=0:TR=4:P1=${fhr12}:P2=${fhr} | wgrib ${DAPATH}/nam.t${cyc}z.awip3d${fhr}.tm00 -i -grib -o mdl3
+
+nagrib << EOF
+GBFILE  = mdl1 
+INDXFL  =
+GDOUTF  = nampcp12_${ymdh} 
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds 
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+GBFILE  = mdl2
+GDOUTF  = nampcp20_${ymdh}
+r
+
+GBFILE  = mdl3
+GDOUTF  = nampcp40_${ymdh}
+r
+
+exit
+EOF
+done
+
+mv nampcp* /meso/save/Geoffrey.Manikin/meg/.
+gpend
+exit

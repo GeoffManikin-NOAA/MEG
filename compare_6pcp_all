@@ -1,0 +1,126 @@
+#!/bin/ksh
+echo 'into'
+
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/meg
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/meg/6pcp
+rm /gpfs/dell1/stmp/Geoffrey.Manikin/meg/6pcp/*
+cd /gpfs/dell1/stmp/Geoffrey.Manikin/meg/6pcp
+cp /gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/coltbl.xwp .
+
+ymdh=2022042912
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+dayoweek=hold11
+
+hours="12"
+for fhr in $hours; do
+
+fhr3=`expr $fhr - 3`
+fhr6=`expr $fhr - 6`
+typeset -Z2 fhr3 fhr6
+
+DAPATH=/gpfs/dell2/emc/verification/noscrub/Geoffrey.Manikin/andover
+cp ${DAPATH}/nam.${ymd}/nam_conusnest_${ymdh}f0${fhr} fmdl1
+cp ${DAPATH}/nam.${ymd}/nam_conusnest_${ymdh}f0${fhr3} fmdl1a
+cp ${DAPATH}/hrrr.${ymd}/hrrr_${ymdh}f0${fhr} fmdl2
+cp ${DAPATH}/hrrr.${ymd}/hrrr_${ymdh}f0${fhr6} fmdl2a
+cp ${DAPATH}/hiresw.${ymd}/hiresw_conusarw_${ymdh}f0${fhr} fmdl3
+cp ${DAPATH}/hiresw.${ymd}/hiresw_conusarw_${ymdh}f0${fhr3} fmdl3a
+cp ${DAPATH}/hiresw.${ymd}/hiresw_conusmem2arw_${ymdh}f0${fhr} fmdl4
+cp ${DAPATH}/hiresw.${ymd}/hiresw_conusmem2arw_${ymdh}f0${fhr3} fmdl4a
+cp ${DAPATH}/hiresw.${ymd}/hiresw_conusfv3_${ymdh}f0${fhr} fmdl5
+cp ${DAPATH}/hiresw.${ymd}/hiresw_conusfv3_${ymdh}f0${fhr3} fmdl5a
+cp ${DAPATH}/ecmwf.${ymd}/ecmwf_${ymdh}f0${fhr} fmdl6
+cp ${DAPATH}/ecmwf.${ymd}/ecmwf_${ymdh}f0${fhr6} fmdl6a
+cp ${DAPATH}/gfs.${ymd}/gfs_0p25_${ymdh}f0${fhr} fmdl7
+cp ${DAPATH}/gfs.${ymd}/gfs_0p25_${ymdh}f0${fhr6} fmdl7a
+
+    gdplot2 << EOF
+ GDFILE   = fmdl1 + fmdl1a
+ GDATTIM  = f$fhr4
+ GLEVEL   = 0
+ GVCORD   = none
+ GDPFUN   = add(p03i^${ymd}/${cyc}f${fhr3}+2,p03i^${ymd}/${cyc}f$fhr)
+ CINT     = 4
+ LINE     = 1
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/ F${fhr}  NAM NEST  6-HR TOTAL PCP
+ DEVICE   = GIF|${ymdh}_pcp6f${fhr}.gif|750;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-98;25;/1;1;1;1
+ GAREA    = 32.;-104.;40.;-94. 
+ CLEAR    = y
+ PANEL    = ul
+ TEXT     = 0.8/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 0 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = .01;.1;.25;.5;.75;1;1.25;1.5;2;3;4
+ FLINE    = 0;21;22;23;4;25;27;28;29;30;15;2
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = fmdl2a + fmdl2 
+ GDPFUN   = sub(p${fhr}i^${ymd}/${cyc}f${fhr}+2,p${fhr6}i^${ymd}/${cyc}f${fhr6})
+ PANEL    = ur 
+ TITLE    = 1/-1/F${fhr}  HRRR  6-HR TOTAL PCP
+ CLRBAR   = 0
+ CLEAR    = n
+r
+
+ GDFILE   = fmdl3a + fmdl3 
+ GDPFUN   = add(p03i^${ymd}/${cyc}f${fhr}+2,p03i^${ymd}/${cyc}f${fhr3})
+ PANEL    = ll 
+ TITLE    = 1/-1/F${fhr}  CONUS ARW  6-HR TOTAL PCP
+ CLRBAR   = 1/H/UL/.1;0.98/1.6;.03/1
+ CLEAR    = n
+r
+
+ GDFILE   = fmdl4a + fmdl4 
+ GDPFUN   = add(p03i^${ymd}/${cyc}f${fhr}+2,p03i^${ymd}/${cyc}f${fhr3})
+ PANEL    = lr 
+ TITLE    = 1/-1/F${fhr}  CONUS ARW2  6-HR TOTAL PCP
+ CLRBAR   = 0
+ CLEAR    = n
+r
+
+ GDFILE   = fmdl5a + fmdl5 
+ GDPFUN   = add(p03i^${ymd}/${cyc}f${fhr}+2,p03i^${ymd}/${cyc}f${fhr3})
+ PANEL    = ul 
+ TITLE    = 1/-1/F${fhr}  CONUS FV3 6-HR TOTAL PCP
+ DEVICE   = GIF|${ymdh}_2pcp6f${fhr}.gif|750;900 
+ CLRBAR   = 0
+ CLEAR    = y
+r
+
+ GDFILE   = fmdl6a + fmdl6 
+ GDPFUN   = quo(mul(sub(pxxm^${ymd}/${cyc}f$fhr+2,pxxm^${ymd}/${cyc}f${fhr6}),1000),25.4)
+ PANEL    = ur 
+ TITLE    = 1/-1/F${fhr}  ECMWF 6-HR TOTAL PCP
+ CLRBAR   = 0
+ CLEAR    = n
+r
+
+ GDFILE   = fmdl7a + fmdl7 
+ GDPFUN   = sub(p${fhr}i^${ymd}/${cyc}f${fhr}+2,p${fhr6}i^${ymd}/${cyc}f${fhr6})
+ PANEL    = ll 
+ TITLE    = 1/-1/F${fhr}  GFS  6-HR TOTAL PCP
+ CLRBAR   = 1/H/UL/.1;0.98/1.6;.03/1
+ CLEAR    = n
+r
+ 
+ex
+EOF
+done
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

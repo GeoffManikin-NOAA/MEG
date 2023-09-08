@@ -1,0 +1,106 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/
+mkdir /stmpp1/Geoffrey.Manikin/meg/700t
+cd /stmpp1/Geoffrey.Manikin/meg/700t
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+year=`cut -c 7-10 /com/date/t${cyc}z`
+month=`cut -c 11-12 /com/date/t${cyc}z`
+date=`cut -c 13-14 /com/date/t${cyc}z`
+ymd=`cut -c 7-14 /com/date/t${cyc}z`
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+
+dayoweek=hold2
+times="00 03 06 09 12 15 18 21 24 27 30 33 36 39 42"
+times="00 06 12"
+for fhr in $times; do
+
+fmdl1=/com/nawips/prod/nam.${ymd}/nam40_${ymd}${cyc}f0${fhr}
+fmdl2=/com/nawips/prod/gfs.${ymd}/gfs_0p25_${ymd}${cyc}f0${fhr}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr 
+ GLEVEL   = 700 
+ GVCORD   = pres 
+ GDPFUN   = tmpc
+ CINT     = 2 
+ LINE     = 0 
+ MAP      = 1
+ WIND     = BK1/0.7/2/122 
+ TITLE    = 1/-1/~ NAM 700 MB TEMP/WINDS (C, knots)
+ DEVICE   = GIF|${ymdh}_700wt${fhr}.gif|800;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-80;25;/1;2;1;1
+ GAREA    = wv- 
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/V/UL/.05;0.6/1.2;.02/1
+ CONTUR   = 0
+ SKIP     = /9;9
+ FINT     = -10;-8;-6;-4;-2;0;2;4;6;8;10;12;14;16;18  
+ FLINE    = 0;30;29;28;27;4;25;23;21;20;5;10;17;11;2;15
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDPFUN   = kntv(wnd)
+ TYPE     = b
+ TITLE    = 0
+ CLRBAR   = 0 
+ CLEAR    = n
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhr
+ GVCORD   = pres
+ GDPFUN   = tmpc
+ CINT     = 2
+ LINE     = 0
+ MAP      = 1
+ WIND     = BK1/0.7/2/122
+ TITLE    = 1/-1/~ GFS 700 MB TEMP/WINDS (C, knots)
+ SATFIL   =
+ RADFIL   =
+ PANEL    = b
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 0 
+ CONTUR   = 0
+ SKIP     = /9;9
+ FINT     = -10;-8;-6;-4;-2;0;2;4;6;8;10;12;14;16;18
+ FLINE    = 0;30;29;28;27;4;25;23;21;20;5;10;17;11;2;15
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDPFUN   = kntv(wnd)
+ TYPE     = b
+ TITLE    = 0
+ CLRBAR   = 0
+r
+
+ex
+EOF
+
+gpend
+done
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

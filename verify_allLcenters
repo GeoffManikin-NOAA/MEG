@@ -1,0 +1,601 @@
+#!/bin/ksh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+storm="hermine09l"
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/slp
+rm /stmpp1/Geoffrey.Manikin/meg/slp/*
+cd /stmpp1/Geoffrey.Manikin/meg/slp
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+verymdh=2017012300
+verymd=`echo $verymdh | cut -c1-8`
+verday=`echo $verymdh | cut -c7-8`
+verhr=`echo $verymdh | cut -c9-10`
+dayoweek=hold6
+
+numl="2;2"
+lead=1
+fhr1=36
+fhr2=`expr $fhr1 - 6`
+fhr3=`expr $fhr1 - 12`
+fhr4=`expr $fhr1 - 18`
+
+typeset -Z2 fhr2 fhr3 fhr4
+
+ymdh1="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${verymdh} -$fhr1 -1`"
+ymd=`echo $ymdh1 | cut -c1-8`
+ymdh2="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${verymdh} -$fhr2 -1`"
+ymdh3="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${verymdh} -$fhr3 -1`"
+ymdh4="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${verymdh} -$fhr4 -1`"
+
+ymd1=`echo $ymdh1 | cut -c1-8`
+ymd2=`echo $ymdh2 | cut -c1-8`
+ymd3=`echo $ymdh3 | cut -c1-8`
+ymd4=`echo $ymdh4 | cut -c1-8`
+
+fmdl1=/com/nawips/prod/nam.${ymd1}/nam40_${ymdh1}f0${fhr1}
+fmdl2=/com/nawips/prod/nam.${ymd2}/nam40_${ymdh2}f0${fhr2}
+fmdl3=/com/nawips/prod/nam.${ymd3}/nam40_${ymdh3}f0${fhr3}
+fmdl4=/com/nawips/prod/nam.${ymd4}/nam40_${ymdh4}f0${fhr4}
+fmdl5=/com2/nawips/prod/gfs.${verymd}/gfs_0p25_${verymdh}f000
+#fmdl5=/com/nawips/prod/nam.${verymd}/nam40_${verymdh}f000
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr1
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = emsl 
+ CINT     = 0 
+ LINE     = 0 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/ NAM $ymd RED-00z BLUE-06z GREEN-12z PUR-18z BRO-obs
+ DEVICE   = GIF|lowplot1.gif|850;950
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-80;25;/1;1;1;1
+# GAREA    = 32.;-82.;46;-60. 
+# GAREA    = 31.;-88.;43.;-66.
+ GAREA    = 36.;-92.;49.;-74.
+ GAREA    = 38.;-92.;54.;-74. 
+ GAREA    = 32.;-80.;42.;-62. 
+ GAREA    = ga+
+ CLEAR    = y
+ PANEL    = 0
+ TEXT     = 0.8/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = ;2/;S13#/;920-1008/5/${numl}/yes
+ HLSYM    = 1;1/3/1;1/3;2/HW
+ CLRBAR   = 0
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 0 
+ FLINE    = 0
+ TYPE     = c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhr2
+ CLEAR    = n
+ TITLE    = 1/1/  VERIFYING TIME   $verymdh
+ HILO     = ;4/;S13#/;920-1008/5/${numl}/yes 
+r
+
+ GDFILE   = $fmdl3
+ GDATTIM  = f$fhr3
+ HILO     = ;22/;S13#/;920-1008/5/${numl}/yes
+ TITLE    = 0
+r
+
+ GDFILE   = $fmdl4
+ GDATTIM  = f$fhr4
+ HILO     = ;29/;S13#/;920-1008/5/${numl}/yes
+r
+
+ GDFILE   = $fmdl5
+ GDATTIM  = f00 
+ HILO     = ;8/;S13#/;920-1008/5/${numl}/yes
+r
+
+ex
+EOF
+
+fmdl1=/com2/nawips/prod/gfs.${ymd1}/gfs40_${ymdh1}f0${fhr1}
+fmdl2=/com2/nawips/prod/gfs.${ymd2}/gfs40_${ymdh2}f0${fhr2}
+fmdl3=/com2/nawips/prod/gfs.${ymd3}/gfs40_${ymdh3}f0${fhr3}
+fmdl4=/com2/nawips/prod/gfs.${ymd4}/gfs40_${ymdh4}f0${fhr4}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr1
+ WIND     = 0
+ TITLE    = 1/-1/ GFS $ymd RED-00z BLUE-06z GREEN-12z PUR-18z BRO-obs
+ DEVICE   = GIF|lowplot2.gif|850;950
+ CLEAR    = y
+ HILO     = ;2/;S13#/;920-1008/5/${numl}/yes
+ HLSYM    = 1;1/3/1;1/3;2/HW
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhr2
+ CLEAR    = n
+ TITLE    = 1/1/  VERIFYING TIME   $verymdh
+ HILO     = ;4/;S13#/;920-1008/5/${numl}/yes
+r
+
+ GDFILE   = $fmdl3
+ GDATTIM  = f$fhr3
+ HILO     = ;22/;S13#/;920-1008/5/${numl}/yes
+ TITLE    = 0
+r
+
+ GDFILE   = $fmdl4
+ GDATTIM  = f$fhr4
+ HILO     = ;29/;S13#/;920-1008/5/${numl}/yes
+r
+
+ GDFILE   = $fmdl5
+ GDATTIM  = f00
+ HILO     = ;8/;S13#/;920-1008/5/${numl}/yes
+r
+
+ex
+EOF
+
+fmdl1=/com2/nawips/prod/ecmwf.${ymd1}/ecmwf_hr_${ymdh1}f0${fhr1}
+fmdl3=/com2/nawips/prod/ecmwf.${ymd3}/ecmwf_hr_${ymdh3}f0${fhr3}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr1
+ WIND     = 0
+ TITLE    = 1/-1/ EC $ymd RED-00z  GREEN-12z  BRO-obs
+ DEVICE   = GIF|lowplot3.gif|850;950
+ CLEAR    = y
+ GDPFUN   = pmsl
+ HILO     = ;2/;S13#/;920-1008/5/${numl}/yes
+ HLSYM    = 1;1/3/1;1/3;2/HW
+r
+
+ GDFILE   = $fmdl3
+ GDATTIM  = f$fhr3
+ CLEAR    = n
+ TITLE    = 1/1/  VERIFYING TIME   $verymdh
+ HILO     = ;22/;S13#/;920-1008/5/${numl}/yes
+r
+
+ GDFILE   = $fmdl5
+ GDATTIM  = f00
+ TITLE    = 0
+ GDPFUN   = emsl
+ HILO     = ;8/;S13#/;920-1008/5/${numl}/yes
+r
+
+ex
+EOF
+
+fmdl1=/com/nawips/prod/ukmet.${ymd1}/ukmet_hr_${ymdh1}f0${fhr1}
+fmdl3=/com/nawips/prod/ukmet.${ymd3}/ukmet_hr_${ymdh3}f0${fhr3}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr1
+ WIND     = 0
+ TITLE    = 1/-1/ UKMET $ymd RED-00z  GREEN-12z  BRO-obs
+ DEVICE   = GIF|lowplot10.gif|850;950
+ CLEAR    = y
+ GDPFUN   = pmsl
+ HILO     = ;2/;S13#/;920-1008/5/${numl}/yes
+ HLSYM    = 1;1/3/1;1/3;2/HW
+r
+
+ GDFILE   = $fmdl3
+ GDATTIM  = f$fhr3
+ CLEAR    = n
+ TITLE    = 1/1/  VERIFYING TIME   $verymdh
+ HILO     = ;22/;S13#/;920-1008/5/${numl}/yes
+r
+
+ GDFILE   = $fmdl5
+ GDATTIM  = f00
+ TITLE    = 0
+ GDPFUN   = emsl
+ HILO     = ;8/;S13#/;920-1008/5/${numl}/yes
+r
+
+ex
+EOF
+
+fmdl1=/com/nawips/prod/nam.${ymd1}/nam_conusnest_${ymdh1}f0${fhr1}
+fmdl2=/com/nawips/prod/nam.${ymd2}/nam_conusnest_${ymdh2}f0${fhr2}
+fmdl3=/com/nawips/prod/nam.${ymd3}/nam_conusnest_${ymdh3}f0${fhr3}
+fmdl4=/com/nawips/prod/nam.${ymd4}/nam_conusnest_${ymdh4}f0${fhr4}
+echo $fmdl1
+exit
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr1
+ WIND     = 0
+ TITLE    = 0 
+ DEVICE   = GIF|lowplot4.gif|850;950
+ CLEAR    = y
+ HILO     = ;2/;S13#/;920-1008/5/${numl}/yes
+ HLSYM    = 1;1/3/1;1/3;2/HW
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhr2
+ CLEAR    = n
+ HILO     = ;4/;S13#/;920-1008/5/${numl}/yes
+r
+
+ GDFILE   = $fmdl3
+ GDATTIM  = f$fhr3
+ TITLE    = 1/1/  VERIFYING TIME   $verymdh
+ HILO     = ;22/;S13#/;920-1008/5/${numl}/yes
+r
+
+ GDFILE   = $fmdl4
+ GDATTIM  = f$fhr4
+ TITLE    = 1/-1/ NAM NEST $ymd RED-00z BLUE-06z GREEN-12z PUR-18z BRO-obs
+ HILO     = ;29/;S13#/;920-1008/5/1;2/yes
+r
+
+ GDFILE   = $fmdl5
+ GDATTIM  = f00
+ HILO     = ;8/;S13#/;920-1008/5/${numl}/yes
+ TITLE    = 0
+r
+
+ex
+EOF
+
+fmdl1=/gpfs/hps/nco/ops/com/nawips/prod/hwrf.${ymd}/${storm}/hwrfc_${ymdh1}f0${fhr1}_${storm}
+fmdl2=/gpfs/hps/nco/ops/com/nawips/prod/hwrf.${ymd}/${storm}/hwrfc_${ymdh2}f0${fhr2}_${storm}
+fmdl3=/gpfs/hps/nco/ops/com/nawips/prod/hwrf.${ymd}/${storm}/hwrfc_${ymdh3}f0${fhr3}_${storm}
+fmdl4=/gpfs/hps/nco/ops/com/nawips/prod/hwrf.${ymd}/${storm}/hwrfc_${ymdh4}f0${fhr4}_${storm}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr1
+ GDPFUN   = pmsl
+ WIND     = 0
+ TITLE    = 1/-1/ HWRF $ymd RED-00z BLUE-06z GREEN-12z PUR-18z BRO-obs
+ DEVICE   = GIF|lowplot5.gif|850;950
+ CLEAR    = y
+ HILO     = ;2/;S13#/;920-1008/5/${numl}/yes
+ HLSYM    = 1;1/3/1;1/3;2/HW
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhr2
+ CLEAR    = n
+ TITLE    = 1/1/  VERIFYING TIME   $verymdh
+ HILO     = ;4/;S13#/;920-1008/5/${numl}/yes
+r
+
+ GDFILE   = $fmdl3
+ GDATTIM  = f$fhr3
+ TITLE    = 0
+ HILO     = ;22/;S13#/;920-1008/5/${numl}/yes
+r
+
+ GDFILE   = $fmdl4
+ GDATTIM  = f$fhr4
+ HILO     = ;29/;S13#/;920-1008/5/${numl}/yes
+r
+
+ GDFILE   = $fmdl5
+ GDATTIM  = f00
+ GDPFUN   = emsl
+ HILO     = ;8/;S13#/;920-1008/5/${numl}/yes
+r
+
+ex
+EOF
+
+fmdl1=/gpfs/hps/nco/ops/com/nawips/prod/ghm.${ymd}/${storm}/ghmg_${ymdh1}f0${fhr1}_${storm}
+fmdl2=/gpfs/hps/nco/ops/com/nawips/prod/ghm.${ymd}/${storm}/ghmg_${ymdh2}f0${fhr2}_${storm}
+fmdl3=/gpfs/hps/nco/ops/com/nawips/prod/ghm.${ymd}/${storm}/ghmg_${ymdh3}f0${fhr3}_${storm}
+fmdl4=/gpfs/hps/nco/ops/com/nawips/prod/ghm.${ymd}/${storm}/ghmg_${ymdh4}f0${fhr4}_${storm}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr1
+ GDPFUN   = pmsl
+ WIND     = 0
+ TITLE    = 1/-1/ GFDL $ymd RED-00z BLUE-06z GREEN-12z PUR-18z BRO-obs
+ DEVICE   = GIF|lowplot6.gif|850;950
+ CLEAR    = y
+ HILO     = ;2/;S13#/;920-1008/5/${numl}/yes
+ HLSYM    = 1;1/3/1;1/3;2/HW
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhr2
+ CLEAR    = n
+ TITLE    = 1/1/  VERIFYING TIME   $verymdh
+ HILO     = ;4/;S13#/;920-1008/5/${numl}/yes
+r
+
+ GDFILE   = $fmdl3
+ GDATTIM  = f$fhr3
+ TITLE    = 0
+ HILO     = ;22/;S13#/;920-1008/5/${numl}/yes
+r
+
+ GDFILE   = $fmdl4
+ GDATTIM  = f$fhr4
+ HILO     = ;29/;S13#/;920-1008/5/${numl}/yes
+r
+
+ GDFILE   = $fmdl5
+ GDATTIM  = f00
+ GDPFUN   = emsl
+ HILO     = ;8/;S13#/;920-1008/5/${numl}/yes
+r
+
+ex
+EOF
+
+fmdl1=/com2/nawips/prod/gefs.${ymd1}/geavg_${ymdh1}f0${fhr1}
+fmdl2=/com2/nawips/prod/gefs.${ymd2}/geavg_${ymdh2}f0${fhr2}
+fmdl3=/com2/nawips/prod/gefs.${ymd3}/geavg_${ymdh3}f0${fhr3}
+fmdl4=/com2/nawips/prod/gefs.${ymd4}/geavg_${ymdh4}f0${fhr4}
+
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr1
+ GDPFUN   = pmsl
+ WIND     = 0
+ TITLE    = 1/-1/ GEFS MEAN $ymd RED-00z BLUE-06z GREEN-12z PUR-18z BRO-obs
+ DEVICE   = GIF|lowplot7.gif|850;950
+ CLEAR    = y
+ HILO     = ;2/;S13#/;920-1008/5/${numl}/yes
+ HLSYM    = 1;1/3/1;1/3;2/HW
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhr2
+ CLEAR    = n
+ TITLE    = 1/1/  VERIFYING TIME   $verymdh
+ HILO     = ;4/;S13#/;920-1008/5/${numl}/yes
+r
+
+ GDFILE   = $fmdl3
+ GDATTIM  = f$fhr3
+ TITLE    = 1/1/  VERIFYING TIME   $verymdh
+ HILO     = ;22/;S13#/;920-1008/5/${numl}/yes
+r
+
+ GDFILE   = $fmdl4
+ GDATTIM  = f$fhr4
+ HILO     = ;29/;S13#/;920-1008/5/${numl}/yes
+r
+
+ GDFILE   = $fmdl5
+ GDATTIM  = f00
+ HILO     = ;8/;S13#/;920-1008/5/${numl}/yes
+r
+
+ex
+EOF
+
+fhrs1=`expr $fhr1 - 3`
+fhrs2=`expr $fhr2 - 3`
+fhrs3=`expr $fhr3 - 3`
+fhrs4=`expr $fhr4 - 3`
+
+typeset -Z2 fhrs1 fhrs2 fhrs3 fhrs4
+ymdhs1="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${verymdh} -$fhrs1 -1`"
+ymds1=`echo $ymdhs1 | cut -c1-8`
+
+ymdhs2="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${verymdh} -$fhrs2 -1`"
+ymds2=`echo $ymdhs2 | cut -c1-8`
+
+ymdhs3="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${verymdh} -$fhrs3 -1`"
+ymds3=`echo $ymdhs3 | cut -c1-8`
+
+ymdhs4="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${verymdh} -$fhrs4 -1`"
+ymds4=`echo $ymdhs4 | cut -c1-8`
+
+fmdl1=/com2/nawips/prod/sref.${ymds1}/sref212_${ymdhs1}_mean
+fmdl2=/com2/nawips/prod/sref.${ymds2}/sref212_${ymdhs2}_mean
+fmdl3=/com2/nawips/prod/sref.${ymds3}/sref212_${ymdhs3}_mean
+fmdl4=/com2/nawips/prod/sref.${ymds4}//sref212_${ymdhs4}_mean
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhrs1
+ GDPFUN   = pmslenmw
+ WIND     = 0
+ TITLE    = 1/-1/ SREF $ymd RED-03z BLUE-09z GREEN-15z PUR-21z BRO-obs
+ DEVICE   = GIF|lowplot8.gif|850;950
+ CLEAR    = y
+ HILO     = ;2/;S13#/;920-1008/5/${numl}/yes
+ HLSYM    = 1;1/3/1;1/3;2/HW
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhrs2
+ CLEAR    = n
+ TITLE    = 1/1/  VERIFYING TIME   $verymdh
+ HILO     = ;4/;S13#/;920-1008/5/${numl}/yes
+r
+
+ GDFILE   = $fmdl3
+ GDATTIM  = f$fhrs3
+ HILO     = ;22/;S13#/;920-1008/5/${numl}/yes
+ TITLE    = 0
+r
+
+ GDFILE   = $fmdl4
+ GDATTIM  = f$fhrs4
+ HILO     = ;29/;S13#/;920-1008/5/${numl}/yes
+r
+
+ GDFILE   = $fmdl5
+ GDPFUN   = emsl
+ GDATTIM  = f00
+ HILO     = ;8/;S13#/;920-1008/5/${numl}/yes
+r
+
+ex
+EOF
+
+fmdl1=/com/nawips/para/gfs.${ymd}/gfs40_${ymdh1}f0${fhr1}
+fmdl2=/com/nawips/para/gfs.${ymd}/gfs40_${ymdh2}f0${fhr2}
+fmdl3=/com/nawips/para/gfs.${ymd}/gfs40_${ymdh3}f0${fhr3}
+fmdl4=/com/nawips/para/gfs.${ymd}/gfs40_${ymdh4}f0${fhr4}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr1
+ WIND     = 0
+ TITLE    = 1/-1/ GFSX $ymd RED-00z BLUE-06z GREEN-12z PUR-18z BRO-obs
+ DEVICE   = GIF|lowplot9.gif|850;950
+ CLEAR    = y
+ HILO     = ;2/;S13#/;920-1008/5/${numl}/yes
+ HLSYM    = 1;1/3/1;1/3;2/HW
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhr2
+ CLEAR    = n
+ TITLE    = 1/1/  VERIFYING TIME   $verymdh
+ HILO     = ;4/;S13#/;920-1008/5/${numl}/yes
+r
+
+ GDFILE   = $fmdl3
+ GDATTIM  = f$fhr3
+ HILO     = ;22/;S13#/;920-1008/5/${numl}/yes
+ TITLE    = 0
+r
+
+ GDFILE   = $fmdl4
+ GDATTIM  = f$fhr4
+ HILO     = ;29/;S13#/;920-1008/5/${numl}/yes
+r
+
+ GDFILE   = $fmdl5
+ GDATTIM  = f00
+ HILO     = ;8/;S13#/;920-1008/5/${numl}/yes
+r
+
+ex
+EOF
+
+fmdl1=/meso2/noscrub/Eric.Rogers/com/nawips/para/nam.${ymd1}/nam40_${ymdh1}f0${fhr1}
+fmdl2=/meso2/noscrub/Eric.Rogers/com/nawips/para/nam.${ymd2}/nam40_${ymdh2}f0${fhr2}
+fmdl3=/meso2/noscrub/Eric.Rogers/com/nawips/para/nam.${ymd3}/nam40_${ymdh3}f0${fhr3}
+fmdl4=/meso2/noscrub/Eric.Rogers/com/nawips/para/nam.${ymd4}/nam40_${ymdh4}f0${fhr4}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr1
+ WIND     = 0
+ TITLE    = 1/-1/ NAMX $ymd RED-00z BLUE-06z GREEN-12z PUR-18z BRO-obs
+ DEVICE   = GIF|lowplot11.gif|850;950
+ CLEAR    = y
+ HILO     = ;2/;S13#/;920-1008/5/${numl}/yes
+ HLSYM    = 1;1/3/1;1/3;2/HW
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhr2
+ CLEAR    = n
+ TITLE    = 1/1/  VERIFYING TIME   $verymdh
+ HILO     = ;4/;S13#/;920-1008/5/${numl}/yes
+r
+
+ GDFILE   = $fmdl3
+ GDATTIM  = f$fhr3
+ HILO     = ;22/;S13#/;920-1008/5/${numl}/yes
+ TITLE    = 0
+r
+
+ GDFILE   = $fmdl4
+ GDATTIM  = f$fhr4
+ HILO     = ;29/;S13#/;920-1008/5/${numl}/yes
+r
+
+ GDFILE   = $fmdl5
+ GDATTIM  = f00
+ GDPFUN   = emsl
+ HILO     = ;8/;S13#/;920-1008/5/${numl}/yes
+r
+
+ex
+EOF
+
+fmdl1=/meso2/noscrub/Eric.Rogers/com/nawips/para/nam.${ymd1}/nam_conusnest_${ymdh1}f0${fhr1}
+fmdl2=/meso2/noscrub/Eric.Rogers/com/nawips/para/nam.${ymd2}/nam_conusnest_${ymdh2}f0${fhr2}
+fmdl3=/meso2/noscrub/Eric.Rogers/com/nawips/para/nam.${ymd3}/nam_conusnest_${ymdh3}f0${fhr3}
+fmdl4=/meso2/noscrub/Eric.Rogers/com/nawips/para/nam.${ymd4}/nam_conusnest_${ymdh4}f0${fhr4}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr1
+ WIND     = 0
+ TITLE    = 1/-1/ NAMX NEST $ymd RED-00z BLUE-06z GREEN-12z PUR-18z BRO-obs
+ DEVICE   = GIF|lowplot12.gif|850;950
+ CLEAR    = y
+ HILO     = ;2/;S13#/;920-1008/5/${numl}/yes
+ HLSYM    = 1;1/3/1;1/3;2/HW
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhr2
+ CLEAR    = n
+ TITLE    = 1/1/  VERIFYING TIME   $verymdh
+ HILO     = ;4/;S13#/;920-1008/5/${numl}/yes
+r
+
+ GDFILE   = $fmdl3
+ GDATTIM  = f$fhr3
+ HILO     = ;22/;S13#/;920-1008/5/${numl}/yes
+ TITLE    = 0
+r
+
+ GDFILE   = $fmdl4
+ GDATTIM  = f$fhr4
+ HILO     = ;29/;S13#/;920-1008/5/${numl}/yes
+r
+
+ GDFILE   = $fmdl5
+ GDATTIM  = f00
+ GDPFUN   = emsl
+ HILO     = ;8/;S13#/;920-1008/5/${numl}/yes
+r
+
+ex
+EOF
+gpend
+
+CONV=/usrx/local/ImageMagick/6.8.3-3/bin
+$CONV/convert -crop 0x0 lowplot1.gif namslpday${lead}_${verymdh}.gif
+$CONV/convert -crop 0x0 lowplot2.gif gfsslpday${lead}_${verymdh}.gif
+$CONV/convert -crop 0x0 lowplot3.gif ecmwfslpday${lead}_${verymdh}.gif
+$CONV/convert -crop 0x0 lowplot4.gif namnestslpday${lead}_${verymdh}.gif
+$CONV/convert -crop 0x0 lowplot5.gif hwrfslpday${lead}_${verymdh}.gif
+$CONV/convert -crop 0x0 lowplot6.gif gfdlslpday${lead}_${verymdh}.gif
+$CONV/convert -crop 0x0 lowplot7.gif gefsslpday${lead}_${verymdh}.gif
+$CONV/convert -crop 0x0 lowplot8.gif srefslpday${lead}_${verymdh}.gif
+$CONV/convert -crop 0x0 lowplot9.gif gfsxslpday${lead}_${verymdh}.gif
+$CONV/convert -crop 0x0 lowplot10.gif ukmetslpday${lead}_${verymdh}.gif
+$CONV/convert -crop 0x0 lowplot11.gif namxslpday${lead}_${verymdh}.gif
+$CONV/convert -crop 0x0 lowplot12.gif namxnestslpday${lead}_${verymdh}.gif
+
+rm low*gif
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

@@ -1,0 +1,57 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /stmp/Geoffrey.Manikin/meg
+mkdir /stmp/Geoffrey.Manikin/meg/scapew
+rm /stmp/Geoffrey.Manikin/meg/scapew/*
+cd /stmp/Geoffrey.Manikin/meg/scapew
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=2013040712
+ymd=`echo $ymdh | cut -c1-8`
+dayoweek=Sun
+
+hours="00 01 02 03 04 05 06 07 08 09 10 11 12"
+hours="09 12 15 33 36 39"
+for fhr in $hours; do
+
+fmdl1=/com/nawips/prod/nam.${ymd}/nam_conusnest_${ymdh}f0${fhr}
+#fmdl1=/com/nawips/prod/nam.${ymd}/nam_${ymdh}f0${fhr}
+#fmdl1=/ptmp/Geoffrey.Manikin/hold/conusnest_${ymdh}f0${fhr}
+
+    gdplot2 << EOF
+
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = cape 
+ CINT     = 500 
+ LINE     = 0 
+ DEVICE   = GIF|conusnestsfccape_${ymdh}f0${fhr}.gif | 800;850
+ PROJ     = lcc/25.;-85.;25./2;2;1;1
+# GAREA    = 34.;-92.;46.;-70. 
+ GAREA    = 20.;-105.;46.;-79.
+ TITLE    = 1//~  NAM NEST SFC CAPE 
+ CLEAR    = y
+ SCALE    = 0
+ PANEL    = 0
+ HILO     = 0
+ HLSYM    = 0 
+ CLRBAR   = 1/V/UL/.03;0.85/0.8;.03/1
+ TEXT     = 1.1/11/2
+ FINT     = 50;500;1000;1500;2000;2500;3000;3500;4000;4500;5000
+ FLINE    = 0;25;21;22;23;5;10;17;16;2;15;32
+ TYPE     = f 
+r
+
+ex
+EOF
+
+done
+gpend
+
+rm *gif
+exit

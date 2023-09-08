@@ -1,0 +1,278 @@
+#!/bin/ksh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/gfssndm
+rm /stmpp1/Geoffrey.Manikin/meg/gfssndm/*
+cd /stmpp1/Geoffrey.Manikin/meg/gfssndm
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+
+ymdh1=2018032018
+ymd1=`echo $ymdh1 | cut -c1-8`
+cyc1=`echo $ymdh1 | cut -c9-10`
+dayoweek=hold10
+
+hours="42"
+for fhr1 in $hours; do
+ymdh2="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh1} -6 -1`"
+ymdh3="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh1} -12 -1`"
+ymdh4="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh1} -18 -1`"
+ymd2=`echo $ymdh2 | cut -c1-8`
+ymd3=`echo $ymdh3 | cut -c1-8`
+ymd4=`echo $ymdh4 | cut -c1-8`
+cyc2=`echo $ymdh2 | cut -c9-10`
+cyc3=`echo $ymdh3 | cut -c9-10`
+cyc4=`echo $ymdh4 | cut -c9-10`
+
+fhr2=`expr $fhr1 + 6`
+fhr3=`expr $fhr1 + 12`
+fhr4=`expr $fhr1 + 18`
+
+verymdh="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh1} ${fhr1} -1`"
+typeset -Z3 fhr1 fhr2 fhr3 fhr4
+DAPATH=/gpfs/hps/nco/ops/com/gfs/prod/gfs.$ymd1
+
+/nwprod/util/exec/cnvgrib -g21 ${DAPATH}/gfs.t${cyc1}z.pgrb2.0p25.f${fhr1} gfs.t${cyc1}z.pgrb.0p25.f${fhr1}
+wgrib -i -d 279 gfs.t${cyc1}z.pgrb.0p25.f${fhr1} -grib -o new.grd
+
+  nagrib << EOF
+GBFILE  = new.grd 
+INDXFL  =
+GDOUTF  = gfssnow1f${fhr1}.grd 
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid 
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+ex
+EOF
+
+/nwprod/util/exec/cnvgrib -g21 ${DAPATH}/gfs.t${cyc2}z.pgrb2.0p25.f${fhr2} gfs.t${cyc2}z.pgrb.0p25.f${fhr2}
+wgrib -i -d 279 gfs.t${cyc2}z.pgrb.0p25.f${fhr2} -grib -o new2.grd
+
+  nagrib << EOF
+GBFILE  = new2.grd 
+INDXFL  =
+GDOUTF  = gfssnow2f${fhr2}.grd 
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid 
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+ex
+EOF
+
+/nwprod/util/exec/cnvgrib -g21 ${DAPATH}/gfs.t${cyc3}z.pgrb2.0p25.f${fhr3} gfs.t${cyc3}z.pgrb.0p25.f${fhr3}
+wgrib -i -d 279 gfs.t${cyc3}z.pgrb.0p25.f${fhr3} -grib -o new3.grd
+
+  nagrib << EOF
+GBFILE  = new3.grd 
+INDXFL  =
+GDOUTF  = gfssnow3f${fhr3}.grd 
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid 
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+ex
+EOF
+
+/nwprod/util/exec/cnvgrib -g21 ${DAPATH}/gfs.t${cyc4}z.pgrb2.0p25.f${fhr4} gfs.t${cyc4}z.pgrb.0p25.f${fhr4}
+wgrib -i -d 279 gfs.t${cyc4}z.pgrb.0p25.f${fhr4} -grib -o new4.grd
+
+  nagrib << EOF
+GBFILE  = new4.grd 
+INDXFL  =
+GDOUTF  = gfssnow4f${fhr4}.grd 
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid 
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+ex
+EOF
+
+/nwprod/util/exec/cnvgrib -g21 ${DAPATH}/gfs.t${cyc1}z.pgrb2.0p25.f000 gfs.t${cyc1}z.pgrb.0p25.f000 
+wgrib -i -d 260 gfs.t${cyc1}z.pgrb.0p25.f000 -grib -o new5.grd
+
+  nagrib << EOF
+GBFILE  = new5.grd 
+INDXFL  =
+GDOUTF  = gfssnow1f000.grd 
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid 
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+ex
+EOF
+
+/nwprod/util/exec/cnvgrib -g21 ${DAPATH}/gfs.t${cyc2}z.pgrb2.0p25.f000 gfs.t${cyc2}z.pgrb.0p25.f000
+wgrib -i -d 260 gfs.t${cyc2}z.pgrb.0p25.f000 -grib -o new6.grd
+
+  nagrib << EOF
+GBFILE  = new6.grd 
+INDXFL  =
+GDOUTF  = gfssnow2f000.grd 
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid 
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+ex
+EOF
+
+/nwprod/util/exec/cnvgrib -g21 ${DAPATH}/gfs.t${cyc3}z.pgrb2.0p25.f000 gfs.t${cyc3}z.pgrb.0p25.f000
+wgrib -i -d 260 gfs.t${cyc3}z.pgrb.0p25.f000 -grib -o new7.grd
+
+  nagrib << EOF
+GBFILE  = new7.grd 
+INDXFL  =
+GDOUTF  = gfssnow3f000.grd 
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid 
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+ex
+EOF
+
+/nwprod/util/exec/cnvgrib -g21 ${DAPATH}/gfs.t${cyc4}z.pgrb2.0p25.f000 gfs.t${cyc4}z.pgrb.0p25.f000
+wgrib -i -d 260 gfs.t${cyc4}z.pgrb.0p25.f000 -grib -o new8.grd
+
+  nagrib << EOF
+GBFILE  = new8.grd 
+INDXFL  =
+GDOUTF  = gfssnow4f000.grd 
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid 
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+ex
+EOF
+
+
+garea="40.;-80.;46.;-70."
+proj="lcc/25.;-75.;25./2;2;1;1"
+garea="36.;-82.;46.;-67."
+proj="lcc/25.;-75.;25./2;2;1;1"
+
+    gdplot2 << EOF
+ GDFILE   = gfssnow1f000.grd + gfssnow1f${fhr1}.grd 
+ GDATTIM  = f$fhr1
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = mul(sub(sndm+2,sndm^${ymd1}/${cyc1}f000),39.37)
+ CINT     = 5 
+ LINE     = 0 
+ DEVICE   = GIF|${ymd1}${cyc1}gfssndm_f${fhr1}.gif | 800;850
+ PROJ     = $proj 
+ GAREA    = $garea 
+ \$MAPFIL = county
+ TITLE    = 1// ${ymd1} ${cyc1}z GFS   ${fhr1}-HR ACC SNOW DPTH
+ CLEAR    = y
+ SCALE    = 0
+ PANEL    = ul 
+ HILO     = 0
+ HLSYM    = 0 
+ CLRBAR   = 0
+ TEXT     = 0.9/11/2
+ FINT     = 0.1;1;2;3;4;6;8;10;12;16;20;24;28;32
+ FLINE    = 0;21;22;23;4;25;27;28;29;30;2;15;17;10;5
+ TYPE     = f 
+r
+
+ TITLE    = 15/1/     CYCLES RUN ON   $ymd1
+ CLEAR    = n
+r
+
+ GDFILE   = gfssnow2f000.grd + gfssnow2f${fhr2}.grd
+ GDATTIM  = f$fhr2
+ GDPFUN   = mul(sub(sndm+2,sndm^${ymd2}/${cyc2}f000),39.37)
+ PANEL    = ur 
+ CLEAR    = n
+ TITLE    = 1//  ${ymd2} ${cyc2}z GFS   ${fhr2}-HR ACC SNOW DPTH 
+r
+
+ TITLE    = 2/1/VERIFYING TIME   $verymdh
+r
+
+ GDFILE   = gfssnow3f000.grd + gfssnow3f${fhr3}.grd
+ GDATTIM  = f$fhr3
+ GDPFUN   = mul(sub(sndm+2,sndm^${ymd3}/${cyc3}f000),39.37)
+ PANEL    = ll 
+ TITLE    = 1//  ${ymd3} ${cyc3}z GFS   ${fhr3}-HR ACC SNOW DPTH 
+ CLRBAR   = 1/H/UL/.02;0.97/1.9;.03/1
+r
+
+ GDFILE   = gfssnow4f000.grd + gfssnow4f${fhr4}.grd
+ GDATTIM  = f$fhr4
+ GDPFUN   = mul(sub(sndm+2,sndm^${ymd4}/${cyc4}f000),39.37)
+ PANEL    = lr
+ TITLE    = 1//  ${ymd4} ${cyc4}z GFS   ${fhr4}-HR ACC SNOW DPTH 
+ CLRBAR   = 0
+r
+
+ex
+EOF
+done
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

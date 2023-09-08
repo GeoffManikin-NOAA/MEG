@@ -1,0 +1,377 @@
+#!/bin/sh
+echo 'into'
+
+ymdh=2020102612
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+day=`echo $ymdh | cut -c7-8`
+dayoweek=hold2
+
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/gempak.rtma
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/gempak.rtma/test
+rm /gpfs/dell1/stmp/Geoffrey.Manikin/gempak.rtma/test/*
+cd /gpfs/dell1/stmp/Geoffrey.Manikin/gempak.rtma/test
+cp /gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/coltbl.xwp .
+
+base=85
+basem1=`expr $base - 5`
+basem2=`expr $base - 10`
+basem3=`expr $base - 15`
+basem4=`expr $base - 20`
+basem5=`expr $base - 25`
+basem6=`expr $base - 30`
+basem7=`expr $base - 35`
+basem8=`expr $base - 40`
+basem9=`expr $base - 45`
+basem10=`expr $base - 50`
+basem11=`expr $base - 55`
+basem12=`expr $base - 60`
+basem13=`expr $base - 65`
+basem14=`expr $base - 70`
+basem15=`expr $base - 75`
+basem16=`expr $base - 80`
+basem17=`expr $base - 85`
+basem18=`expr $base - 90`
+basem19=`expr $base - 95`
+basem20=`expr $base - 100`
+
+garea="28.;-100.;48.;-64."
+#garea="29.;-110.;49.;-80."
+garea="28.;-90.;38.;-76."
+#garea="23.;-100.;49.;-60."
+#garea="26.;-108.;46.;-84"
+#garea="38.;-107.;50.;-89."
+garea="34.;-92.;36.;-88."
+garea="ok"
+proj="lcc/25.;-95;25./1;1;1;1"
+
+     sfmap << EOF
+ AREA     = $garea
+ GAREA    = $garea
+ SATFIL   =
+ RADFIL   =
+ SFPARM   = tmpf
+ DATTIM   = ${day}/${cyc}
+ SFFILE   = /gpfs/dell1/nco/ops/dcom/prod/ldmdata/gempak/hrly/${ymd}.hrly
+ COLORS   = 1 
+ MAP      = 1
+ LATLON   = 0
+ TITLE    = 1/-1/~   TEMPERATURE OBSERVATIONS 
+ CLEAR    = no 
+ PANEL    = 0 
+ DEVICE   = GIF|${ymdh}_2mt.gif|750;850 
+ PROJ     = $proj 
+ FILTER   = none 
+ TEXT     = 0.9/21/2.0/SW
+ LUTFIL   =
+ STNPLT   =
+ CLRBAR   =
+r
+
+ SFPARM   = tmpf<$base
+ COLORS   = 14
+ TITLE    = 0
+r
+
+ SFPARM   = tmpf<$basem1
+ COLORS   = 15
+r
+
+ SFPARM   = tmpf<$basem2
+ COLORS   = 2
+r
+
+ SFPARM   = tmpf<$basem3
+ COLORS   = 16
+r
+
+ SFPARM   = tmpf<$basem4
+ COLORS   = 17
+r
+
+ SFPARM   = tmpf<$basem5
+ COLORS   = 10
+r
+
+ SFPARM   = tmpf<$basem6
+ COLORS   = 20 
+r
+
+ SFPARM   = tmpf<$basem7
+ COLORS   = 5 
+r
+
+ SFPARM   = tmpf<$basem8
+ COLORS   = 21 
+r
+
+ SFPARM   = tmpf<$basem9
+ COLORS   = 22
+r
+
+ SFPARM   = tmpf<$basem10
+ COLORS   = 23
+r
+
+ SFPARM   = tmpf<$basem11
+ COLORS   = 24
+r
+           
+ SFPARM   = tmpf<$basem12
+ COLORS   = 27
+r
+
+ SFPARM   = tmpf<$basem13
+ COLORS   = 26
+r
+
+ SFPARM   = tmpf<$basem14
+ COLORS   = 25
+r
+
+ SFPARM   = tmpf<$basem15
+ COLORS   = 4 
+r
+
+ SFPARM   = tmpf<$basem16
+ COLORS   = 28 
+r
+           
+ SFPARM   = tmpf<$basem17
+ COLORS   = 29
+r
+
+ SFPARM   = tmpf<$basem18
+ COLORS   = 30 
+r
+
+ SFPARM   = tmpf<$basem19
+ COLORS   = 12 
+r
+
+ SFPARM   = tmpf<$basem20
+ COLORS   = 1
+r
+
+ SFFILE   = /dcom/us007003/ldmdata/gempak/ship/${ymd}${cyc}.ship
+ SFPARM   = tmpf<$base
+ COLORS   = 14
+ TITLE    = 0
+r
+  
+ SFPARM   = tmpf<$basem1
+ COLORS   = 15
+r
+  
+ SFPARM   = tmpf<$basem2
+ COLORS   = 2
+r
+  
+ SFPARM   = tmpf<$basem3
+ COLORS   = 16
+r
+  
+ SFPARM   = tmpf<$basem4
+ COLORS   = 17
+r
+  
+ SFPARM   = tmpf<$basem5
+ COLORS   = 10
+r
+
+ SFPARM   = tmpf<$basem5
+ COLORS   = 10
+r
+
+ SFPARM   = tmpf<$basem6
+ COLORS   = 20
+r
+
+ SFPARM   = tmpf<$basem7
+ COLORS   = 5
+r
+
+ SFPARM   = tmpf<$basem8
+ COLORS   = 21
+r
+
+ SFPARM   = tmpf<$basem9
+ COLORS   = 22
+r
+
+ SFPARM   = tmpf<$basem10
+ COLORS   = 23
+r
+
+ SFPARM   = tmpf<$basem11
+ COLORS   = 24
+r
+
+ SFPARM   = tmpf<$basem12
+ COLORS   = 27
+r
+
+ SFPARM   = tmpf<$basem13
+ COLORS   = 26
+r
+
+ SFPARM   = tmpf<$basem14
+ COLORS   = 25
+r
+
+ SFPARM   = tmpf<$basem15
+ COLORS   = 4
+r
+
+ SFPARM   = tmpf<$basem16
+ COLORS   = 28
+r
+
+ SFPARM   = tmpf<$basem17
+ COLORS   = 29
+r
+
+ SFPARM   = tmpf<$basem18
+ COLORS   = 30
+r
+
+ SFPARM   = tmpf<$basem19
+ COLORS   = 12
+r
+
+ SFPARM   = tmpf<$basem20
+ COLORS   = 1
+r
+  
+ex
+EOF
+
+count="1 2 3 4 5 6 7"
+for counter in $count; do
+ if [ $counter -lt 10 ]
+  then
+   file="/ptmpp1/Geoffrey.Manikin/mesonet2/msonet${cyc}.gem.00${counter}"
+  else
+   file="/ptmpp1/Geoffrey.Manikin/mesonet2/msonet${cyc}.gem.0${counter}"
+ fi
+ 
+     sfmap << EOF
+ AREA     = $garea
+ GAREA    = $garea
+ SATFIL   =
+ RADFIL   =
+ SFPARM   = tmpf
+ DATTIM   = last
+ SFFILE   = $file 
+ COLORS   = 1
+ MAP      = 1
+ LATLON   = 0
+ TITLE    = 1/1/~  TEMPERATURE OBS 
+ CLEAR    = $clear 
+ PANEL    = $panel 
+ DEVICE   = GIF|${ymdh}_2mt.gif|750;850
+ PROJ     = $proj
+ FILTER   = none
+ TEXT     = 0.9/21/2.0/SW
+ LUTFIL   =
+ STNPLT   =
+ CLRBAR   =
+r
+          
+ SFPARM   = tmpf<$base
+ COLORS   = 14
+ CLEAR    = n
+ TITLE    = 0
+r
+
+ SFPARM   = tmpf<$basem1
+ COLORS   = 15
+r
+          
+ SFPARM   = tmpf<$basem2
+ COLORS   = 2
+r
+          
+ SFPARM   = tmpf<$basem3
+ COLORS   = 16
+r
+          
+ SFPARM   = tmpf<$basem4
+ COLORS   = 17
+r
+          
+ SFPARM   = tmpf<$basem5
+ COLORS   = 10
+r
+          
+ SFPARM   = tmpf<$basem5
+ COLORS   = 10
+r
+
+ SFPARM   = tmpf<$basem6
+ COLORS   = 20
+r
+
+ SFPARM   = tmpf<$basem7
+ COLORS   = 5
+r
+
+ SFPARM   = tmpf<$basem8
+ COLORS   = 21
+r
+
+ SFPARM   = tmpf<$basem9
+ COLORS   = 22
+r
+
+ SFPARM   = tmpf<$basem10
+ COLORS   = 23
+r
+
+ SFPARM   = tmpf<$basem11
+ COLORS   = 24
+r
+
+ SFPARM   = tmpf<$basem12
+ COLORS   = 27
+r
+
+ SFPARM   = tmpf<$basem13
+ COLORS   = 26
+r
+
+ SFPARM   = tmpf<$basem14
+ COLORS   = 25
+r
+
+ SFPARM   = tmpf<$basem15
+ COLORS   = 4
+r
+
+ SFPARM   = tmpf<$basem16
+ COLORS   = 28
+r
+
+ SFPARM   = tmpf<$basem17
+ COLORS   = 29
+r
+
+ SFPARM   = tmpf<$basem18
+ COLORS   = 30
+r
+
+ SFPARM   = tmpf<$basem19
+ COLORS   = 12
+r
+
+ SFPARM   = tmpf<$basem20
+ COLORS   = 1
+r
+
+ex
+EOF
+done
+
+gpend
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

@@ -1,0 +1,76 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/rtmawv
+rm /stmpp1/Geoffrey.Manikin/meg/rtmawv/*
+cd /stmpp1/Geoffrey.Manikin/meg/rtmawv
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+ymdh=2017061603
+dayoweek=hold5
+ymd=`echo $ymdh | cut -c1-8`
+
+fmdl1=/com2/nawips/prod/rtma2p5.${ymd}/rtma2p5_${ymdh}f000
+#fmdl1=/ptmp/Geoffrey.Manikin/rtma/rtma_${ymdh}f000
+
+    gdplot2 << EOF
+
+ GDFILE   = $fmdl1
+ GDATTIM  = last 
+ GLEVEL   = 10 
+ GVCORD   = hght 
+ GDPFUN   = dwpf 
+ CINT     = 0 
+ LINE     = 1 
+ MAP      = 1/1/2
+ WIND     = 0
+ TITLE    = 1/-1/~   2.5 RTMA WIND 
+ DEVICE   = GIF|${ymdh}_2p5rtma10wz.gif|850;950
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-97;25;/1;1;1;1
+# GAREA    = 30.;-104.;40.;-88.
+ GAREA    = 28.;-91.5;34.;-81.5 
+ GAREA    = ks+ 
+ CLEAR    = y
+ PANEL    = 0
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 0 
+ CONTUR   = 0
+ SKIP     = /20;20
+ FINT     = 0 
+ FLINE    = 0
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ CINT     = 
+ WIND     = AK15/0.5/1/2/0.5
+ GDPFUN   = kntv(wnd)
+ SKIP     = /40;40
+ TYPE     = a
+ TITLE    = 0
+ CLRBAR   = 0
+ CLEAR    = n
+r
+
+ex
+EOF
+gpend
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

@@ -1,0 +1,71 @@
+#!/bin/ksh --login
+#
+#BSUB -oo /lfs/h2/emc/ptmp/geoffrey.manikin/output/gfs_nagrib2.out
+#BSUB -eo /lfs/h2/emc/prmp/geoffrey.manikin/output/gfs_nagrib2.out
+#BSUB -J gfs_nagrib
+#BSUB -n 1 
+#BSUB -R span[ptile=1]
+#BSUB -W 01:00
+#BSUB -q "dev"
+#BSUB -R "affinity[core(16):distribute=balance]"
+#BSUB -P HRRR-T2O
+#BSUB -x
+#BSUB -a poe
+
+set -x
+
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/gfs0p25
+rm /lfs/h2/emc/stmp/geoffrey.manikin/gfs0p25/*
+cd /lfs/h2/emc/stmp/geoffrey.manikin/gfs0p25
+cp /lfs/h2/emc/vpppg/save/geoffrey.manikin/gempak/nagrib2/* .
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`cut -c 7-14 /com/date/t${cyc}z`
+
+ymd=20230315
+gfs_ver=v16.3
+
+#fhrs="00 03 06 09 12 15 18 21 24 30 36 42 48 54 60 66 72 78 84 90 96 102 108 114 120 126 132 138 144 150 156 162 168 174 180 186 192 204 228 240 264 288"
+#fhrs="00 03 06 09 12 15 18 21 24 30 36 42 48 54 60 66 72 78 84 90 96 102 108 114 120 126 132 138 144 150 156 162 168 174"
+fhrs="00 06 12 18 24 30 36 42 48 54 60 66 72 78 84 90 96 102 108 114 120 126 132 138 144 150 156 162 168 174 180 186 192 198 204 210 216 222 228 234 240"
+fhrs="00 06 12 18 24"
+fhrs="00 06 12 18 24 30 36 42 48 54 60"
+fhrs="00"
+#fhrs="03 09 15 21 27 33 39 45 51 57 63 69 75 81"
+
+cycles="00 06 12 18"
+cycles="06 12 18"
+cycles="06 12 18"
+for cyc in $cycles
+do
+for fhr in $fhrs
+do
+
+typeset -Z3 fhr
+
+DAPATH=/lfs/h2/emc/ptmp/geoffrey.manikin/gfs/gfs.${ymd}
+DAPATH=/lfs/h1/ops/prod/com/gfs/${gfs_ver}/gfs.${ymd}/${cyc}/atmos/
+export DAPATH
+
+  nagrib2 << EOF
+GBFILE  = ${DAPATH}/gfs.t${cyc}z.pgrb2.0p25.f${fhr} 
+INDXFL  =
+GDOUTF  = gfs_0p25_${ymd}${cyc}f${fhr} 
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+exit
+EOF
+
+mv gfs_0p25_${ymd}${cyc}f${fhr} /lfs/h2/emc/vpppg/noscrub/geoffrey.manikin/dews/.
+done
+done
+gpend
+exit

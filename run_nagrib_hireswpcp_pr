@@ -1,0 +1,178 @@
+#!/bin/ksh
+
+set -x
+
+mkdir /stmpp1/Geoffrey.Manikin/hireswpcp
+rm /stmpp1/Geoffrey.Manikin/hireswpcp/*
+cd /stmpp1/Geoffrey.Manikin/hireswpcp/
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymdh=2017091906
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+#DAPATH=/com2/hiresw/prod/hiresw.${ymd}
+#DAPATH=/gpfs/hps/nco/ops/com/hiresw/prod/hiresw.${ymd}
+DAPATH=/ptmpp1/Geoffrey.Manikin/hold/
+OUT=/meso/save/Geoffrey.Manikin/meg/maria
+
+export DAPATH
+. /nwprod/gempak/.gempak
+
+fhrs="03 06 09 12 15 18 21 24 27 30 33 36 39 42 45 48"
+for fhr in $fhrs
+do
+
+typeset -Z2 fhra fhr3
+fhr3=`expr $fhr - 3`
+if [ $fhr3 -lt 10 -a $fhr3 -gt 0 ]; then
+typeset -Z1 fhr3
+fi
+
+fhra=$fhr
+if [ $fhr -lt 10 ]; then
+typeset -Z1 fhra
+fi
+
+if [ $fhr -eq 03 ]; then
+fhr3=0
+typeset -Z1 fhr3
+fi
+
+if [ $fhr -eq 3 ];then
+ echo "APCP:surface:0-3 hour acc fcst" >> pcp.fil
+else
+ echo "APCP:surface:${fhr3}-${fhra} hour acc fcst" >> pcp.fil
+fi
+
+wgrib2 ${DAPATH}/hiresw.t${cyc}z.nmmb_5km.f${fhr}.pr.grib2 | grep -F -f pcp.fil | wgrib2 -i -grib new.fil ${DAPATH}/hiresw.t${cyc}z.nmmb_5km.f${fhr}.pr.grib2
+
+   nagrib2 << EOF
+GBFILE  = new.fil 
+INDXFL  =
+GDOUTF  = dummyhires1.grd 
+PROJ    =
+GRDAREA =
+KXKY    = 
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+ex
+EOF
+rm new.fil pcp.fil
+done
+mv dummyhires1.grd $OUT/hireswnmmbpcp_${ymdh}
+
+for fhr in $fhrs
+do
+
+typeset -Z2 fhra fhr3
+fhr3=`expr $fhr - 3`
+if [ $fhr3 -lt 10 -a $fhr3 -gt 0 ]; then
+typeset -Z1 fhr3
+fi
+
+fhra=$fhr
+if [ $fhr -lt 10 ]; then
+typeset -Z1 fhra
+fi
+
+if [ $fhr -eq 03 ]; then
+fhr3=0
+typeset -Z1 fhr3
+fi
+
+if [ $fhr -eq 3 ];then
+ echo "APCP:surface:0-3 hour acc fcst" >> pcp.fil
+else
+ echo "APCP:surface:${fhr3}-${fhra} hour acc fcst" >> pcp.fil
+fi
+
+wgrib2 ${DAPATH}/hiresw.t${cyc}z.arw_5km.f${fhr}.pr.grib2 | grep -F -f pcp.fil | wgrib2 -i -grib new.fil ${DAPATH}/hiresw.t${cyc}z.arw_5km.f${fhr}.pr.grib2
+
+   nagrib2 << EOF
+GBFILE  = new.fil
+INDXFL  =
+GDOUTF  = dummyhires2.grd
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+ex
+EOF
+
+rm new.fil pcp.fil
+done
+mv dummyhires2.grd $OUT/hireswarwpcp_${ymdh}
+
+exit
+for fhr in $fhrs
+do
+
+wgrib ${DAPATH}/prnmmb.t${cyc}z.awp5kmf${fhr} | grep kpds5=211:kpds6=105  | wgrib ${DAPATH}/prnmmb.t${cyc}z.awpreg${fhr} -i -grib -o new2.fil
+wgrib ${DAPATH}/prnmmb.t${cyc}z.awp5kmf${fhr} | grep kpds5=212:kpds6=200  | wgrib ${DAPATH}/prnmmb.t${cyc}z.awpreg${fhr} -i -grib -o new3.fil
+wgrib ${DAPATH}/prarw.t${cyc}z.awp5kmf${fhr} | grep kpds5=211:kpds6=105  | wgrib ${DAPATH}/prarw.t${cyc}z.awpreg${fhr} -i -grib -o new4.fil
+wgrib ${DAPATH}/prarw.t${cyc}z.awp5kmf${fhr} | grep kpds5=212:kpds6=200  | wgrib ${DAPATH}/prarw.t${cyc}z.awpreg${fhr} -i -grib -o new5.fil
+
+   nagrib << EOF
+GBFILE  = new2.fil
+INDXFL  =
+GDOUTF  = dummyhires3.grd
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+GBFILE  = new3.fil
+r
+
+exit
+EOF
+
+   nagrib << EOF
+GBFILE  = new4.fil
+INDXFL  =
+GDOUTF  = dummyhires4.grd
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+GBFILE  = new5.fil
+r
+
+exit
+EOF
+
+rm new*.fil
+done
+
+mv dummyhires3.grd hireswnmmb_${ymdh}
+mv dummyhires4.grd hireswarw_${ymdh}
+
+return
+stop

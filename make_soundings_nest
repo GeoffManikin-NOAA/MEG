@@ -1,0 +1,65 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+ymdh=2017031312
+ymd=`echo $ymdh | cut -c1-8`
+month=`echo $ymdh | cut -c5-6`
+day=`echo $ymdh | cut -c7-8`
+cyc=`echo $ymdh | cut -c9-10`
+dayoweek=hold8
+stations="725037"
+
+mkdir /stmpp1/Geoffrey.Manikin/sndnest
+rm /stmpp1/Geoffrey.Manikin/sndnest/*
+cd /stmpp1/Geoffrey.Manikin/sndnest
+cp /meso/save/Geoffrey.Manikin/gempak.rap13/coltbl.xwp .
+
+times="24 25 26 27 28"
+times="29 30"
+for fhr in $times; do
+
+validtime="`/meso/save/Geoffrey.Manikin/meg/advtime ${ymdh} $fhr -1 x`"
+dattim=`echo $validtime | cut -c5-11`
+for stnm in $stations; do
+
+fmdl1=/com/nawips/prod/nam.${ymd}/nam_conusnest_${ymd}${cyc}.snd 
+echo $fmdl1
+
+    snprof << EOF
+ SNFILE   = $fmdl1 
+ DATTIM   = $dattim
+ AREA     = @${stnm}
+ SNPARM   = tmpc;dwpc
+ LINE     = 2;4/1/5
+ PTYPE    = skewt
+ VCOORD   = PRES
+ STNDEX   = lift;cape;cins
+ STNCOL   = 24
+ WIND     = bk1
+ WINPOS   = 1
+ MARKER   = 0
+ BORDER   = 1//2
+ TITLE    = 1// $stnm   OPS NAM NEST 
+ DEVICE   = gif|nest_${ymdh}f${fhr}.gif|750;850
+ YAXIS    = 1050/250/100/1;1;1
+ XAXIS    = -25/25/10/;1
+ FILTER   = 0.6
+ CLEAR    = y
+ PANEL    = 0
+ TEXT     = 1.0
+ THTALN   = 8/3/1/250/500/5
+ THTELN   = 23/1/1/250/500/5
+ MIXRLN   = 17/10/2/0/40./1.
+r
+
+ex
+EOF
+
+gpend
+done
+done
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

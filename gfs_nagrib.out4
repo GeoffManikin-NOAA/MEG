@@ -1,0 +1,2092 @@
+Running prologue on parent mom node: nid001216...
+Job 15074916.cbqs01 nodelist: nid001216
+ GBFILE    GRIB data file name                
+ GDOUTF    Output grid file                   
+ PROJ      Map projection/angles/margins|dr  MER
+ GRDAREA   Area covered by grid               
+ KXKY      Number of grid points in x;y      10;10
+ MAXGRD    Maximum number of grids           200
+ CPYFIL    Grid file whose navigation is to   
+ GAREA     Graphics area                     WV
+ OUTPUT    Output device/filename            T
+ G2TBLS    Input GRIB2 decoding tables        
+ G2DIAG    GRIB2 diagnostic elements          
+ OVERWR    Overwr flag                       NO
+ PDSEXT    Y or N, add PDS extension if fou  NO
+ Parameters requested: GBFILE,GDOUTF,PROJ,GRDAREA,KXKY,MAXGRD,CPYFIL,GAREA,
+ OUTPUT,G2TBLS,G2DIAG,OVERWR,PDSEXT.
+ GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> [GB 1]  No GEMPAK parameter name defined for this grid.
+ [GB -34]  Could not convert GRIB2 message to GEMPAK grid.
+ [GB 1]  No GEMPAK parameter name defined for this grid.
+ [GB -34]  Could not convert GRIB2 message to GEMPAK grid.
+ [GB 1]  No GEMPAK parameter name defined for this grid.
+ [GB -34]  Could not convert GRIB2 message to GEMPAK grid.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ Opening WMO Originating Center Table wmocenter.tbl...
+ Opening WMO GRIB2 Parameter Table g2varswmo2.tbl...
+ Opening WMO GRIB2 Vertical Coordinate Table g2vcrdwmo2.tbl...
+Creating the GEMPAK grid file...
+GEMPAK grid file is ready...
+
+ MESG# GDT# DIS# CAT# ID#  PDT# VCD#    GEMPAK_TIME    LEVL1 LEVL2  VCRD PARM
+    1    0    0    3    1    0  101   220926/1200F024          0        NONE PMSL        
+    2    0    0    1   22    0  105   220926/1200F024          1        HYBL CWTR        
+    3    0    0    1   23    0  105   220926/1200F024          1        HYBL ICMR        
+    4    0    0    1   24    0  105   220926/1200F024          1        HYBL RNMX        
+    5    0    0    1   25    0  105   220926/1200F024          1        HYBL SNMR        
+    6    0    0    1   32    0  105   220926/1200F024          1        HYBL GRMR        
+ Opening Local GRIB2 Parameter Table g2varsncep1.tbl...
+   10    0    0   19    0    0    1   220926/1200F024          0        NONE VSBY        
+ Opening Local GRIB2 Vertical Coordinate Table g2vcrdncep1.tbl...
+   11    0    0    2    2    0  220   220926/1200F024          0        PBLY UREL        
+   12    0    0    2    3    0  220   220926/1200F024          0        PBLY VREL        
+   13    0    0    2  224    0  220   220926/1200F024          0        PBLY VRATE       
+   14    0    0    2   22    0    1   220926/1200F024          0        NONE GUST        
+   15    0    0    3    5    0  100   220926/1200F024          0        PRES HGHT        
+   16    0    0    0    0    0  100   220926/1200F024          0        PRES TMPK        
+   17    0    0    1    1    0  100   220926/1200F024          0        PRES RELH        
+   18    0    0    1    0    0  100   220926/1200F024          0        PRES SPFH        
+   19    0    0    2    8    0  100   220926/1200F024          0        PRES OMEG        
+   20    0    0    2    9    0  100   220926/1200F024          0        PRES VVEL        
+   21    0    0    2    2    0  100   220926/1200F024          0        PRES UREL        
+   22    0    0    2    3    0  100   220926/1200F024          0        PRES VREL        
+   23    0    0    2   10    0  100   220926/1200F024          0        PRES AVOR        
+   24    0    0   14  192    0  100   220926/1200F024          0        PRES OZMR        
+   85    0    0    3    5    0  100   220926/1200F024          1        PRES HGHT        
+   86    0    0    0    0    0  100   220926/1200F024          1        PRES TMPK        
+   87    0    0    1    1    0  100   220926/1200F024          1        PRES RELH        
+   88    0    0    1    0    0  100   220926/1200F024          1        PRES SPFH        
+   89    0    0    2    8    0  100   220926/1200F024          1        PRES OMEG        
+   90    0    0    2    9    0  100   220926/1200F024          1        PRES VVEL        
+   91    0    0    2    2    0  100   220926/1200F024          1        PRES UREL        
+   92    0    0    2    3    0  100   220926/1200F024          1        PRES VREL        
+   93    0    0    2   10    0  100   220926/1200F024          1        PRES AVOR        
+   94    0    0   14  192    0  100   220926/1200F024          1        PRES OZMR        
+  105    0    0    3    5    0  100   220926/1200F024          2        PRES HGHT        
+  106    0    0    0    0    0  100   220926/1200F024          2        PRES TMPK        
+  107    0    0    1    1    0  100   220926/1200F024          2        PRES RELH        
+  108    0    0    1    0    0  100   220926/1200F024          2        PRES SPFH        
+  109    0    0    2    8    0  100   220926/1200F024          2        PRES OMEG        
+  110    0    0    2    9    0  100   220926/1200F024          2        PRES VVEL        
+  111    0    0    2    2    0  100   220926/1200F024          2        PRES UREL        
+  112    0    0    2    3    0  100   220926/1200F024          2        PRES VREL        
+  113    0    0    2   10    0  100   220926/1200F024          2        PRES AVOR        
+  114    0    0   14  192    0  100   220926/1200F024          2        PRES OZMR        
+  115    0    0    3    5    0  100   220926/1200F024          3        PRES HGHT        
+  116    0    0    0    0    0  100   220926/1200F024          3        PRES TMPK        
+  117    0    0    1    1    0  100   220926/1200F024          3        PRES RELH        
+  118    0    0    1    0    0  100   220926/1200F024          3        PRES SPFH        
+  119    0    0    2    8    0  100   220926/1200F024          3        PRES OMEG        
+  120    0    0    2    9    0  100   220926/1200F024          3        PRES VVEL        
+  121    0    0    2    2    0  100   220926/1200F024          3        PRES UREL        
+  122    0    0    2    3    0  100   220926/1200F024          3        PRES VREL        
+  123    0    0    2   10    0  100   220926/1200F024          3        PRES AVOR        
+  124    0    0   14  192    0  100   220926/1200F024          3        PRES OZMR        
+  125    0    0    3    5    0  100   220926/1200F024          5        PRES HGHT        
+  126    0    0    0    0    0  100   220926/1200F024          5        PRES TMPK        
+  127    0    0    1    1    0  100   220926/1200F024          5        PRES RELH        
+  128    0    0    1    0    0  100   220926/1200F024          5        PRES SPFH        
+  129    0    0    2    8    0  100   220926/1200F024          5        PRES OMEG        
+  130    0    0    2    9    0  100   220926/1200F024          5        PRES VVEL        
+  131    0    0    2    2    0  100   220926/1200F024          5        PRES UREL        
+  132    0    0    2    3    0  100   220926/1200F024          5        PRES VREL        
+  133    0    0    2   10    0  100   220926/1200F024          5        PRES AVOR        
+  134    0    0   14  192    0  100   220926/1200F024          5        PRES OZMR        
+  135    0    0    3    5    0  100   220926/1200F024          7        PRES HGHT        
+  136    0    0    0    0    0  100   220926/1200F024          7        PRES TMPK        
+  137    0    0    1    1    0  100   220926/1200F024          7        PRES RELH        
+  138    0    0    1    0    0  100   220926/1200F024          7        PRES SPFH        
+  139    0    0    2    8    0  100   220926/1200F024          7        PRES OMEG        
+  140    0    0    2    9    0  100   220926/1200F024          7        PRES VVEL        
+  141    0    0    2    2    0  100   220926/1200F024          7        PRES UREL        
+  142    0    0    2    3    0  100   220926/1200F024          7        PRES VREL        
+  143    0    0    2   10    0  100   220926/1200F024          7        PRES AVOR        
+  144    0    0   14  192    0  100   220926/1200F024          7        PRES OZMR        
+  145    0    0    3    5    0  100   220926/1200F024         10        PRES HGHT        
+  146    0    0    0    0    0  100   220926/1200F024         10        PRES TMPK        
+  147    0    0    1    1    0  100   220926/1200F024         10        PRES RELH        
+  148    0    0    1    0    0  100   220926/1200F024         10        PRES SPFH        
+  149    0    0    2    8    0  100   220926/1200F024         10        PRES OMEG        
+  150    0    0    2    9    0  100   220926/1200F024         10        PRES VVEL        
+
+ MESG# GDT# DIS# CAT# ID#  PDT# VCD#    GEMPAK_TIME    LEVL1 LEVL2  VCRD PARM
+  151    0    0    2    2    0  100   220926/1200F024         10        PRES UREL        
+  152    0    0    2    3    0  100   220926/1200F024         10        PRES VREL        
+  153    0    0    2   10    0  100   220926/1200F024         10        PRES AVOR        
+  154    0    0   14  192    0  100   220926/1200F024         10        PRES OZMR        
+  155    0    0    3    5    0  100   220926/1200F024         15        PRES HGHT        
+  156    0    0    0    0    0  100   220926/1200F024         15        PRES TMPK        
+  157    0    0    1    1    0  100   220926/1200F024         15        PRES RELH        
+  158    0    0    1    0    0  100   220926/1200F024         15        PRES SPFH        
+  159    0    0    2    8    ##### Job 15074916.cbqs01 - PBS Job Script:
+
+#!/bin/ksh
+#
+#PBS -N gfs_nagrib4
+#PBS -N gfs_nagrib4
+#PBS -o /lfs/h2/emc/vpppg/save/geoffrey.manikin/meg/gfs_nagrib.out4
+#PBS -o /lfs/h2/emc/vpppg/save/geoffrey.manikin/meg/gfs_nagrib.out4
+#PBS -e /lfs/h2/emc/vpppg/save/geoffrey.manikin/meg/gfs_nagrib.err4
+#PBS -e /lfs/h2/emc/vpppg/save/geoffrey.manikin/meg/gfs_nagrib.err4
+#PBS -l select=1:ncpus=10:mpiprocs=1:mem=10GB
+#PBS -l select=1:ncpus=10:mpiprocs=1:mem=10GB
+#PBS -q dev
+#PBS -q dev
+#PBS -l walltime=00:30
+#PBS -l walltime=00:30
+#PBS -A VERF-DEV
+#PBS -A VERF-DEV
+
+set -x
+
+ymd=20220926
+version=v16.2
+
+DAPATH=/lfs/h1/ops/prod/com/gfs/${version}/gfs.${ymd}
+#DAPATH=/lfs/h2/emc/ptmp/geoffrey.manikin/gfs/gfs.${ymd}
+WGRIB=/apps/ops/prod/libs/intel/19.1.3.304/grib_util/1.2.2/bin/wgrib
+
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib5
+rm /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib5/*
+cd /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib5/
+
+export DAPATH 
+
+cycles="00 06 12 18"
+cycles="00 12"
+cycles="12`"
+fhrs="06 12 18 24 30 36 42 48 54 60 66 72 78 84 90 96 102 108 114 120 126 132"
+#fhrs="06 12 18 24 30 36 42 48 54 60"
+#fhrs="06 12 18 24 30 36 42 48 54 60 66 72 78 84 90 96 102 108 114 120 126 132 138 144 150 156 162 168 174 180 186 192"
+#fhrs="06 12 18 24 30 36 42 48 54 60"
+#fhrs="30 36 42 48 54 60 66 72 78 84 90 96"
+#fhrs="06 12 18 24 30 36 42 48 54 60 66 72 78 84"
+fhrs="06 12 18 24 30 36 42 48 54 60 66 72 78 84 90 96 102 108 114 120 126 132 138 144 150 156 162 168 174 180 186 192 198 204 210 216 222 228 234 240"
+fhrs="24 30 36 42 48 54 60 66 72 78 84 90 96"
+
+for cyc in $cycles
+do
+for fhr in $fhrs
+do
+
+typeset -Z3 fhr
+cp ${DAPATH}/${cyc}/atmos/gfs.t${cyc}z.pgrb2.0p25.f${fhr} . 
+
+nagrib2 << EOF
+GBFILE  = gfs.t${cyc}z.pgrb2.0p25.f${fhr} 
+INDXFL  =
+GDOUTF  = dummygfs${fhr}.grd 
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+exit
+EOF
+
+  gddelt << EOF
+GDFILE = dummygfs${fhr}.grd
+GVCORD = pres
+GLEV   = all
+GFUN   = all
+r
+
+GVCORD  = hght
+r
+
+GVCORD  = hybl
+r
+
+GVCORD  = sgma
+r
+
+GVCORD  = trop
+r
+
+GVCORD  = dpth
+r
+
+GVCORD  = PBLY
+r
+
+GVCORD  = POTV
+r
+
+GVCORD  = FRZL
+r
+
+GVCORD  = HTFL
+r
+
+GVCORD  = MCTL
+r
+
+GVCORD  = LCTL
+r
+
+GVCORD  = HCTL
+r
+
+GVCORD  = MCBL
+r
+
+GVCORD  = MCLY
+r
+
+GVCORD  = PDLY
+r
+
+GVCORD  = ATMO
+r
+
+GVCORD   = MWSL
+r
+
+GVCORD   = TOPA
+r
+
+GVCORD   = CEIL
+r
+
+exit
+EOF
+
+done
+#mv dummygfs.grd /meso/save/geoffrey.manikin/meg/gfspcp_${ymd}${cyc}
+mv dummygfs${fhr}.grd /lfs/h2/emc/vpppg/noscrub/geoffrey.manikin/ian/gfspcp_${ymd}${cyc}
+done
+gpend
+exit
+
+##### End of job script
+------------------------------------------------------------------
+Running prologue on parent mom node: nid001216...
+Job 15076468.cbqs01 nodelist: nid001216
+ GBFILE    GRIB data file name                
+ GDOUTF    Output grid file                   
+ PROJ      Map projection/angles/margins|dr  MER
+ GRDAREA   Area covered by grid               
+ KXKY      Number of grid points in x;y      10;10
+ MAXGRD    Maximum number of grids           200
+ CPYFIL    Grid file whose navigation is to   
+ GAREA     Graphics area                     WV
+ OUTPUT    Output device/filename            T
+ G2TBLS    Input GRIB2 decoding tables        
+ G2DIAG    GRIB2 diagnostic elements          
+ OVERWR    Overwr flag                       NO
+ PDSEXT    Y or N, add PDS extension if fou  NO
+ Parameters requested: GBFILE,GDOUTF,PROJ,GRDAREA,KXKY,MAXGRD,CPYFIL,GAREA,
+ OUTPUT,G2TBLS,G2DIAG,OVERWR,PDSEXT.
+ GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> [GB 1]  No GEMPAK parameter name defined for this grid.
+ [GB -34]  Could not convert GRIB2 message to GEMPAK grid.
+ [GB 1]  No GEMPAK parameter name defined for this grid.
+ [GB -34]  Could not convert GRIB2 message to GEMPAK grid.
+ [GB 1]  No GEMPAK parameter name defined for this grid.
+ [GB -34]  Could not convert GRIB2 message to GEMPAK grid.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ Opening WMO Originating Center Table wmocenter.tbl...
+ Opening WMO GRIB2 Parameter Table g2varswmo2.tbl...
+ Opening WMO GRIB2 Vertical Coordinate Table g2vcrdwmo2.tbl...
+Creating the GEMPAK grid file...
+GEMPAK grid file is ready...
+
+ MESG# GDT# DIS# CAT# ID#  PDT# VCD#    GEMPAK_TIME    LEVL1 LEVL2  VCRD PARM
+    1    0    0    3    1    0  101   220926/1200F036          0        NONE PMSL        
+    2    0    0    1   22    0  105   220926/1200F036          1        HYBL CWTR        
+    3    0    0    1   23    0  105   220926/1200F036          1        HYBL ICMR        
+    4    0    0    1   24    0  105   220926/1200F036          1        HYBL RNMX        
+    5    0    0    1   25    0  105   220926/1200F036          1        HYBL SNMR        
+    6    0    0    1   32    0  105   220926/1200F036          1        HYBL GRMR        
+ Opening Local GRIB2 Parameter Table g2varsncep1.tbl...
+   10    0    0   19    0    0    1   220926/1200F036          0        NONE VSBY        
+ Opening Local GRIB2 Vertical Coordinate Table g2vcrdncep1.tbl...
+   11    0    0    2    2    0  220   220926/1200F036          0        PBLY UREL        
+   12    0    0    2    3    0  220   220926/1200F036          0        PBLY VREL        
+   13    0    0    2  224    0  220   220926/1200F036          0        PBLY VRATE       
+   14    0    0    2   22    0    1   220926/1200F036          0        NONE GUST        
+   15    0    0    3    5    0  100   220926/1200F036          0        PRES HGHT        
+   16    0    0    0    0    0  100   220926/1200F036          0        PRES TMPK        
+   17    0    0    1    1    0  100   220926/1200F036          0        PRES RELH        
+   18    0    0    1    0    0  100   220926/1200F036          0        PRES SPFH        
+   19    0    0    2    8    0  100   220926/1200F036          0        PRES OMEG        
+   20    0    0    2    9    0  100   220926/1200F036          0        PRES VVEL        
+   21    0    0    2    2    0  100   220926/1200F036          0        PRES UREL        
+   22    0    0    2    3    0  100   220926/1200F036          0        PRES VREL        
+   23    0    0    2   10    0  100   220926/1200F036          0        PRES AVOR        
+   24    0    0   14  192    0  100   220926/1200F036          0        PRES OZMR        
+   85    0    0    3    5    0  100   220926/1200F036          1        PRES HGHT        
+   86    0    0    0    0    0  100   220926/1200F036          1        PRES TMPK        
+   87    0    0    1    1    0  100   220926/1200F036          1        PRES RELH        
+   88    0    0    1    0    0  100   220926/1200F036          1        PRES SPFH        
+   89    0    0    2    8    0  100   220926/1200F036          1        PRES OMEG        
+   90    0    0    2    9    0  100   220926/1200F036          1        PRES VVEL        
+   91    0    0    2    2    0  100   220926/1200F036          1        PRES UREL        
+   92    0    0    2    3    0  100   220926/1200F036          1        PRES VREL        
+   93    0    0    2   10    0  100   220926/1200F036          1        PRES AVOR        
+   94    0    0   14  192    0  100   220926/1200F036          1        PRES OZMR        
+  105    0    0    3    5    0  100   220926/1200F036          2        PRES HGHT        
+  106    0    0    0    0    0  100   220926/1200F036          2        PRES TMPK        
+  107    0    0    1    1    0  100   220926/1200F036          2        PRES RELH        
+  108    0    0    1    0    0  100   220926/1200F036          2        PRES SPFH        
+  109    0    0    2    8    0  100   220926/1200F036          2        PRES OMEG        
+  110    0    0    2    9    0  100   220926/1200F036          2        PRES VVEL        
+  111    0    0    2    2    0  100   220926/1200F036          2        PRES UREL        
+  112    0    0    2    3    0  100   220926/1200F036          2        PRES VREL        
+  113    0    0    2   10    0  100   220926/1200F036          2        PRES AVOR        
+  114    0    0   14  192    0  100   220926/1200F036          2        PRES OZMR        
+  115    0    0    3    5    0  100   220926/1200F036          3        PRES HGHT        
+  116    0    0    0    0    0  100   220926/1200F036          3        PRES TMPK        
+  117    0    0    1    1    0  100   220926/1200F036          3        PRES RELH        
+  118    0    0    1    0    0  100   220926/1200F036          3        PRES SPFH        
+  119    0    0    2    8    0  100   220926/1200F036          3        PRES OMEG        
+  120    0    0    2    9    0  100   220926/1200F036          3        PRES VVEL        
+  121    0    0    2    2    0  100   220926/1200F036          3        PRES UREL        
+  122    0    0    2    3    0  100   220926/1200F036          3        PRES VREL        
+  123    0    0    2   10    0  100   220926/1200F036          3        PRES AVOR        
+  124    0    0   14  192    0  100   220926/1200F036          3        PRES OZMR        
+  125    0    0    3    5    0  100   220926/1200F036          5        PRES HGHT        
+  126    0    0    0    0    0  100   220926/1200F036          5        PRES TMPK        
+  127    0    0    1    1    0  100   220926/1200F036          5        PRES RELH        
+  128    0    0    1    0    0  100   220926/1200F036          5        PRES SPFH        
+  129    0    0    2    8    0  100   220926/1200F036          5        PRES OMEG        
+  130    0    0    2    9    0  100   220926/1200F036          5        PRES VVEL        
+  131    0    0    2    2    0  100   220926/1200F036          5        PRES UREL        
+  132    0    0    2    3    0  100   220926/1200F036          5        PRES VREL        
+  133    0    0    2   10    0  100   220926/1200F036          5        PRES AVOR        
+  134    0    0   14  192    0  100   220926/1200F036          5        PRES OZMR        
+  135    0    0    3    5    0  100   220926/1200F036          7        PRES HGHT        
+  136    0    0    0    0    0  100   220926/1200F036          7        PRES TMPK        
+  137    0    0    1    1    0  100   220926/1200F036          7        PRES RELH        
+  138    0    0    1    0    0  100   220926/1200F036          7        PRES SPFH        
+  139    0    0    2    8    0  100   220926/1200F036          7        PRES OMEG        
+  140    0    0    2    9    0  100   220926/1200F036          7        PRES VVEL        
+  141    0    0    2    2    0  100   220926/1200F036          7        PRES UREL        
+  142    0    0    2    3    0  100   220926/1200F036          7        PRES VREL        
+  143    0    0    2   10    0  100   220926/1200F036          7        PRES AVOR        
+  144    0    0   14  192    0  100   220926/1200F036          7        PRES OZMR        
+  145    0    0    3    5    0  100   220926/1200F036         10        PRES HGHT        
+  146    0    0    0    0    0  100   220926/1200F036         10        PRES TMPK        
+  147    0    0    1    1    0  100   220926/1200F036         10        PRES RELH        
+  148    0    0    1    0    0  100   220926/1200F036         10        PRES SPFH        
+  149    0    0    2    8    0  100   220926/1200F036         10        PRES OMEG        
+  150    0    0    2    9    0  100   220926/1200F036         10        PRES VVEL        
+
+ MESG# GDT# DIS# CAT# ID#  PDT# VCD#    GEMPAK_TIME    LEVL1 LEVL2  VCRD PARM
+  151    0    0    2    2    0  100   220926/1200F036         10        PRES UREL        
+  152    0    0    2    3    0  100   220926/1200F036         10        PRES VREL        
+  153    0    0    2   10    0  100   220926/1200F036         10        PRES AVOR        
+  154    0    0   14  192    0  100   220926/1200F036         10        PRES OZMR        
+  155    0    0    3    5    0  100   220926/1200F036         15        PRES HGHT        
+  156    0    0    0    0    0  100   220926/1200F036         15        PRES TMPK        
+  157    0    0    1    1    0  100   220926/1200F036         15        PRES RELH        
+  158    0    0    1    0    0  100   220926/1200F036         15        PRES SPFH        
+  159    0    0    2    8    0  100   220926/1200F036         15        PRES OMEG        
+  160    0    0    2    9    0  100   220926/1200F036         15        PRES VVEL        
+  161    0    0    2    2    0  100   220926/1200F036         15        PRES UREL        
+  162    0    0    2    3    0  100   220926/1200F036         15        PRES VREL        
+  163    0    0    2   10    0  100   220926/1200F036         15        PRES AVOR        
+  164    0    0   14  192    0  100   220926/1200F036         15        PRES OZMR        
+  165    0    0    3    5    0  100   220926/1200F036         20        PRES HGHT        
+  166    0    0    0    0    0  100   220926/1200F036         20        PRES TMPK        
+  167    0    0    1    1    0  100   220926/1200F036         20        PRES RELH        
+  168    0    0    1    0    0  100   220926/1200F036         20        PRES SPFH        
+  169    0    0    2    8    0  100   220926/1200F036         20        PRES OMEG        
+  170    0    0    2    9    0  100   220926/1200F036         20        PRES VVEL        
+  171    0    0    2    2    0  100   220926/1200F036         20        PRES UREL        
+  172    0    0    2    3    0  100   220926/1200F036         20        PRES VREL        
+  173    0    0    2   10    0  100   220926/1200F036         20        PRES AVOR        
+  174    0    0   14  192    0  100   220926/1200F036         20        PRES OZMR        
+  175    0    0    3    5    0  100   220926/1200F036         30        PRES HGHT        
+  176    0    0    0    0    0  100   220926/1200F036         30        PRES TMPK        
+  177    0    0    1    1    0  100   220926/1200F036         30        PRES RELH        
+  178    0    0    1    0    0  100   220926/1200F036         30        PRES SPFH        
+  179    0    0    2    8    0  100   220926/1200F036         30        PRES OMEG        
+  180    0    0    2    9    0  100   220926/1200F036         30        PRES VVEL        
+  181    0    0    2    2    0  100   220926/1200F036         30        PRES UREL        
+  182    0    0    2    3    0  100   220926/1200F036         30        PRES VREL        
+  183    0    0    2   10    0  100   220926/1200F036         30        PRES AVOR        
+  184    0    0   14  192    0  100   220926/1200F036         30        PRES OZMR        
+  185    0    0    3    5    0  100   220926/1200F036         40        PRES HGHT        
+  186    0    0    0    0    0  100   220926/1200F036         40        PRES TMPK        
+  187    0    0    1    1    0  100   220926/1200F036         40        PRES RELH        
+  188    0    0    1    0    0  100   220926/1200F036         40        PRES SPFH        
+  189    0    0    2    8    0  100   220926/1200F036         40        PRES OMEG        
+  190    0    0    2    9    0  100   220926/1200F036         40        PRES VVEL        
+  191    0    0    2    2    0  100   220926/1200F036         40        PRES UREL        
+  192    0    0    2    3    0  100   220926/1200F036         40        PRES VREL        
+  193    0    0    2   10    0  100   220926/1200F036         40        PRES AVOR        
+  194    0    0   14  192    0  100   220926/1200F036         40        PRES OZMR        
+  195    0    0    3    5    0  100   220926/1200F036         50        PRES HGHT        
+  196    0    0    0    0    0  100   220926/1200F036         50        PRES TMPK        
+  197    0    0    1    1    0  100   220926/1200F036         50        PRES RELH        
+  198    0    0    6    1    0  100   220926/1200F036         50        PRES CLD         
+  199    0    0    1    0    0  100   220926/1200F036         50        PRES SPFH        
+  200    0    0    2    8    0  100   220926/1200F036         50        PRES OMEG        
+
+ MESG# GDT# DIS# CAT# ID#  PDT# VCD#    GEMPAK_TIME    LEVL1 LEVL2  VCRD PARM
+  201    0    0    2    9    0  100   220926/1200F036         50        PRES VVEL        
+  202    0    0    2    2    0  100   220926/1200F036         50        PRES UREL        
+  203    0    0    2    3    0  100   220926/1200F036         50        PRES VREL        
+  204    0    0    2   10    0  100   220926/1200F036         50        PRES AVOR        
+  205    0    0    1   22    0  100   220926/1200F036         50        PRES CWTR        
+  206    0    0    1   23    0  100   220926/1200F036         50        PRES ICMR        
+  207    0    0    1   24    0  100   220926/1200F036         50        PRES RNMX        
+  208    0    0    1   25    0  100   220926/1200F036         50        PRES SNMR        
+  209    0    0    1   32    0  100   220926/1200F036         50        PRES GRMR        
+  210    0    0   14  192    0  100   220926/1200F036         50        PRES OZMR        
+  211    0    0    3    5    0  100   220926/1200F036         70        PRES HGHT        
+  212    0    0    0    0    0  100   220926/1200F036         70        PRES TMPK        
+  213    0    0    1    1    0  100   220926/1200F036         70        PRES RELH        
+  214    0    0    1    0    0  100   220926/1200F036         70        PRES SPFH        
+  215    0    0    2    8    0  100   220926/1200F036         70        PRES OMEG        
+  216    0    0    2    9    0  100   220926/1200F036         70        PRES VVEL        
+  217    0    0    2    2    0  100   220926/1200F036         70        PRES UREL        
+  218    0    0    2    3    0  100   220926/1200F036         70        PRES VREL        
+  219    0    0    2   10    0  100   220926/1200F036         70        PRES AVOR        
+  220    0    0   14  192    0  100   220926/1200F036         70        PRES OZMR        
+  221    0    0    3    5    0  100   220926/1200F036        100        PRES HGHT        
+  222    0    0    0    0    0  100   220926/1200F036        100        PRES TMPK        
+  223    0    0    1    1    0  100   220926/1200F036        100        PRES RELH        
+  224    0    0    6    1    0  100   220926/1200F036        100        PRES CLD         
+  225    0    0    1    0    0  100   220926/1200F036        100        PRES SPFH        
+  226    0    0    2    8    0  100   220926/1200F036        100        PRES OMEG        
+  227    0    0    2    9    0  100   220926/1200F036        100        PRES VVEL        
+  228    0    0    2    2    0  100   220926/1200F036        100        PRES UREL        
+  229    0    0    2    3    0  100   220926/1200F036        100        PRES VREL        
+  230    0    0    2   10    0  100   220926/1200F036        100        PRES AVOR        
+  231    0    0    1   22    0  100   220926/1200F036        100        PRES CWTR        
+  232    0    0    1   23    0  100   220926/1200F036        100        PRES ICMR        
+  233    0    0    1   24    0  100   220926/1200F036        100        PRES RNMX        
+  234    0    0    1   25    0  100   220926/1200F036        100        PRES SNMR        
+  235    0    0    1   32    0  100   220926/1200F036        100        PRES GRMR        
+  236    0    0   14  192    0  100   220926/1200F036        100        PRES OZMR        
+  237    0    0    3    5    0  100   220926/1200F036        150        PRES HGHT        
+  238    0    0    0    0    0  100   220926/1200F036        150        PRES TMPK        
+  239    0    0    1    1    0  100   220926/1200F036        150        PRES RELH        
+  240    0    0    6    1    0  100   220926/1200F036        150        PRES CLD         
+  241    0    0    1    0    0  100   220926/1200F036        150        PRES SPFH        
+  242    0    0    2    8    0  100   220926/1200F036        150        PRES OMEG        
+  243    0    0    2    9    0  100   220926/1200F036        150        PRES VVEL        
+  244    0    0    2    2    0  100   220926/1200F036        150        PRES UREL        
+  245    0    0    2    3    0  100   220926/1200F036        150        PRES VREL        
+  246    0    0    2   10    0  100   220926/1200F036        150        PRES AVOR        
+  247    0    0    1   22    0  100   220926/1200F036        150        PRES CWTR        
+  248    0    0    1   23    0  100   220926/1200F036        150        PRES ICMR        
+  249    0    0    1   24    0  100   220926/1200F036        150        PRES RNMX        
+  250    0    0    1   25    0  100   220926/1200F036        150        PRES SNMR        
+
+ MESG# GDT# DIS# CAT# ID#  PDT# VCD#    GEMPAK_TIME    LEVL1 LEVL2  VCRD PARM
+  251    0    0    1   32    0  100   220926/1200F036        150        PRES GRMR        
+  252    0    0   14  192    0  100   220926/1200F036        150        PRES OZMR        
+  253    0    0    3    5    0  100   220926/1200F036        200        PRES HGHT        
+  254    0    0    0    0    0  100   220926/1200F036        200        PRES TMPK        
+  255    0    0    1    1    0  100   220926/1200F036        200        PRES RELH        
+  256    0    0    6    1    0  100   220926/1200F036        200        PRES CLD         
+  257    0    0    1    0    0  100   220926/1200F036        200        PRES SPFH        
+  258    0    0    2    8    0  100   220926/1200F036        200        PRES OMEG        
+  259    0    0    2    9    0  100   220926/1200F036        200        PRES VVEL        
+  260    0    0    2    2    0  100   220926/1200F036        200        PRES UREL        
+  261    0    0    2    3    0  100   220926/1200F036        200        PRES VREL        
+  262    0    0    2   10    0  100   220926/1200F036        200        PRES AVOR        
+  263    0    0    1   22    0  100   220926/1200F036        200        PRES CWTR        
+  264    0    0    1   23    0  100   220926/1200F036        200        PRES ICMR        
+  265    0    0    1   24    0  100   220926/1200F036        200        PRES RNMX        
+  266    0    0    1   25    0  100   220926/1200F036        200        PRES SNMR        
+  267    0    0    1   32    0  100   220926/1200F036        200        PRES GRMR        
+  268    0    0   14  192    0  100   220926/1200F036        200        PRES OZMR        
+  269    0    0    3    5    0  100   220926/1200F036        250        PRES HGHT        
+  270    0    0    0    0    0  100   220926/1200F036        250        PRES TMPK        
+  271    0    0    1    1    0  100   220926/1200F036        250        PRES RELH        
+  272    0    0    6    1    0  100   220926/1200F036        250        PRES CLD         
+  273    0    0    1    0    0  100   220926/1200F036        250        PRES SPFH        
+  274    0    0    2    8    0  100   220926/1200F036        250        PRES OMEG        
+  275    0    0    2    9    0  100   220926/1200F036        250        PRES VVEL        
+  276    0    0    2    2    0  100   220926/1200F036        250        PRES UREL        
+  277    0    0    2    3    0  100   220926/1200F036        250        PRES VREL        
+  278    0    0    2   10    0  100   220926/1200F036        250        PRES AVOR        
+  279    0    0    1   22    0  100   220926/1200F036        250        PRES CWTR        
+  280    0    0    1   23    0  100   220926/1200F036        250        PRES ICMR        
+  281    0    0    1   24    0  100   220926/1200F036        250        PRES RNMX        
+  282    0    0    1   25    0  100   220926/1200F036        250        PRES SNMR        
+  283    0    0    1   32    0  100   220926/1200F036        250        PRES GRMR        
+  284    0    0   14  192    0  100   220926/1200F036        250        PRES OZMR        
+  285    0    0    3    5    0  100   220926/1200F036        300        PRES HGHT        
+  286    0    0    0    0    0  100   220926/1200F036        300        PRES TMPK        
+  287    0    0    1    1    0  100   220926/1200F036        300        PRES RELH        
+  288    0    0    6    1    0  100   220926/1200F036        300        PRES CLD         
+  289    0    0    1    0    0  100   220926/1200F036        300        PRES SPFH        
+  290    0    0    2    8    0  100   220926/1200F036        300        PRES OMEG        
+  291    0    0    2    9    0  100   220926/1200F036        300        PRES VVEL        
+  292    0    0    2    2    0  100   220926/1200F036        300        PRES UREL        
+  293    0    0    2    3    0  100   220926/1200F036        300        PRES VREL        
+  294    0    0    2   10    0  100   220926/1200F036        300        PRES AVOR        
+  295    0    0    1   22    0  100   220926/1200F036        300        PRES CWTR        
+  296    0    0    1   23    0  100   220926/1200F036        300        PRES ICMR        
+  297    0    0    1   24    0  100   220926/1200F036        300        PRES RNMX        
+  298    0    0    1   25    0  100   220926/1200F036        300        PRES SNMR        
+  299    0    0    1   32    0  100   220926/1200F036        300        PRES GRMR        
+  300    0    0   14  192    0  100   220926/1200F036        300        PRES OZMR        
+
+ MESG# GDT# DIS# CAT# ID#  PDT# VCD#    GEMPAK_TIME    LEVL1 LEVL2  VCRD PARM
+  301    0    0    3    5    0  100   220926/1200F036        350        PRES HGHT        
+  302    0    0    0    0    0  100   220926/1200F036        350        PRES TMPK        
+  303    0    0    1    1    0  100   220926/1200F036        350        PRES RELH        
+  304    0    0    6    1    0  100   220926/1200F036        350        PRES CLD         
+  305    0    0    1    0    0  100   220926/1200F036        350        PRES SPFH        
+  306    0    0    2    8    0  100   220926/1200F036        350        PRES OMEG        
+  307    0    0    2    9    0  100   220926/1200F036        350        PRES VVEL        
+  308    0    0    2    2    0  100   220926/1200F036        350        PRES UREL        
+  309    0    0    2    3    0  100   220926/1200F036        350        PRES VREL        
+  310    0    0    2   10    0  100   220926/1200F036        350        PRES AVOR        
+  311    0    0    1   22    0  100   220926/1200F036        350        PRES CWTR        
+  312    0    0    1   23    0  100   220926/1200F036        350        PRES ICMR        
+  313    0    0    1   24    0  100   220926/1200F036        350        PRES RNMX        
+  314    0    0    1   25    0  100   220926/1200F036        350        PRES SNMR        
+  315    0    0    1   32    0  100   220926/1200F036        350        PRES GRMR        
+  316    0    0   14  192    0  100   220926/1200F036        350        PRES OZMR        
+  317    0    0    3    5    0  100   220926/1200F036        400        PRES HGHT        
+  318    0    0    0    0    0  100   220926/1200F036        400        PRES TMPK        
+  319    0    0    1    1    0  100   220926/1200F036        400        PRES RELH        
+  320    0    0    6    1    0  100   220926/1200F036        400        PRES CLD         
+  321    0    0    1    0    0  100   220926/1200F036        400        PRES SPFH        
+  322    0    0    2    8    0  100   220926/1200F036        400        PRES OMEG        
+  323    0    0    2    9    0  100   220926/1200F036        400        PRES VVEL        
+  324    0    0    2    2    0  100   220926/1200F036        400        PRES UREL        
+  325    0    0    2    3    0  100   220926/1200F036        400        PRES VREL        
+  326    0    0    2   10    0  100   220926/1200F036        400        PRES AVOR        
+  327    0    0    1   22    0  100   220926/1200F036        400        PRES CWTR        
+  328    0    0    1   23    0  100   220926/1200F036        400        PRES ICMR        
+  329    0    0    1   24    0  100   220926/1200F036        400        PRES RNMX        
+  330    0    0    1   25    0  100   220926/1200F036        400        PRES SNMR        
+  331    0    0    1   32    0  100   220926/1200F036        400        PRES GRMR        
+  332    0    0   14  192    0  100   220926/1200F036        400        PRES OZMR        
+  333    0    0    3    5    0  100   220926/1200F036        450        PRES HGHT        
+  334    0    0    0    0    0  100   220926/1200F036        450        PRES TMPK        
+  335    0    0    1    1    0  100   220926/1200F036        450        PRES RELH        
+  336    0    0    6    1    0  100   220926/1200F036        450        PRES CLD         
+  337    0    0    1    0    0  100   220926/1200F036        450        PRES SPFH        
+  338    0    0    2    8    0  100   220926/1200F036        450        PRES OMEG        
+  339    0    0    2    9    0  100   220926/1200F036        450        PRES VVEL        
+  340    0    0    2    2    0  100   220926/1200F036        450        PRES UREL        
+  341    0    0    2    3    0  100   220926/1200F036        450        PRES VREL        
+  342    0    0    2   10    0  100   220926/1200F036        450        PRES AVOR        
+  343    0    0    1   22    0  100   220926/1200F036        450        PRES CWTR        
+  344    0    0    1   23    0  100   220926/1200F036        450        PRES ICMR        
+  345    0    0    1   24    0  100   220926/1200F036        450        PRES RNMX        
+  346    0    0    1   25    0  100   220926/1200F036        450        PRES SNMR        
+  347    0    0    1   32    0  100   220926/1200F036        450        PRES GRMR        
+  348    0    0   14  192    0  100   220926/1200F036        450        PRES OZMR        
+  349    0    0    3    5    0  100   220926/1200F036        500        PRES HGHT        
+  350    0    0    0    0    0  100   220926/1200F036        500        PRES TMPK        
+
+ MESG# GDT# DIS# CAT# ID#  PDT# VCD#    GEMPAK_TIME    LEVL1 LEVL2  VCRD PARM
+  351    0    0    1    1    0  100   220926/1200F036        500        PRES RELH        
+  352    0    0    6    1    0  100   220926/1200F036        500        PRES CLD         
+  353    0    0    1    0    0  100   220926/1200F036        500        PRES SPFH        
+  354    0    0    2    8    0  100   220926/1200F036        500        PRES OMEG        
+  355    0    0    2    9    0  100   220926/1200F036        500        PRES VVEL        
+  356    0    0    2    2    0  100   220926/1200F036        500        PRES UREL        
+  357    0    0    2    3    0  100   220926/1200F036        500        PRES VREL        
+  358    0    0    2   10    0  100   220926/1200F036        500        PRES AVOR        
+  359    0    0    1   22    0  100   220926/1200F036        500        PRES CWTR        
+  360    0    0    1   23    0  100   220926/1200F036        500        PRES ICMR        
+  361    0    0    1   24    0  100   220926/1200F036        500        PRES RNMX        
+  362    0    0    1   25    0  100   220926/1200F036        500        PRES SNMR        
+  363    0    0    1   32    0  100   220926/1200F036        500        PRES GRMR        
+  364    0    0   14  192    0  100   220926/1200F036        500        PRES OZMR        
+  365    0    0    3    5    0  100   220926/1200F036        550        PRES HGHT        
+  366    0    0    0    0    0  100   220926/1200F036        550        PRES TMPK        
+  367    0    0    1    1    0  100   220926/1200F036        550        PRES RELH        
+  368    0    0    6    1    0  100   220926/1200F036        550        PRES CLD         
+  369    0    0    1    0    0  100   220926/1200F036        550        PRES SPFH        
+  370    0    0    2    8    0  100   220926/1200F036        550        PRES OMEG        
+  371    0    0    2    9    0  100   220926/1200F036        550        PRES VVEL        
+  372    0    0    2    2    0  100   220926/1200F036        550        PRES UREL        
+  373    0    0    2    3    0  100   220926/1200F036        550        PRES VREL        
+  374    0    0    2   10    0  100   220926/1200F036        550        PRES AVOR        
+  375    0    0    1   22    0  100   220926/1200F036        550        PRES CWTR        
+  376    0    0    1   23    0  100   220926/1200F036        550        PRES ICMR        
+  377    0    0    1   24    0  100   220926/1200F036        550        PRES RNMX        
+  378    0    0    1   25    0  100   220926/1200F036        550        PRES SNMR        
+  379    0    0    1   32    0  100   220926/1200F036        550        PRES GRMR        
+  380    0    0   14  192    0  100   220926/1200F036        550        PRES OZMR        
+  381    0    0    3    5    0  100   220926/1200F036        600        PRES HGHT        
+  382    0    0    0    0    0  100   220926/1200F036        600        PRES TMPK        
+  383    0    0    1    1    0  100   220926/1200F036        600        PRES RELH        
+  384    0    0    6    1    0  100   220926/1200F036        600        PRES CLD         
+  385    0    0    1    0    0  100   220926/1200F036        600        PRES SPFH        
+  386    0    0    2    8    0  100   220926/1200F036        600        PRES OMEG        
+  387    0    0    2    9    0  100   220926/1200F036        600        PRES VVEL        
+  388    0    0    2    2    0  100   220926/1200F036        600        PRES UREL        
+  389    0    0    2    3    0  100   220926/1200F036        600        PRES VREL        
+  390    0    0    2   10    0  100   220926/1200F036        600        PRES AVOR        
+  391    0    0    1   22    0  100   220926/1200F036        600        PRES CWTR        
+  392    0    0    1   23    0  100   220926/1200F036        600        PRES ICMR        
+  393    0    0    1   24    0  100   220926/1200F036        600        PRES RNMX        
+  394    0    0    1   25    0  100   220926/1200F036        600        PRES SNMR        
+  395    0    0    1   32    0  100   220926/1200F036        600        PRES GRMR        
+  396    0    0   14  192    0  100   220926/1200F036        600        PRES OZMR        
+  397    0    0    3    5    0  100   220926/1200F036        650        PRES HGHT        
+  398    0    0    0    0    0  100   220926/1200F036        650        PRES TMPK        
+  399    0    0    1    1    0  100   220926/1200F036        650        PRES RELH        
+  400    0    0    6    1    0  100   220926/1200F036        650        PRES CLD         
+
+ MESG# GDT# DIS# CAT# ID#  PDT# VCD#    GEMPAK_TIME    LEVL1 LEVL2  VCRD PARM
+  401    0    0    1    0    0  100   220926/1200F036        650        PRES SPFH        
+  402    0    0    2    8    0  100   220926/1200F036        650        PRES OMEG        
+  403    0    0    2    9    0  100   220926/1200F036        650        PRES VVEL        
+  404    0    0    2    2    0  100   220926/1200F036        650        PRES UREL        
+  405    0    0    2    3    0  100   220926/1200F036        650        PRES VREL        
+  406    0    0    2   10    0  100   220926/1200F036        650        PRES AVOR        
+  407    0    0    1   22    0  100   220926/1200F036        650        PRES CWTR        
+  408    0    0    1   23    0  100   220926/1200F036        650        PRES ICMR        
+  409    0    0    1   24    0  100   220926/1200F036        650        PRES RNMX        
+  410    0    0    1   25    0  100   220926/1200F036        650        PRES SNMR        
+  411    0    0    1   32    0  100   220926/1200F036        650        PRES GRMR        
+  412    0    0   14  192    0  100   220926/1200F036        650        PRES OZMR        
+  413    0    0    3    5    0  100   220926/1200F036        700        PRES HGHT        
+  414    0    0    0    0    0  100   220926/1200F036        700        PRES TMPK        
+  415    0    0    1    1    0  100   220926/1200F036        700        PRES RELH        
+  416    0    0    6    1    0  100   220926/1200F036        700        PRES CLD         
+  417    0    0    1    0    0  100   220926/1200F036        700        PRES SPFH        
+  418    0    0    2    8    0  100   220926/1200F036        700        PRES OMEG        
+  419    0    0    2    9    0  100   220926/1200F036        700        PRES VVEL        
+  420    0    0    2    2    0  100   220926/1200F036        700        PRES UREL        
+  421    0    0    2    3    0  100   220926/1200F036        700        PRES VREL        
+  422    0    0    2   10    0  100   220926/1200F036        700        PRES AVOR        
+  423    0    0    1   22    0  100   220926/1200F036        700        PRES CWTR        
+  424    0    0    1   23    0  100   220926/1200F036        700        PRES ICMR        
+  425    0    0    1   24    0  100   220926/1200F036        700        PRES RNMX        
+  426    0    0    1   25    0  100   220926/1200F036        700        PRES SNMR        
+  427    0    0    1   32    0  100   220926/1200F036        700        PRES GRMR        
+  428    0    0   14  192    0  100   220926/1200F036        700        PRES OZMR        
+  429    0    0    3    5    0  100   220926/1200F036        750        PRES HGHT        
+  430    0    0    0    0    0  100   220926/1200F036        750        PRES TMPK        
+  431    0    0    1    1    0  100   220926/1200F036        750        PRES RELH        
+  432    0    0    6    1    0  100   220926/1200F036        750        PRES CLD         
+  433    0    0    1    0    0  100   220926/1200F036        750        PRES SPFH        
+  434    0    0    2    8    0  100   220926/1200F036        750        PRES OMEG        
+  435    0    0    2    9    0  100   220926/1200F036        750        PRES VVEL        
+  436    0    0    2    2    0  100   220926/1200F036        750        PRES UREL        
+  437    0    0    2    3    0  100   220926/1200F036        750        PRES VREL        
+  438    0    0    2   10    0  100   220926/1200F036        750        PRES AVOR        
+  439    0    0    1   22    0  100   220926/1200F036        750        PRES CWTR        
+  440    0    0    1   23    0  100   220926/1200F036        750        PRES ICMR        
+  441    0    0    1   24    0  100   220926/1200F036        750        PRES RNMX        
+  442    0    0    1   25    0  100   220926/1200F036        750        PRES SNMR        
+  443    0    0    1   32    0  100   220926/1200F036        750        PRES GRMR        
+  444    0    0   14  192    0  100   220926/1200F036        750        PRES OZMR        
+  445    0    0    3    5    0  100   220926/1200F036        800        PRES HGHT        
+  446    0    0    0    0    0  100   220926/1200F036        800        PRES TMPK        
+  447    0    0    1    1    0  100   220926/1200F036        800        PRES RELH        
+  448    0    0    6    1    0  100   220926/1200F036        800        PRES CLD         
+  449    0    0    1    0    0  100   220926/1200F036        800        PRES SPFH        
+  450    0    0    2    8    0  100   220926/1200F036        800        PRES OMEG        
+
+ MESG# GDT# DIS# CAT# ID#  PDT# VCD#    GEMPAK_TIME    LEVL1 LEVL2  VCRD PARM
+  451    0    0    2    9    0  100   220926/1200F036        800        PRES VVEL        
+  452    0    0    2    2    0  100   220926/1200F036        800        PRES UREL        
+  453    0    0    2    3    0  100   220926/1200F036        800        PRES VREL        
+  454    0    0    2   10    0  100   220926/1200F036        800        PRES AVOR        
+  455    0    0    1   22    0  100   220926/1200F036        800        PRES CWTR        
+  456    0    0    1   23    0  100   220926/1200F036        800        PRES ICMR        
+  457    0    0    1   24    0  100   220926/1200F036        800        PRES RNMX        
+  458    0    0    1   25    0  100   220926/1200F036        800        PRES SNMR        
+  459    0    0    1   32    0  100   220926/1200F036        800        PRES GRMR        
+  460    0    0   14  192    0  100   220926/1200F036        800        PRES OZMR        
+  461    0    0    3    5    0  100   220926/1200F036        850        PRES HGHT        
+  462    0    0    0    0    0  100   220926/1200F036        850        PRES TMPK        
+  463    0    0    1    1    0  100   220926/1200F036        850        PRES RELH        
+  464    0    0    6    1    0  100   220926/1200F036        850        PRES CLD         
+  465    0    0    1    0    0  100   220926/1200F036        850        PRES SPFH        
+  466    0    0    2    8    0  100   220926/1200F036        850        PRES OMEG        
+  467    0    0    2    9    0  100   220926/1200F036        850        PRES VVEL        
+  468    0    0    2    2    0  100   220926/1200F036        850        PRES UREL        
+  469    0    0    2    3    0  100   220926/1200F036        850        PRES VREL        
+  470    0    0    2   10    0  100   220926/1200F036        850        PRES AVOR        
+  471    0    0    1   22    0  100   220926/1200F036        850        PRES CWTR        
+  472    0    0    1   23    0  100   220926/1200F036        850        PRES ICMR        
+  473    0    0    1   24    0  100   220926/1200F036        850        PRES RNMX        
+  474    0    0    1   25    0  100   220926/1200F036        850        PRES SNMR        
+  475    0    0    1   32    0  100   220926/1200F036        850        PRES GRMR        
+  476    0    0   14  192    0  100   220926/1200F036        850        PRES OZMR        
+  477    0    0    3    5    0  100   220926/1200F036        900        PRES HGHT        
+  478    0    0    0    0    0  100   220926/1200F036        900        PRES TMPK        
+  479    0    0    1    1    0  100   220926/1200F036        900        PRES RELH        
+  480    0    0    6    1    0  100   220926/1200F036        900        PRES CLD         
+  481    0    0    1    0    0  100   220926/1200F036        900        PRES SPFH        
+  482    0    0    2    8    0  100   220926/1200F036        900        PRES OMEG        
+  483    0    0    2    9    0  100   220926/1200F036        900        PRES VVEL        
+  484    0    0    2    2    0  100   220926/1200F036        900        PRES UREL        
+  485    0    0    2    3    0  100   220926/1200F036        900        PRES VREL        
+  486    0    0    2   10    0  100   220926/1200F036        900        PRES AVOR        
+  487    0    0    1   22    0  100   220926/1200F036        900        PRES CWTR        
+  488    0    0    1   23    0  100   220926/1200F036        900        PRES ICMR        
+  489    0    0    1   24    0  100   220926/1200F036        900        PRES RNMX        
+  490    0    0    1   25    0  100   220926/1200F036        900        PRES SNMR        
+  491    0    0    1   32    0  100   220926/1200F036        900        PRES GRMR        
+  492    0    0   14  192    0  100   220926/1200F036        900        PRES OZMR        
+  493    0    0    3    5    0  100   220926/1200F036        925        PRES HGHT        
+  494    0    0    0    0    0  100   220926/1200F036        925        PRES TMPK        
+  495    0    0    1    1    0  100   220926/1200F036        925        PRES RELH        
+  496    0    0    6    1    0  100   220926/1200F036        925        PRES CLD         
+  497    0    0    1    0    0  100   220926/1200F036        925        PRES SPFH        
+  498    0    0    2    8    0  100   220926/1200F036        925        PRES OMEG        
+  499    0    0    2    9    0  100   220926/1200F036        925        PRES VVEL        
+  500    0    0    2    2    0  100   220926/1200F036        925        PRES UREL        
+
+ MESG# GDT# DIS# CAT# ID#  PDT# VCD#    GEMPAK_TIME    LEVL1 LEVL2  VCRD PARM
+  501    0    0    2    3    0  100   220926/1200F036        925        PRES VREL        
+  502    0    0    2   10    0  100   220926/1200F036        925        PRES AVOR        
+  503    0    0    1   22    0  100   220926/1200F036        925        PRES CWTR        
+  504    0    0    1   23    0  100   220926/1200F036        925        PRES ICMR        
+  505    0    0    1   24    0  100   220926/1200F036        925        PRES RNMX        
+  506    0    0    1   25    0  100   220926/1200F036        925        PRES SNMR        
+  507    0    0    1   32    0  100   220926/1200F036        925        PRES GRMR        
+  508    0    0   14  192    0  100   220926/1200F036        925        PRES OZMR        
+  509    0    0    3    5    0  100   220926/1200F036        950        PRES HGHT        
+  510    0    0    0    0    0  100   220926/1200F036        950        PRES TMPK        
+  511    0    0    1    1    0  100   220926/1200F036        950        PRES RELH        
+  512    0    0    6    1    0  100   220926/1200F036        950        PRES CLD         
+  513    0    0    1    0    0  100   220926/1200F036        950        PRES SPFH        
+  514    0    0    2    8    0  100   220926/1200F036        950        PRES OMEG        
+  515    0    0    2    9    0  100   220926/1200F036        950        PRES VVEL        
+  516    0    0    2    2    0  100   220926/1200F036        950        PRES UREL        
+  517    0    0    2    ##### Job 15076468.cbqs01 - PBS Job Script:
+
+#!/bin/ksh
+#
+#PBS -N gfs_nagrib4
+#PBS -N gfs_nagrib4
+#PBS -o /lfs/h2/emc/vpppg/save/geoffrey.manikin/meg/gfs_nagrib.out4
+#PBS -o /lfs/h2/emc/vpppg/save/geoffrey.manikin/meg/gfs_nagrib.out4
+#PBS -e /lfs/h2/emc/vpppg/save/geoffrey.manikin/meg/gfs_nagrib.err4
+#PBS -e /lfs/h2/emc/vpppg/save/geoffrey.manikin/meg/gfs_nagrib.err4
+#PBS -l select=1:ncpus=10:mpiprocs=1:mem=20GB
+#PBS -l select=1:ncpus=10:mpiprocs=1:mem=20GB
+#PBS -q dev
+#PBS -q dev
+#PBS -l walltime=00:30
+#PBS -l walltime=00:30
+#PBS -A VERF-DEV
+#PBS -A VERF-DEV
+
+set -x
+
+ymd=20220926
+version=v16.2
+
+DAPATH=/lfs/h1/ops/prod/com/gfs/${version}/gfs.${ymd}
+#DAPATH=/lfs/h2/emc/ptmp/geoffrey.manikin/gfs/gfs.${ymd}
+WGRIB=/apps/ops/prod/libs/intel/19.1.3.304/grib_util/1.2.2/bin/wgrib
+
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib4
+rm /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib4/*
+cd /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib4/
+
+export DAPATH 
+
+cycles="00 06 12 18"
+cycles="00 12"
+cycles="12"
+fhrs="06 12 18 24 30 36 42 48 54 60 66 72 78 84 90 96 102 108 114 120 126 132"
+#fhrs="06 12 18 24 30 36 42 48 54 60"
+#fhrs="06 12 18 24 30 36 42 48 54 60 66 72 78 84 90 96 102 108 114 120 126 132 138 144 150 156 162 168 174 180 186 192"
+#fhrs="06 12 18 24 30 36 42 48 54 60"
+#fhrs="30 36 42 48 54 60 66 72 78 84 90 96"
+#fhrs="06 12 18 24 30 36 42 48 54 60 66 72 78 84"
+fhrs="06 12 18 24 30 36 42 48 54 60 66 72 78 84 90 96 102 108 114 120 126 132 138 144 150 156 162 168 174 180 186 192 198 204 210 216 222 228 234 240"
+fhrs="36 42 48 54 60 66 72 78 84 90 96 102 108"
+
+for cyc in $cycles
+do
+for fhr in $fhrs
+do
+
+typeset -Z3 fhr
+cp ${DAPATH}/${cyc}/atmos/gfs.t${cyc}z.pgrb2.0p25.f${fhr} . 
+
+nagrib2 << EOF
+GBFILE  = gfs.t${cyc}z.pgrb2.0p25.f${fhr} 
+INDXFL  =
+GDOUTF  = dummygfs${fhr}.grd 
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+exit
+EOF
+
+  gddelt << EOF
+GDFILE = dummygfs${fhr}.grd
+GVCORD = pres
+GLEV   = all
+GFUN   = all
+r
+
+GVCORD  = hght
+r
+
+GVCORD  = hybl
+r
+
+GVCORD  = sgma
+r
+
+GVCORD  = trop
+r
+
+GVCORD  = dpth
+r
+
+GVCORD  = PBLY
+r
+
+GVCORD  = POTV
+r
+
+GVCORD  = FRZL
+r
+
+GVCORD  = HTFL
+r
+
+GVCORD  = MCTL
+r
+
+GVCORD  = LCTL
+r
+
+GVCORD  = HCTL
+r
+
+GVCORD  = MCBL
+r
+
+GVCORD  = MCLY
+r
+
+GVCORD  = PDLY
+r
+
+GVCORD  = ATMO
+r
+
+GVCORD   = MWSL
+r
+
+GVCORD   = TOPA
+r
+
+GVCORD   = CEIL
+r
+
+exit
+EOF
+
+done
+#mv dummygfs.grd /meso/save/geoffrey.manikin/meg/gfspcp_${ymd}${cyc}
+mv dummygfs${fhr}.grd /lfs/h2/emc/vpppg/noscrub/geoffrey.manikin/ian/gfspcp_${ymd}${cyc}
+done
+gpend
+exit
+
+##### End of job script
+------------------------------------------------------------------
+Running prologue on parent mom node: nid003293...
+Job 15077038.cbqs01 nodelist: nid003293
+ GBFILE    GRIB data file name                
+ GDOUTF    Output grid file                   
+ PROJ      Map projection/angles/margins|dr  MER
+ GRDAREA   Area covered by grid               
+ KXKY      Number of grid points in x;y      10;10
+ MAXGRD    Maximum number of grids           200
+ CPYFIL    Grid file whose navigation is to   
+ GAREA     Graphics area                     WV
+ OUTPUT    Output device/filename            T
+ G2TBLS    Input GRIB2 decoding tables        
+ G2DIAG    GRIB2 diagnostic elements          
+ OVERWR    Overwr flag                       NO
+ PDSEXT    Y or N, add PDS extension if fou  NO
+ Parameters requested: GBFILE,GDOUTF,PROJ,GRDAREA,KXKY,MAXGRD,CPYFIL,GAREA,
+ OUTPUT,G2TBLS,G2DIAG,OVERWR,PDSEXT.
+ GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> [GB 1]  No GEMPAK parameter name defined for this grid.
+ [GB -34]  Could not convert GRIB2 message to GEMPAK grid.
+ [GB 1]  No GEMPAK parameter name defined for this grid.
+ [GB -34]  Could not convert GRIB2 message to GEMPAK grid.
+ [GB 1]  No GEMPAK parameter name defined for this grid.
+ [GB -34]  Could not convert GRIB2 message to GEMPAK grid.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ Opening WMO Originating Center Table wmocenter.tbl...
+ Opening WMO GRIB2 Parameter Table g2varswmo2.tbl...
+ Opening WMO GRIB2 Vertical Coordinate Table g2vcrdwmo2.tbl...
+Creating the GEMPAK grid file...
+GEMPAK grid file is ready...
+
+ MESG# GDT# DIS# CAT# ID#  PDT# VCD#    GEMPAK_TIME    LEVL1 LEVL2  VCRD PARM
+    1    0    0    3    1    0  101   220926/1200F036          0        NONE PMSL        
+    2    0    0    1   22    0  105   220926/1200F036          1        HYBL CWTR        
+    3    0    0    1   23    0  105   220926/1200F036          1        HYBL ICMR        
+    4    0    0    1   24    0  105   220926/1200F036          1        HYBL RNMX        
+    5    0    0    1   25    0  105   220926/1200F036          1        HYBL SNMR        
+    6    0    0    1   32    0  105   220926/1200F036          1        HYBL GRMR        
+ Opening Local GRIB2 Parameter Table g2varsncep1.tbl...
+   10    0    0   19    0    0    1   220926/1200F036          0        NONE VSBY        
+ Opening Local GRIB2 Vertical Coordinate Table g2vcrdncep1.tbl...
+   11    0    0    2    2    0  220   220926/1200F036          0        PBLY UREL        
+   12    0    0    2    3    0  220   220926/1200F036          0        PBLY VREL        
+   13    0    0    2  224    0  220   220926/1200F036          0        PBLY VRATE       
+   14    0    0    2   22    0    1   220926/1200F036          0        NONE GUST        
+   15    0    0    3    5    0  100   220926/1200F036          0        PRES HGHT        
+   16    0    0    0    0    0  100   220926/1200F036          0        PRES TMPK        
+   17    0    0    1    1    0  100   220926/1200F036          0        PRES RELH        
+   18    0    0    1    0    0  100   220926/1200F036          0        PRES SPFH        
+   19    0    0    2    8    0  100   220926/1200F036          0        PRES OMEG        
+   20    0    0    2    9    0  100   220926/1200F036          0        PRES VVEL        
+   21    0    0    2    2    0  100   220926/1200F036          0        PRES UREL        
+   22    0    0    2    3    0  100   220926/1200F036          0        PRES VREL        
+   23    0    0    2   10    0  100   220926/1200F036          0        PRES AVOR        
+   24    0    0   14  192    0  100   220926/1200F036          0        PRES OZMR        
+   85    0    0    3    5    0  100   220926/1200F036          1        PRES HGHT        
+   86    0    0    0    0    0  100   220926/1200F036          1        PRES TMPK        
+   87    0    0    1    1    0  100   220926/1200F036          1        PRES RELH        
+   88    0    0    1    0    0  100   220926/1200F036          1        PRES SPFH        
+   89    0    0    2    8    0  100   220926/1200F036          1        PRES OMEG        
+   90    0    0    2    9    0  100   220926/1200F036          1        PRES VVEL        
+   91    0    0    2    2    0  100   220926/1200F036          1        PRES UREL        
+   92    0    0    2    3    0  100   220926/1200F036          1        PRES VREL        
+   93    0    0    2   10    0  100   220926/1200F036          1        PRES AVOR        
+   94    0    0   14  192    0  100   220926/1200F036          1        PRES OZMR        
+  105    0    0    3    5    0  100   220926/1200F036          2        PRES HGHT        
+  106    0    0    0    0    0  100   220926/1200F036          2        PRES TMPK        
+  107    0    0    1    1    0  100   220926/1200F036          2        PRES RELH        
+  108    0    0    1    0    0  100   220926/1200F036          2        PRES SPFH        
+  109    0    0    2    8    0  100   220926/1200F036          2        PRES OMEG        
+  110    0    0    2    9    0  100   220926/1200F036          2        PRES VVEL        
+  111    0    0    2    2    0  100   220926/1200F036          2        PRES UREL        
+  112    0    0    2    3    0  100   220926/1200F036          2        PRES VREL        
+  113    0    0    2   10    0  100   220926/1200F036          2        PRES AVOR        
+  114    0    0   14  192    0  100   220926/1200F036          2        PRES OZMR        
+  115    0    0    3    5    0  100   220926/1200F036          3        PRES HGHT        
+  116    0    0    0    0    0  100   220926/1200F036          3        PRES TMPK        
+  117    0    0    1    1    0  100   220926/1200F036          3        PRES RELH        
+  118    0    0    1    0    0  100   220926/1200F036          3        PRES SPFH        
+  119    0    0    2    8    0  100   220926/1200F036          3        PRES OMEG        
+  120    0    0    2    9    0  100   220926/1200F036          3        PRES VVEL        
+  121    0    0    2    2    0  100   220926/1200F036          3        PRES UREL        
+  122    0    0    2    3    0  100   220926/1200F036          3        PRES VREL        
+  123    0    0    2   10    0  100   220926/1200F036          3        PRES AVOR        
+  124    0    0   14  192    0  100   220926/1200F036          3        PRES OZMR        
+  125    0    0    3    5    0  100   220926/1200F036          5        PRES HGHT        
+  126    0    0    0    0    0  100   220926/1200F036          5        PRES TMPK        
+  127    0    0    1    1    0  100   220926/1200F036          5        PRES RELH        
+  128    0    0    1    0    0  100   220926/1200F036          5        PRES SPFH        
+  129    0    0    2    8    0  100   220926/1200F036          5        PRES OMEG        
+  130    0    0    2    9    0  100   220926/1200F036          5        PRES VVEL        
+  131    0    0    2    2    0  100   220926/1200F036          5        PRES UREL        
+  132    0    0    2    3    0  100   220926/1200F036          5        PRES VREL        
+  133    0    0    2   10    0  100   220926/1200F036          5        PRES AVOR        
+  134    0    0   14  192    0  100   220926/1200F036          5        PRES OZMR        
+  135    0    0    3    5    0  100   220926/1200F036          7        PRES HGHT        
+  136    0    0    0    0    0  100   220926/1200F036          7        PRES TMPK        
+  137    0    0    1    1    0  100   220926/1200F036          7        PRES RELH        
+  138    0    0    1    0    0  100   220926/1200F036          7        PRES SPFH        
+  139    0    0    2    8    0  100   220926/1200F036          7        PRES OMEG        
+  140    0    0    2    9    0  100   220926/1200F036          7        PRES VVEL        
+  141    0    0    2    2    0  100   220926/1200F036          7        PRES UREL        
+  142    0    0    2    3    0  100   220926/1200F036          7        PRES VREL        
+  143    0    0    2   10    0  100   220926/1200F036          7        PRES AVOR        
+  144    0    0   14  192    0  100   220926/1200F036          7        PRES OZMR        
+  145    0    0    3    5    0  100   220926/1200F036         10        PRES HGHT        
+  146    0    0    0    0    0  100   220926/1200F036         10        PRES TMPK        
+  147    0    0    1    1    0  100   220926/1200F036         10        PRES RELH        
+  148    0    0    1    0    0  100   220926/1200F036         10        PRES SPFH        
+  149    0    0    2    8    0  100   220926/1200F036         10        PRES OMEG        
+  150    0    0    2    9    0  100   220926/1200F036         10        PRES VVEL        
+
+ MESG# GDT# DIS# CAT# ID#  PDT# VCD#    GEMPAK_TIME    LEVL1 LEVL2  VCRD PARM
+  151    0    0    2    2    0  100   220926/1200F036         10        PRES UREL        
+  152    0    0    2    3    0  100   220926/1200F036         10        PRES VREL        
+  153    0    0    2   10    0  100   220926/1200F036         10        PRES AVOR        
+  154    0    0   14  192    0  100   220926/1200F036         10        PRES OZMR        
+  155    0    0    3    5    0  100   220926/1200F036         15        PRES HGHT        
+  156    0    0    0    0    0  100   220926/1200F036         15        PRES TMPK        
+  157    0    0    1    1    0  100   220926/1200F036         15        PRES RELH        
+  158    0    0    1    0    0  100   220926/1200F036         15        PRES SPFH        
+  159    0    0    2    8    0  100   220926/1200F036         15        PRES OMEG        
+  160    0    0    2    9    0  100   220926/1200F036         15        PRES VVEL        
+  161    0    0    2    2    0  100   220926/1200F036         15        PRES UREL        
+  162    0    0    2    3    0  100   220926/1200F036         15        PRES VREL        
+  163    0    0    2   10    0  100   220926/1200F036         15        PRES AVOR        
+  164    0    0   14  192    0  100   220926/1200F036         15        PRES OZMR        
+  165    0    0    3    5    0  100   220926/1200F036         20        PRES HGHT        
+  166    0    0    0    0    0  100   220926/1200F036         20        PRES TMPK        
+  167    0    0    1    1    0  100   220926/1200F036         20        PRES RELH        
+  168    0    0    1    0    0  100   220926/1200F036         20        PRES SPFH        
+  169    0    0    2    8    0  100   220926/1200F036         20        PRES OMEG        
+  170    0    0    2    9    0  100   220926/1200F036         20        PRES VVEL        
+  171    0    0    2    2    0  100   220926/1200F036         20        PRES UREL        
+  172    0    0    2    3    0  100   220926/1200F036         20        PRES VREL        
+  173    0    0    2   10    0  100   220926/1200F036         20        PRES AVOR        
+  174    0    0   14  192    0  100   220926/1200F036         20        PRES OZMR        
+  175    0    0    3    5    0  100   220926/1200F036         30        PRES HGHT        
+  176    0    0    0    0    0  100   220926/1200F036         30        PRES TMPK        
+  177    0    0    1    1    0  100   220926/1200F036         30        PRES RELH        
+  178    0    0    1    0    0  100   220926/1200F036         30        PRES SPFH        
+  179    0    0    2    8    0  100   220926/1200F036         30        PRES OMEG        
+  180    0    0    2    9    0  100   220926/1200F036         30        PRES VVEL        
+  181    0    0    2    2    0  100   220926/1200F036         30        PRES UREL        
+  182    0    0    2    3    0  100   220926/1200F036         30        PRES VREL        
+  183    0    0    2   10    0  100   220926/1200F036         30        PRES AVOR        
+  184    0    0   14  192    0  100   220926/1200F036         30        PRES OZMR        
+  185    0    0    3    5    0  100   220926/1200F036         40        PRES HGHT        
+  186    0    0    0    0    0  100   220926/1200F036         40        PRES TMPK        
+  187    0    0    1    1    0  100   220926/1200F036         40        PRES RELH        
+  188    0    0    1    0    0  100   220926/1200F036         40        PRES SPFH        
+  189    0    0    2    8    0  100   220926/1200F036         40        PRES OMEG        
+  190    0    0    2    9    0  100   220926/1200F036         40        PRES VVEL        
+  191    0    0    2    2    0  100   220926/1200F036         40        PRES UREL        
+  192    0    0    2    3    0  100   220926/1200F036         40        PRES VREL        
+  193    0    0    2   10    0  100   220926/1200F036         40        PRES AVOR        
+  194    0    0   14  192    0  100   220926/1200F036         40        PRES OZMR        
+  195    0    0    3    5    0  100   220926/1200F036         50        PRES HGHT        
+  196    0    0    0    0    0  100   220926/1200F036         50        PRES TMPK        
+  197    0    0    1    1    0  100   220926/1200F036         50        PRES RELH        
+  198    0    0    6    1    0  100   220926/1200F036         50        PRES CLD         
+  199    0    0    1    0    0  100   220926/1200F036         50        PRES SPFH        
+  200    0    0    2    8    0  100   220926/1200F036         50        PRES OMEG        
+
+ MESG# GDT# DIS# CAT# ID#  PDT# VCD#    GEMPAK_TIME    LEVL1 LEVL2  VCRD PARM
+  201    0    0    2    9    0  100   220926/1200F036         50        PRES VVEL        
+  202    0    0    2    2    0  100   220926/1200F036         50        PRES UREL        
+  203    0    0    2    3    0  100   220926/1200F036         50        PRES VREL        
+  204    0    0    2   10    0  100   220926/1200F036         50        PRES AVOR        
+  205    0    0    1   22    0  100   220926/1200F036         50        PRES CWTR        
+  206    0    0    1   23    0  100   220926/1200F036         50        PRES ICMR        
+  207    0    0    1   24    0  100   220926/1200F036         50        PRES RNMX        
+  208    0    0    1   25    0  100   220926/1200F036         50        PRES SNMR        
+  209    0    0    1   32    0  100   220926/1200F036         50        PRES GRMR        
+  210    0    0   14  192    0  100   220926/1200F036         50        PRES OZMR        
+  211    0    0    3    5    0  100   220926/1200F036         70        PRES HGHT        
+  212    0    0    0    0    0  100   220926/1200F036         70        PRES TMPK        
+  213    0    0    1    1    0  100   220926/1200F036         70        PRES RELH        
+  214    0    0    1    0    0  100   220926/1200F036         70        PRES SPFH        
+  215    0    0    2    8    0  100   220926/1200F036         70        PRES OMEG        
+  216    0    0    2    9    0  100   220926/1200F036         70        PRES VVEL        
+  217    0    0    2    2    0  100   220926/1200F036         70        PRES UREL        
+  218    0    0    2    3    0  100   220926/1200F036         70        PRES VREL        
+  219    0    0    2   10    0  100   220926/1200F036         70        PRES AVOR        
+  220    0    0   14  192    0  100   220926/1200F036         70        PRES OZMR        
+  221    0    0    3    5    0  100   220926/1200F036        100        PRES HGHT        
+  222    0    0    0    0    0  100   220926/1200F036        100        PRES TMPK        
+  223    0    0    1    1    0  100   220926/1200F036        100        PRES RELH        
+  224    0    0    6    1    0  100   220926/1200F036        100        PRES CLD         
+  225    0    0    1    0    0  100   220926/1200F036        100        PRES SPFH        
+  226    0    0    2    8    0  100   220926/1200F036        100        PRES OMEG        
+  227    0    0    2    9    0  100   220926/1200F036        100        PRES VVEL        
+  228    0    0    2    2    0  100   220926/1200F036        100        PRES UREL        
+  229    0    0    2    3    0  100   220926/1200F036        100        PRES VREL        
+  230    0    0    2   10    0  100   220926/1200F036        100        PRES AVOR        
+  231    0    0    1   22    0  100   220926/1200F036        100        PRES CWTR        
+  232    0    0    1   23    0  100   220926/1200F036        100        PRES ICMR        
+  233    0    0    1   24    0  100   220926/1200F036        100        PRES RNMX        
+  234    0    0    1   25    0  100   220926/1200F036        100        PRES SNMR        
+  235    0    0    1   32    0  100   220926/1200F036        100        PRES GRMR        
+  236    0    0   14  192    0  100   220926/1200F036        100        PRES OZMR        
+  237    0    0    3    5    0  100   220926/1200F036        150        PRES HGHT        
+  238    0    0    0    0    0  100   220926/1200F036        150        PRES TMPK        
+  239    0    0    1    1    0  100   220926/1200F036        150        PRES RELH        
+  240    0    0    6    1    0  100   220926/1200F036        150        PRES CLD         
+  241    0    0    1    0    0  100   220926/1200F036        150        PRES SPFH        
+  242    0    0    2    8    0  100   220926/1200F036        150        PRES OMEG        
+  243    0    0    2    9    0  100   220926/1200F036        150        PRES VVEL        
+  244    0    0    2    2    0  100   220926/1200F036        150        PRES UREL        
+  245    0    0    2    3    0  100   220926/1200F036        150        PRES VREL        
+  246    0    0    2   10    0  100   220926/1200F036        150        PRES AVOR        
+  247    0    0    1   22    0  100   220926/1200F036        150        PRES CWTR        
+  248    0    0    1   23    0  100   220926/1200F036        150        PRES ICMR        
+  249    0    0    1   24    0  100   220926/1200F036        150        PRES RNMX        
+  250    0    0    1   25    0  100   220926/1200F036        150        PRES SNMR        
+
+ MESG# GDT# DIS# CAT# ID#  PDT# VCD#    GEMPAK_TIME    LEVL1 LEVL2  VCRD PARM
+  251    0    0    1   32    0  100   220926/1200F036        150        PRES GRMR        
+  252    0    0   14  192    0  100   220926/1200F036        150        PRES OZMR        
+  253    0    0    3    5    0  100   220926/1200F036        200        PRES HGHT        
+  254    0    0    0    0    0  100   220926/1200F036        200        PRES TMPK        
+  255    0    0    1    1    0  100   220926/1200F036        200        PRES RELH        
+  256    0    0    6    1    0  100   220926/1200F036        200        PRES CLD         
+  257    0    0    1    0    0  100   220926/1200F036        200        PRES SPFH        
+  258    0    0    2    8    0  100   220926/1200F036        200        PRES OMEG        
+  259    0    0    2    9    0  100   220926/1200F036        200        PRES VVEL        
+  260    0    0    2    2    0  100   220926/1200F036        200        PRES UREL        
+  261    0    0    2    3    0  100   220926/1200F036        200        PRES VREL        
+  262    0    0    2   10    0  100   220926/1200F036        200        PRES AVOR        
+  263    0    0    1   22    0  100   220926/1200F036        200        PRES CWTR        
+  264    0    0    1   23    0  100   220926/1200F036        200        PRES ICMR        
+  265    0    0    1   24    0  100   220926/1200F036        200        PRES RNMX        
+  266    0    0    1   25    0  100   220926/1200F036        200        PRES SNMR        
+  267    0    0    1   32    0  100   220926/1200F036        200        PRES GRMR        
+  268    0    0   14  192    0  100   220926/1200F036        200        PRES OZMR        
+  269    0    0    3    5    0  100   220926/1200F036        250        PRES HGHT        
+  270    0    0    0    0    0  100   220926/1200F036        250        PRES TMPK        
+  271    0    0    1    1    0  100   220926/1200F036        250        PRES RELH        
+  272    0    0    6    1    0  100   220926/1200F036        250        PRES CLD         
+  273    0    0    1    0    0  100   220926/1200F036        250        PRES SPFH        
+  274    0    0    2    8    0  100   220926/1200F036        250        PRES OMEG        
+  275    0    0    2    9    0  100   220926/1200F036        250        PRES VVEL        
+  276    0    0    2    2    0  100   220926/1200F036        250        PRES UREL        
+  277    0    0    2    3    0  100   220926/1200F036        250        PRES VREL        
+  278    0    0    2   10    0  100   220926/1200F036        250        PRES AVOR        
+  279    0    0    1   22    0  100   220926/1200F036        250        PRES CWTR        
+  280    0    0    1   23    0  100   220926/1200F036        250        PRES ICMR        
+  281    0    0    1   24    0  100   220926/1200F036        250        PRES RNMX        
+  282    0    0    1   25    0  100   220926/1200F036        250        PRES SNMR        
+  283    0    0    1   32    0  100   220926/1200F036        250        PRES GRMR        
+  284    0    0   14  192    0  100   220926/1200F036        250        PRES OZMR        
+  285    0    0    3    5    0  100   220926/1200F036        300        PRES HGHT        
+  286    0    0    0    0    0  100   220926/1200F036        300        PRES TMPK        
+  287    0    0    1    1    0  100   220926/1200F036        300        PRES RELH        
+  288    0    0    6    1    0  100   220926/1200F036        300        PRES CLD         
+  289    0    0    1    0    0  100   220926/1200F036        300        PRES SPFH        
+  290    0    0    2    8    0  100   220926/1200F036        300        PRES OMEG        
+  291    0    0    2    9    0  100   220926/1200F036        300        PRES VVEL        
+  292    0    0    2    2    0  100   220926/1200F036        300        PRES UREL        
+  293    0    0    2    3    0  100   220926/1200F036        300        PRES VREL        
+  294    0    0    2   10    0  100   220926/1200F036        300        PRES AVOR        
+  295    0    0    1   22    0  100   220926/1200F036        300        PRES CWTR        
+  296    0    0    1   23    0  100   220926/1200F036        300        PRES ICMR        
+  297    0    0    1   24    0  100   220926/1200F036        300        PRES RNMX        
+  298    0    0    1   25    0  100   220926/1200F036        300        PRES SNMR        
+  299    0    0    1   32    0  100   220926/1200F036        300        PRES GRMR        
+  300    0    0   14  192    0  100   220926/1200F036        300        PRES OZMR        
+
+ MESG# GDT# DIS# CAT# ID#  PDT# VCD#    GEMPAK_TIME    LEVL1 LEVL2  VCRD PARM
+  301    0    0    3    5    0  100   220926/1200F036        350        PRES HGHT        
+  302    0    0    0    0    0  100   220926/1200F036        350        PRES TMPK        
+  303    0    0    1    1    0  100   220926/1200F036        350        PRES RELH        
+  304    0    0    6    1    0  100   220926/1200F036        350        PRES CLD         
+  305    0    0    1    0    0  100   220926/1200F036        350        PRES SPFH        
+  306    0    0    2    8    0  100   220926/1200F036        350        PRES OMEG        
+  307    0    0    2    9    0  100   220926/1200F036        350        PRES VVEL        
+  308    0    0    2    2    0  100   220926/1200F036        350        PRES UREL        
+  309    0    0    2    3    0  100   220926/1200F036        350        PRES VREL        
+  310    0    0    2   10    0  100   220926/1200F036        350        PRES AVOR        
+  311    0    0    1   22    0  100   220926/1200F036        350        PRES CWTR        
+  312    0    0    1   23    0  100   220926/1200F036        350        PRES ICMR        
+  313    0    0    1   24    0  100   220926/1200F036        350        PRES RNMX        
+  314    0    0    1   25    0  100   220926/1200F036        350        PRES SNMR        
+  315    0    0    1   32    0  100   220926/1200F036        350        PRES GRMR        
+  316    0    0   14  192    0  100   220926/1200F036        350        PRES OZMR        
+  317    0    0    3    5    0  100   220926/1200F036        400        PRES HGHT        
+  318    0    0    0    0    0  100   220926/1200F036        400        PRES TMPK        
+  319    0    0    1    1    0  100   220926/1200F036        400        PRES RELH        
+  320    0    0    6    1    0  100   220926/1200F036        400        PRES CLD         
+  321    0    0    1    0    0  100   220926/1200F036        400        PRES SPFH        
+  322    0    0    2    8    0  100   220926/1200F036        400        PRES OMEG        
+  323    0    0    2    9    0  100   220926/1200F036        400        PRES VVEL        
+  324    0    0    2    2    0  100   220926/1200F036        400        PRES UREL        
+  325    0    0    2    3    0  100   220926/1200F036        400        PRES VREL        
+  326    0    0    2   10    0  100   220926/1200F036        400        PRES AVOR        
+  327    0    0    1   22    0  100   220926/1200F036        400        PRES CWTR        
+  328    0    0    1   23    0  100   220926/1200F036        400        PRES ICMR        
+  329    0    0    1   24    0  100   220926/1200F036        400        PRES RNMX        
+  330    0    0    1   25    0  100   220926/1200F036        400        PRES SNMR        
+  331    0    0    1   32    0  100   220926/1200F036        400        PRES GRMR        
+  332    0    0   14  192    0  100   220926/1200F036        400        PRES OZMR        
+  333    0    0    3    5    0  100   220926/1200F036        450        PRES HGHT        
+  334    0    0    0    0    0  100   220926/1200F036        450        PRES TMPK        
+  335    0    0    1    1    0  100   220926/1200F036        450        PRES RELH        
+  336    0    0    6    1    0  100   220926/1200F036        450        PRES CLD         
+  337    0    0    1    0    0  100   220926/1200F036        450        PRES SPFH        
+  338    0    0    2    8    0  100   220926/1200F036        450        PRES OMEG        
+  339    0    0    2    9    0  100   220926/1200F036        450        PRES VVEL        
+  340    0    0    2    2    0  100   220926/1200F036        450        PRES UREL        
+  341    0    0    2    3    0  100   220926/1200F036        450        PRES VREL        
+  342    0    0    2   10    0  100   220926/1200F036        450        PRES AVOR        
+  343    0    0    1   22    0  100   220926/1200F036        450        PRES CWTR        
+  344    0    0    1   23    0  100   220926/1200F036        450        PRES ICMR        
+  345    0    0    1   24    0  100   220926/1200F036        450        PRES RNMX        
+  346    0    0    1   25    0  100   220926/1200F036        450        PRES SNMR        
+  347    0    0    1   32    0  100   220926/1200F036        450        PRES GRMR        
+  348    0    0   14  192    0  100   220926/1200F036        450        PRES OZMR        
+  349    0    0    3    5    0  100   220926/1200F036        500        PRES HGHT        
+  350    0    0    0    0    0  100   220926/1200F036        500        PRES TMPK        
+
+ MESG# GDT# DIS# CAT# ID#  PDT# VCD#    GEMPAK_TIME    LEVL1 LEVL2  VCRD PARM
+  351    0    0    1    1    0  100   220926/1200F036        500        PRES RELH        
+  352    0    0    6    1    0  100   220926/1200F036        500        PRES CLD         
+  353    0    0    1    0    0  100   220926/1200F036        500        PRES SPFH        
+  354    0    0    2    8    0  100   220926/1200F036        500        PRES OMEG        
+  355    0    0    2    9    0  100   220926/1200F036        500        PRES VVEL        
+  356    0    0    2    2    0  100   220926/1200F036        500        PRES UREL        
+  357    0    0    2    3    0  100   220926/1200F036        500        PRES VREL        
+  358    0    0    2   10    0  100   220926/1200F036        500        PRES AVOR        
+  359    0    0    1   22    0  100   220926/1200F036        500        PRES CWTR        
+  360    0    0    1   23    0  100   220926/1200F036        500        PRES ICMR        
+  361    0    0    1   24    0  100   220926/1200F036        500        PRES RNMX        
+  362    0    0    1   25    0  100   220926/1200F036        500        PRES SNMR        
+  363    0    0    1   32    0  100   220926/1200F036        500        PRES GRMR        
+  364    0    0   14  192    0  100   220926/1200F036        500        PRES OZMR        
+  365    0    0    3    5    0  100   220926/1200F036        550        PRES HGHT        
+  366    0    0    0    0    0  100   220926/1200F036        550        PRES TMPK        
+  367    0    0    1    1    0  100   220926/1200F036        550        PRES RELH        
+  368    0    0    6    1    0  100   220926/1200F036        550        PRES CLD         
+  369    0    0    1    0    0  100   220926/1200F036        550        PRES SPFH        
+  370    0    0    2    8    0  100   220926/1200F036        550        PRES OMEG        
+  371    0    0    2    9    0  100   220926/1200F036        550        PRES VVEL        
+  372    0    0    2    2    0  100   220926/1200F036        550        PRES UREL        
+  373    0    0    2    3    0  100   220926/1200F036        550        PRES VREL        
+  374    0    0    2   10    0  100   220926/1200F036        550        PRES AVOR        
+  375    0    0    1   22    0  100   220926/1200F036        550        PRES CWTR        
+  376    0    0    1   23    0  100   220926/1200F036        550        PRES ICMR        
+  377    0    0    1   24    0  100   220926/1200F036        550        PRES RNMX        
+  378    0    0    1   25    0  100   220926/1200F036        550        PRES SNMR        
+  379    0    0    1   32    0  100   220926/1200F036        550        PRES GRMR        
+  380    0    0   14  192    0  100   220926/1200F036        550        PRES OZMR        
+  381    0    0    3    5    0  100   220926/1200F036        600        PRES HGHT        
+  382    0    0    0    0    0  100   220926/1200F036        600        PRES TMPK        
+  383    0    0    1    1    0  100   220926/1200F036        600        PRES RELH        
+  384    0    0    6    1    0  100   220926/1200F036        600        PRES CLD         
+  385    0    0    1    0    0  100   220926/1200F036        600        PRES SPFH        
+  386    0    0    2    8    0  100   220926/1200F036        600        PRES OMEG        
+  387    0    0    2    9    0  100   220926/1200F036        600        PRES VVEL        
+  388    0    0    2    2    0  100   220926/1200F036        600        PRES UREL        
+  389    0    0    2    3    0  100   220926/1200F036        600        PRES VREL        
+  390    0    0    2   10    0  100   220926/1200F036        600        PRES AVOR        
+  391    0    0    1   22    0  100   220926/1200F036        600        PRES CWTR        
+  392    0    0    1   23    0  100   220926/1200F036        600        PRES ICMR        
+  393    0    0    1   24    0  100   220926/1200F036        600        PRES RNMX        
+  394    0    0    1   25    0  100   220926/1200F036        600        PRES SNMR        
+  395    0    0    1   32    0  100   220926/1200F036        600        PRES GRMR        
+  396    0    0   14  192    0  100   220926/1200F036        600        PRES OZMR        
+  397    0    0    3    5    0  100   220926/1200F036        650        PRES HGHT        
+  398    0    0    0    0    0  100   220926/1200F036        650        PRES TMPK        
+  399    0    0    1    1    0  100   220926/1200F036        650        PRES RELH        
+  400    0    0    6    1    0  100   220926/1200F036        650        PRES CLD         
+
+ MESG# GDT# DIS# CAT# ID#  PDT# VCD#    GEMPAK_TIME    LEVL1 LEVL2  VCRD PARM
+  401    0    0    1    0    0  100   220926/1200F036        650        PRES SPFH        
+  402    0    0    2    8    0  100   220926/1200F036        650        PRES OMEG        
+  403    0    0    2    9    0  100   220926/1200F036        650        PRES VVEL        
+  404    0    0    2    2    0  100   220926/1200F036        650        PRES UREL        
+  405    0    0    2    3    0  100   220926/1200F036        650        PRES VREL        
+  406    0    0    2   10    0  100   220926/1200F036        650        PRES AVOR        
+  407    0    0    1   22    0  100   220926/1200F036        650        PRES CWTR        
+  408    0    0    1   23    0  100   220926/1200F036        650        PRES ICMR        
+  409    0    0    1   24    0  100   220926/1200F036        650        PRES RNMX        
+  410    0    0    1   25    0  100   220926/1200F036        650        PRES SNMR        
+  411    0    0    1   32    0  100   220926/1200F036        650        PRES GRMR        
+  412    0    0   14  192    0  100   220926/1200F036        650        PRES OZMR        
+  413    0    0    3    5    0  100   220926/1200F036        700        PRES HGHT        
+  414    0    0    0    0    0  100   220926/1200F036        700        PRES TMPK        
+  415    0    0    1    1    0  100   220926/1200F036        700        PRES RELH        
+  416    0    0    6    1    0  100   220926/1200F036        700        PRES CLD         
+  417    0    0    1    0    0  100   220926/1200F036        700        PRES SPFH        
+  418    0    0    2    8    0  100   220926/1200F036        700        PRES OMEG        
+  419    0    0    2    9    0  100   220926/1200F036        700        PRES VVEL        
+  420    0    0    2    2    0  100   220926/1200F036        700        PRES UREL        
+  421    0    0    2    3    0  100   220926/1200F036        700        PRES VREL        
+  422    0    0    2   10    0  100   220926/1200F036        700        PRES AVOR        
+  423    0    0    1   22    0  100   220926/1200F036        700        PRES CWTR        
+  424    0    0    1   23    0  100   220926/1200F036        700        PRES ICMR        
+  425    0    0    1   24    0  100   220926/1200F036        700        PRES RNMX        
+  426    0    0    1   25    0  100   220926/1200F036        700        PRES SNMR        
+  427    0    0    1   32    0  100   220926/1200F036        700        PRES GRMR        
+  428    0    0   14  192    0  100   220926/1200F036        700        PRES OZMR        
+  429    0    0    3    5    0  100   220926/1200F036        750        PRES HGHT        
+  430    0    0    0    0    0  100   220926/1200F036        750        PRES TMPK        
+  431    0    0    1    1    0  100   220926/1200F036        750        PRES RELH        
+  432    0    0    6    1    0  100   220926/1200F036        750        PRES CLD         
+  433    0    0    1    0    0  100   220926/1200F036        750        PRES SPFH        
+  434    0    0    2    8    0  100   220926/1200F036        750        PRES OMEG        
+  435    0    0    2    9    0  100   220926/1200F036        750        PRES VVEL        
+  436    0    0    2    2    0  100   220926/1200F036        750        PRES UREL        
+  437    0    0    2    3    0  100   220926/1200F036        750        PRES VREL        
+  438    0    0    2   10    0  100   220926/1200F036        750        PRES AVOR        
+  439    0    0    1   22    0  100   220926/1200F036        750        PRES CWTR        
+  440    0    0    1   23    0  100   220926/1200F036        750        PRES ICMR        
+  441    0    0    1   24    0  100   220926/1200F036        750        PRES RNMX        
+  442    0    0    1   25    0  100   220926/1200F036        750        PRES SNMR        
+  443    0    0    1   32    0  100   220926/1200F036        750        PRES GRMR        
+  444    0    0   14  192    0  100   220926/1200F036        750        PRES OZMR        
+  445    0    0    3    5    0  100   220926/1200F036        800        PRES HGHT        
+  446    0    0    0    0    0  100   220926/1200F036        800        PRES TMPK        
+  447    0    0    1    1    0  100   220926/1200F036        800        PRES RELH        
+  448    0    0    6    1    0  100   220926/1200F036        800        PRES CLD         
+  449    0    0    1    0    0  100   220926/1200F036        800        PRES SPFH        
+  450    0    0    2    8    0  100   220926/1200F036        800        PRES OMEG        
+
+ MESG# GDT# DIS# CAT# ID#  PDT# VCD#    GEMPAK_TIME    LEVL1 LEVL2  VCRD PARM
+  451    0    0    2    9    0  100   220926/1200F036        800        PRES VVEL        
+  452    0    0    2    2    0  100   220926/1200F036        800        PRES UREL        
+  453    0    0    2    3    0  100   220926/1200F036        800        PRES VREL        
+  454    0    0    2   10    0  100   220926/1200F036        800        PRES AVOR        
+  455    0    0    1   22    0  100   220926/1200F036        800        PRES CWTR        
+  456    0    0    1   23    0  100   220926/1200F036        800        PRES ICMR        
+  457    0    0    1   24    0  100   220926/1200F036        800        PRES RNMX        
+  458    0    0    1   25    0  100   220926/1200F036        800        PRES SNMR        
+  459    0    0    1   32    0  100   220926/1200F036        800        PRES GRMR        
+  460    0    0   14  192    0  100   220926/1200F036        800        PRES OZMR        
+  461    0    0    3    5    0  100   220926/1200F036        850        PRES HGHT        
+  462    0    0    0    0    0  100   220926/1200F036        850        PRES TMPK        
+  463    0    0    1    1    0  100   220926/1200F036        850        PRES RELH        
+  464    0    0    6    1    0  100   220926/1200F036        850        PRES CLD         
+  465    0    0    1    0    0  100   220926/1200F036        850        PRES SPFH        
+  466    0    0    2    8    0  100   220926/1200F036        850        PRES OMEG        
+  467    0    0    2    9    0  100   220926/1200F036        850        PRES VVEL        
+  468    0    0    2    2    0  100   220926/1200F036        850        PRES UREL        
+  469    0    0    2    3    0  100   220926/1200F036        850        PRES VREL        
+  470    0    0    2   10    0  100   220926/1200F036        850        PRES AVOR        
+  471    0    0    1   22    0  100   220926/1200F036        850        PRES CWTR        
+  472    0    0    1   23    0  100   220926/1200F036        850        PRES ICMR        
+  473    0    0    1   24    0  100   220926/1200F036        850        PRES RNMX        
+  474    0    0    1   25    0  100   220926/1200F036        850        PRES SNMR        
+  475    0    0    1   32    0  100   220926/1200F036        850        PRES GRMR        
+  476    0    0   14  192    0  100   220926/1200F036        850        PRES OZMR        
+  477    0    0    3    5    0  100   220926/1200F036        900        PRES HGHT        
+  478    0    0    0    0    0  100   220926/1200F036        900        PRES TMPK        
+  479    0    0    1    1    0  100   220926/1200F036        900        PRES RELH        
+  480    0    0    6    1    0  100   220926/1200F036        900        PRES CLD         
+  481    0    0    1    0    0  100   220926/1200F036        900        PRES SPFH        
+  482    0    0    2    8    0  100   220926/1200F036        900        PRES OMEG        
+  483    0    0    2    9    0  100   220926/1200F036        900        PRES VVEL        
+  484    0    0    2    2    0  100   220926/1200F036        900        PRES UREL        
+  485    0    0    2    3    0  100   220926/1200F036        900        PRES VREL        
+  486    0    0    2   10    0  100   220926/1200F036        900        PRES AVOR        
+  487    0    0    1   22    0  100   220926/1200F036        900        PRES CWTR        
+  488    0    0    1   23    0  100   220926/1200F036        900        PRES ICMR        
+  489    0    0    1   24    0  100   220926/1200F036        900        PRES RNMX        
+  490    0    0    1   25    0  100   220926/1200F036        900        PRES SNMR        
+  491    0    0    1   32    0  100   220926/1200F036        900        PRES GRMR        
+  492    0    0   14  192    0  100   220926/1200F036        900        PRES OZMR        
+  493    0    0    3    5    0  100   220926/1200F036        925        PRES HGHT        
+  494    0    0    0    0    0  100   220926/1200F036        925        PRES TMPK        
+  495    0    0    1    1    0  100   220926/1200F036        925        PRES RELH        
+  496    0    0    6    1    0  100   220926/1200F036        925        PRES CLD         
+  497    0    0    1    0    0  100   220926/1200F036        925        PRES SPFH        
+  498    0    0    2    8    0  100   220926/1200F036        925        PRES OMEG        
+  499    0    0    2    9    0  100   220926/1200F036        925        PRES VVEL        
+  500    0    0    2    2    0  100   220926/1200F036        925        PRES UREL        
+
+ MESG# GDT# DIS# CAT# ID#  PDT# VCD#    GEMPAK_TIME    LEVL1 LEVL2  VCRD PARM
+  501    0    0    2    3    0  100   220926/1200F036        925        PRES VREL        
+  502    0    0    2   10    0  100   220926/1200F036        925        PRES AVOR        
+  503    0    0    1   22    0  100   220926/1200F036        925        PRES CWTR        
+  504    0    0    1   23    0  100   220926/1200F036        925        PRES ICMR        
+  505    0    0    1   24    0  100   220926/1200F036        925        PRES RNMX        
+  506    0    0    1   25    0  100   220926/1200F036        925        PRES SNMR        
+  507    0    0    1   32    0  100   220926/1200F036        925        PRES GRMR        
+  508    0    0   14  192    0  100   220926/1200F036        925        PRES OZMR        
+  509    0    0    3    5    0  100   220926/1200F036        950        PRES HGHT        
+  510    0    0    0    0    0  100   220926/1200F036        950        PRES TMPK        
+  511    0    0    1    1    0  100   220926/1200F036        950        PRES RELH        
+  512    0    0    6    1    0  100   220926/1200F036        950        PRES CLD         
+  513    0    0    1    0    0  100   220926/1200F036        950        PRES SPFH        
+  514    0    0    2    8    0  100   220926/1200F036        950        PRES OMEG        
+  515    0    0    2    9    0  100   220926/1200F036        950        PRES VVEL        
+  516    0    0    2    2    0  100   220926/1200F036        950        PRES UREL        
+  517    0    0    2    ##### Job 15077038.cbqs01 - PBS Job Script:
+
+#!/bin/ksh
+#
+#PBS -N gfs_nagrib4
+#PBS -N gfs_nagrib4
+#PBS -o /lfs/h2/emc/vpppg/save/geoffrey.manikin/meg/gfs_nagrib.out4
+#PBS -o /lfs/h2/emc/vpppg/save/geoffrey.manikin/meg/gfs_nagrib.out4
+#PBS -e /lfs/h2/emc/vpppg/save/geoffrey.manikin/meg/gfs_nagrib.err4
+#PBS -e /lfs/h2/emc/vpppg/save/geoffrey.manikin/meg/gfs_nagrib.err4
+#PBS -l select=1:ncpus=10:mpiprocs=1:mem=50GB
+#PBS -l select=1:ncpus=10:mpiprocs=1:mem=50GB
+#PBS -q dev
+#PBS -q dev
+#PBS -l walltime=00:30
+#PBS -l walltime=00:30
+#PBS -A VERF-DEV
+#PBS -A VERF-DEV
+
+set -x
+
+ymd=20220926
+version=v16.2
+
+DAPATH=/lfs/h1/ops/prod/com/gfs/${version}/gfs.${ymd}
+#DAPATH=/lfs/h2/emc/ptmp/geoffrey.manikin/gfs/gfs.${ymd}
+WGRIB=/apps/ops/prod/libs/intel/19.1.3.304/grib_util/1.2.2/bin/wgrib
+
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib4
+rm /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib4/*
+cd /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib4/
+
+export DAPATH 
+
+cycles="00 06 12 18"
+cycles="00 12"
+cycles="12"
+fhrs="06 12 18 24 30 36 42 48 54 60 66 72 78 84 90 96 102 108 114 120 126 132"
+#fhrs="06 12 18 24 30 36 42 48 54 60"
+#fhrs="06 12 18 24 30 36 42 48 54 60 66 72 78 84 90 96 102 108 114 120 126 132 138 144 150 156 162 168 174 180 186 192"
+#fhrs="06 12 18 24 30 36 42 48 54 60"
+#fhrs="30 36 42 48 54 60 66 72 78 84 90 96"
+#fhrs="06 12 18 24 30 36 42 48 54 60 66 72 78 84"
+fhrs="06 12 18 24 30 36 42 48 54 60 66 72 78 84 90 96 102 108 114 120 126 132 138 144 150 156 162 168 174 180 186 192 198 204 210 216 222 228 234 240"
+fhrs="36 42 48 54 60 66 72 78 84 90 96 102 108"
+
+for cyc in $cycles
+do
+for fhr in $fhrs
+do
+
+typeset -Z3 fhr
+cp ${DAPATH}/${cyc}/atmos/gfs.t${cyc}z.pgrb2.0p25.f${fhr} . 
+
+nagrib2 << EOF
+GBFILE  = gfs.t${cyc}z.pgrb2.0p25.f${fhr} 
+INDXFL  =
+GDOUTF  = dummygfs${fhr}.grd 
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+exit
+EOF
+
+  gddelt << EOF
+GDFILE = dummygfs${fhr}.grd
+GVCORD = pres
+GLEV   = all
+GFUN   = all
+r
+
+GVCORD  = hght
+r
+
+GVCORD  = hybl
+r
+
+GVCORD  = sgma
+r
+
+GVCORD  = trop
+r
+
+GVCORD  = dpth
+r
+
+GVCORD  = PBLY
+r
+
+GVCORD  = POTV
+r
+
+GVCORD  = FRZL
+r
+
+GVCORD  = HTFL
+r
+
+GVCORD  = MCTL
+r
+
+GVCORD  = LCTL
+r
+
+GVCORD  = HCTL
+r
+
+GVCORD  = MCBL
+r
+
+GVCORD  = MCLY
+r
+
+GVCORD  = PDLY
+r
+
+GVCORD  = ATMO
+r
+
+GVCORD   = MWSL
+r
+
+GVCORD   = TOPA
+r
+
+GVCORD   = CEIL
+r
+
+exit
+EOF
+
+done
+#mv dummygfs.grd /meso/save/geoffrey.manikin/meg/gfspcp_${ymd}${cyc}
+mv dummygfs${fhr}.grd /lfs/h2/emc/vpppg/noscrub/geoffrey.manikin/ian/gfspcp_${ymd}${cyc}
+done
+gpend
+exit
+
+##### End of job script
+------------------------------------------------------------------
+Running prologue on parent mom node: nid001433...
+Job 15077752.cbqs01 nodelist: nid001433
+ GBFILE    GRIB data file name                
+ GDOUTF    Output grid file                   
+ PROJ      Map projection/angles/margins|dr  MER
+ GRDAREA   Area covered by grid               
+ KXKY      Number of grid points in x;y      10;10
+ MAXGRD    Maximum number of grids           200
+ CPYFIL    Grid file whose navigation is to   
+ GAREA     Graphics area                     WV
+ OUTPUT    Output device/filename            T
+ G2TBLS    Input GRIB2 decoding tables        
+ G2DIAG    GRIB2 diagnostic elements          
+ OVERWR    Overwr flag                       NO
+ PDSEXT    Y or N, add PDS extension if fou  NO
+ Parameters requested: GBFILE,GDOUTF,PROJ,GRDAREA,KXKY,MAXGRD,CPYFIL,GAREA,
+ OUTPUT,G2TBLS,G2DIAG,OVERWR,PDSEXT.
+ GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> GEMPAK-NAGRIB2> [GB 1]  No GEMPAK parameter name defined for this grid.
+ [GB -34]  Could not convert GRIB2 message to GEMPAK grid.
+ [GB 1]  No GEMPAK parameter name defined for this grid.
+ [GB -34]  Could not convert GRIB2 message to GEMPAK grid.
+ [GB 1]  No GEMPAK parameter name defined for this grid.
+ [GB -34]  Could not convert GRIB2 message to GEMPAK grid.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ [GD -10]  Grid already exists.
+ Opening WMO Originating Center Table wmocenter.tbl...
+ Opening WMO GRIB2 Parameter Table g2varswmo2.tbl...
+ Opening WMO GRIB2 Vertical Coordinate Table g2vcrdwmo2.tbl...
+Creating the GEMPAK grid file...
+GEMPAK grid file is ready...
+
+ MESG# GDT# DIS# CAT# ID#  PDT# VCD#    GEMPAK_TIME    LEVL1 LEVL2  VCRD PARM
+    1    0    0    3    1    0  101   220926/1200F036          0        NONE PMSL        
+    2    0    0    1   22    0  105   220926/1200F036          1        HYBL CWTR        
+    3    0    0    1   23    0  105   220926/1200F036          1        HYBL ICMR        
+    4    0    0    1   24    0  105   220926/1200F036          1        HYBL RNMX        
+    5    0    0    1   25    0  105   220926/1200F036          1        HYBL SNMR        
+    6    0    0    1   32    0  105   220926/1200F036          1        HYBL GRMR        
+ Opening Local GRIB2 Parameter Table g2varsncep1.tbl...
+   10    0    0   19    0    0    1   220926/1200F036          0        NONE VSBY        
+ Opening Local GRIB2 Vertical Coordinate Table g2vcrdncep1.tbl...
+   11    0    0    2    2    0  220   220926/1200F036          0        PBLY UREL        
+   12    0    0    2    3    0  220   220926/1200F036          0        PBLY VREL        
+   13    0    0    2  224    0  220   220926/1200F036          0        PBLY VRATE       
+   14    0    0    2   22    0    1   220926/1200F036          0        NONE GUST        
+   15    0    0    3    5    0  100   220926/1200F036          0        PRES HGHT        
+   16    0    0    0    0    0  100   220926/1200F036          0        PRES TMPK        
+   17    0    0    1    1    0  100   220926/1200F036          0        PRES RELH        
+   18    0    0    1    0    0  100   220926/1200F036          0        PRES SPFH        
+   19    0    0    2    8    0  100   220926/1200F036          0        PRES OMEG        
+   20    0    0    2    9    0  100   220926/1200F036          0        PRES VVEL        
+   21    0    0    2    2    0  100   220926/1200F036          0        PRES UREL        
+   22    0    0    2    3    0  100   220926/1200F036          0        PRES VREL        
+   23    0    0    2   10    0  100   220926/1200F036          0        PRES AVOR        
+   24    0    0   14  192    0  100   220926/1200F036          0        PRES OZMR        
+   85    0    0    3    5    0  100   220926/1200F036          1        PRES HGHT        
+   86    0    0    0    0    0  100   220926/1200F036          1        PRES TMPK        
+   87    0    0    1    1    0  100   220926/1200F036          1        PRES RELH        
+   88    0    0    1    0    0  100   220926/1200F036          1        PRES SPFH        
+   89    0    0    2    8    0  100   220926/1200F036          1        PRES OMEG        
+   90    0    0    2    9    0  100   220926/1200F036          1        PRES VVEL        
+   91    0    0    2    2    0  100   220926/1200F036          1        PRES UREL        
+   92    0    0    2    3    0  100   220926/1200F036          1        PRES VREL        
+   93    0    0    2   10    0  100   220926/1200F036          1        PRES AVOR        
+   94    0    0   14  192    0  100   220926/1200F036          1        PRES OZMR        
+  105    0    0    3    5    0  100   220926/1200F036          2        PRES HGHT        
+  106    0    0    0    0    0  100   220926/1200F036          2        PRES TMPK        
+  107    0    0    1    1    0  100   220926/1200F036          2        PRES RELH        
+  108    0    0    1    0    0  100   220926/1200F036          2        PRES SPFH        
+  109    0    0    2    8    0  100   220926/1200F036          2        PRES OMEG        
+  110    0    0    2    9    0  100   220926/1200F036          2        PRES VVEL        
+  111    0    0    2    2    0  100   220926/1200F036          2        PRES UREL        
+  112    0    0    2    3    0  100   220926/1200F036          2        PRES VREL        
+  113    0    0    2   10    0  100   220926/1200F036          2        PRES AVOR        
+  114    0    0   14  192    0  100   220926/1200F036          2        PRES OZMR        
+  115    0    0    3    5    0  100   220926/1200F036          3        PRES HGHT        
+  116    0    0    0    0    0  100   220926/1200F036          3        PRES TMPK        
+  117    0    0    1    1    0  100   220926/1200F036          3        PRES RELH        
+  118    0    0    1    0    0  100   220926/1200F036          3        PRES SPFH        
+  119    0    0    2    8    0  100   220926/1200F036          3        PRES OMEG        
+  120    0    0    2    9    0  100   220926/1200F036          3        PRES VVEL        
+  121    0    0    2    2    0  100   220926/1200F036          3        PRES UREL        
+  122    0    0    2    3    0  100   220926/1200F036          3        PRES VREL        
+  123    0    0    2   10    0  100   220926/1200F036          3        PRES AVOR        
+  124    0    0   14  192    0  100   220926/1200F036          3        PRES OZMR        
+  125    0    0    3    5    0  100   220926/1200F036          5        PRES HGHT        
+  126    0    0    0    0    0  100   220926/1200F036          5        PRES TMPK        
+  127    0    0    1    1    0  100   220926/1200F036          5        PRES RELH        
+  128    0    0    1    0    0  100   220926/1200F036          5        PRES SPFH        
+  129    0    0    2    8    0  100   220926/1200F036          5        PRES OMEG        
+  130    0    0    2    9    0  100   220926/1200F036          5        PRES VVEL        
+  131    0    0    2    2    0  100   220926/1200F036          5        PRES UREL        
+  132    0    0    2    3    0  100   220926/1200F036          5        PRES VREL        
+  133    0    0    2   10    0  100   220926/1200F036          5        PRES AVOR        
+  134    0    0   14  192    0  100   220926/1200F036          5        PRES OZMR        
+  135    0    0    3    5    0  100   220926/1200F036          7        PRES HGHT        
+  136    0    0    0    0    0  100   220926/1200F036          7        PRES TMPK        
+  137    0    0    1    1    0  100   220926/1200F036          7        PRES RELH        
+  138    0    0    1    0    0  100   220926/1200F036          7        PRES SPFH        
+  139    0    0    2    8    0  100   220926/1200F036          7        PRES OMEG        
+  140    0    0    2    9    0  100   220926/1200F036          7        PRES VVEL        
+  141    0    0    2    2    0  100   220926/1200F036          7        PRES UREL        
+  142    0    0    2    3    0  100   220926/1200F036          7        PRES VREL        
+  143    0    0    2   10    0  100   220926/1200F036          7        PRES AVOR        
+  144    0    0   14  192    0  100   220926/1200F036          7        PRES OZMR        
+  145    0    0    3    5    0  100   220926/1200F036         10        PRES HGHT        
+  146    0    0    0    0    0  100   220926/1200F036         10        PRES TMPK        
+  147    0    0    1    1    0  100   220926/1200F036         10        PRES RELH        
+  148    0    0    1    0    0  100   220926/1200F036         10        PRES SPFH        
+  149    0    0    2    8    0  100   220926/1200F036         10        PRES OMEG        
+  150    0    0    2    9    0  100   220926/1200F036         10        PRES VVEL        
+
+ MESG# GDT# DIS# CAT# ID#  PDT# VCD#    GEMPAK_TIME    LEVL1 LEVL2  VCRD PARM
+  151    0    0    2    2    0  100   220926/1200F036         10        PRES UREL        
+  152    0    0    2    3    0  100   220926/1200F036         10        PRES VREL        
+  153    0    0    2   10    0  100   220926/1200F036         10        PRES AVOR        
+  154    0    0   14  192    0  100   220926/1200F036         10        PRES OZMR        
+  155    0    0    3    5    0  100   220926/1200F036         15        PRES HGHT        
+  156    0    0    0    0    0  100   220926/1200F036         15        PRES TMPK        
+  157    0    0    1    1    0  100   220926/1200F036         15        PRES RELH        
+  158    0    0    1    0    0  100   220926/1200F036         15        PRES SPFH        
+  159    0    0    2    8    ##### Job 15077752.cbqs01 - PBS Job Script:
+
+#!/bin/ksh
+#
+#PBS -N gfs_nagrib4
+#PBS -N gfs_nagrib4
+#PBS -o /lfs/h2/emc/vpppg/save/geoffrey.manikin/meg/gfs_nagrib.out4
+#PBS -o /lfs/h2/emc/vpppg/save/geoffrey.manikin/meg/gfs_nagrib.out4
+#PBS -e /lfs/h2/emc/vpppg/save/geoffrey.manikin/meg/gfs_nagrib.err4
+#PBS -e /lfs/h2/emc/vpppg/save/geoffrey.manikin/meg/gfs_nagrib.err4
+#PBS -l select=1:ncpus=10:mpiprocs=1:mem=50GB
+#PBS -l select=1:ncpus=10:mpiprocs=1:mem=50GB
+#PBS -q dev
+#PBS -q dev
+#PBS -l walltime=00:30
+#PBS -l walltime=00:30
+#PBS -A VERF-DEV
+#PBS -A VERF-DEV
+
+set -x
+
+ymd=20220926
+version=v16.2
+
+DAPATH=/lfs/h1/ops/prod/com/gfs/${version}/gfs.${ymd}
+#DAPATH=/lfs/h2/emc/ptmp/geoffrey.manikin/gfs/gfs.${ymd}
+WGRIB=/apps/ops/prod/libs/intel/19.1.3.304/grib_util/1.2.2/bin/wgrib
+
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib4
+rm /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib4/*
+cd /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib4/
+
+export DAPATH 
+
+cycles="00 06 12 18"
+cycles="00 12"
+cycles="12"
+fhrs="06 12 18 24 30 36 42 48 54 60 66 72 78 84 90 96 102 108 114 120 126 132"
+#fhrs="06 12 18 24 30 36 42 48 54 60"
+#fhrs="06 12 18 24 30 36 42 48 54 60 66 72 78 84 90 96 102 108 114 120 126 132 138 144 150 156 162 168 174 180 186 192"
+#fhrs="06 12 18 24 30 36 42 48 54 60"
+#fhrs="30 36 42 48 54 60 66 72 78 84 90 96"
+#fhrs="06 12 18 24 30 36 42 48 54 60 66 72 78 84"
+fhrs="06 12 18 24 30 36 42 48 54 60 66 72 78 84 90 96 102 108 114 120 126 132 138 144 150 156 162 168 174 180 186 192 198 204 210 216 222 228 234 240"
+fhrs="36 42 48 54 60 66 72 78 84 90 96 102 108"
+
+for cyc in $cycles
+do
+for fhr in $fhrs
+do
+
+typeset -Z3 fhr
+cp ${DAPATH}/${cyc}/atmos/gfs.t${cyc}z.pgrb2.0p25.f${fhr} . 
+
+nagrib2 << EOF
+GBFILE  = gfs.t${cyc}z.pgrb2.0p25.f${fhr} 
+INDXFL  =
+GDOUTF  = dummygfs${fhr}.grd 
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+exit
+EOF
+
+  gddelt << EOF
+GDFILE = dummygfs${fhr}.grd
+GVCORD = pres
+GLEV   = all
+GFUN   = all
+r
+
+GVCORD  = hght
+r
+
+GVCORD  = hybl
+r
+
+GVCORD  = sgma
+r
+
+GVCORD  = trop
+r
+
+GVCORD  = dpth
+r
+
+GVCORD  = PBLY
+r
+
+GVCORD  = POTV
+r
+
+GVCORD  = FRZL
+r
+
+GVCORD  = HTFL
+r
+
+GVCORD  = MCTL
+r
+
+GVCORD  = LCTL
+r
+
+GVCORD  = HCTL
+r
+
+GVCORD  = MCBL
+r
+
+GVCORD  = MCLY
+r
+
+GVCORD  = PDLY
+r
+
+GVCORD  = ATMO
+r
+
+GVCORD   = MWSL
+r
+
+GVCORD   = TOPA
+r
+
+GVCORD   = CEIL
+r
+
+exit
+EOF
+
+done
+#mv dummygfs.grd /meso/save/geoffrey.manikin/meg/gfspcp_${ymd}${cyc}
+mv dummygfs${fhr}.grd /lfs/h2/emc/vpppg/noscrub/geoffrey.manikin/ian/gfspcp_${ymd}${cyc}
+done
+gpend
+exit
+
+##### End of job script
+------------------------------------------------------------------

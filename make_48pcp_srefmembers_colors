@@ -1,0 +1,135 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmp/wx20mg/meg
+mkdir /stmp/wx20mg/meg/48pcpsrefmem
+rm /stmp/wx20mg/meg/48pcpsrefmem/*
+cd /stmp/wx20mg/meg/48pcpsrefmem
+cp /meso/save/wx20mg/casework/coltbl.xwp .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`echo $ymdh | cut -c1-8`
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+
+ymdh=2013060609
+ymd=`echo $ymdh | cut -c1-8`
+dayoweek=Thu
+
+hours="51"
+models="em nmm nmb"
+members="ctl p1 p2 p3 n1 n2 n3"
+
+for fhr in $hours; do
+for mdl in $models; do
+ 
+fmdl1=/com/nawips/prod/sref.${ymd}/sref212_${ymdh}_${mdl}_ctl
+fmdl2=/com/nawips/prod/sref.${ymd}/sref212_${ymdh}_${mdl}_p1
+fmdl3=/com/nawips/prod/sref.${ymd}/sref212_${ymdh}_${mdl}_p2
+fmdl4=/com/nawips/prod/sref.${ymd}/sref212_${ymdh}_${mdl}_p3
+fmdl5=/com/nawips/prod/sref.${ymd}/sref212_${ymdh}_${mdl}_n1
+fmdl6=/com/nawips/prod/sref.${ymd}/sref212_${ymdh}_${mdl}_n2
+fmdl7=/com/nawips/prod/sref.${ymd}/sref212_${ymdh}_${mdl}_n3
+
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f${fhr} 
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = p48m 
+ CINT     = 0.25 
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1//  $mdl CTL 48-HR PCP  $ymd ${cyc}z  F${fhr}
+ DEVICE   = GIF|sref${mdl}48pcp2_${ymdh}f${fhr}.gif | 800;850
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-75;25;/1;1;1;1
+ GAREA    = 33.;-86.;49.;-62.
+ CLEAR    = y
+ PANEL    = m1 
+ TEXT     = 0.7/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 0
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 1;2;5;10;15;20;25;35;50;75;100;125;150;175 
+ FLINE    = 0;23;22;21;5;19;10;17;16;15;14;29;28;24;25
+ TYPE     = f/c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ CLEAR    = n
+ GDFILE   = $fmdl2
+ TITLE    = 1// $mdl P1 48-HR PCP  $ymd ${cyc}z  F${fhr} 
+ PANEL    = m2 
+r
+
+ GDFILE   = $fmdl3
+ TITLE    = 1// $mdl P2 48-HR PCP  $ymd ${cyc}z  F${fhr}  
+ PANEL    = m3 
+r
+
+ GDFILE   = $fmdl4
+ TITLE    = 1// $mdl P3 48-HR PCP  $ymd ${cyc}z  F${fhr}  
+ PANEL    = m4
+r
+
+ GDFILE   = $fmdl5
+ TITLE    = 1// $mdl N1 48-HR PCP  $ymd ${cyc}z  F${fhr}  
+ PANEL    = m5
+r
+
+ GDFILE   = $fmdl6
+ TITLE    = 1// $mdl N2 48-HR PCP  $ymd ${cyc}z  F${fhr}  
+ PANEL    = m6
+ CLRBAR   = 0
+r
+
+ GDFILE   = $fmdl7
+ TITLE    = 1// $mdl N3 48-HR PCP  $ymd ${cyc}z  F${fhr}  
+ PANEL    = m7
+ CLRBAR   = 1/H/UL/.99;.6/1.4;.06/2
+r
+
+ex
+EOF
+done
+done
+gpend
+
+. /u/wx20mg/.Utils
+export w1=wd20mg
+export w2=$rzdm
+
+ftp -n -v << EOF > /meso/save/wx20mg/casework/rzftp2.out
+open emcrzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/today
+mput *gif
+bye
+EOF
+
+ftp -n -v << EOF > /meso/save/wx20mg/casework/rzftp.out
+open emcrzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/${dayoweek}
+mput *gif
+bye
+EOF
+
+exit

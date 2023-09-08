@@ -1,0 +1,63 @@
+#/bin/ksh
+
+set -x
+
+cyc=$1
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+#ymdh=2012110518
+#ymd=20121105
+
+#ymdh=2012110912
+#ymd=20121109
+
+DAPATH=/com/nam/prod/nam.${ymd}
+#DAPATH=/ptmp/wx20mg/hold/
+
+export DAPATH
+. /nwprod/gempak/.gempak
+
+fhrs="03 06 09 12 15 18 21 24 27 30 33 36 39 42 45 48 51 54 57 60"
+
+for fhr in $fhrs
+do
+
+wgrib -i -d 11 ${DAPATH}/nam.t${cyc}z.conusnest.hiresf${fhr}.tm00 -grib -o new2t.fil
+wgrib -i -d 13 ${DAPATH}/nam.t${cyc}z.conusnest.hiresf${fhr}.tm00 -grib -o new2d.fil
+wgrib -i -d 14 ${DAPATH}/nam.t${cyc}z.conusnest.hiresf${fhr}.tm00 -grib -o new10u.fil
+wgrib -i -d 15 ${DAPATH}/nam.t${cyc}z.conusnest.hiresf${fhr}.tm00 -grib -o new10v.fil
+
+ nagrib << EOF
+GBFILE  = new2t.fil 
+INDXFL  =
+GDOUTF  = dummynest.grd 
+PROJ    =
+GRDAREA =
+KXKY    = 
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+GBFILE  = new2d.fil
+r
+
+GBFILE  = new10u.fil
+r
+
+GBFILE  = new10v.fil
+r
+exit
+EOF
+
+rm new*fil
+done
+mv dummynest.grd namnest_${ymdh}
+exit
+

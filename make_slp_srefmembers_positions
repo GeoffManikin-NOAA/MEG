@@ -1,0 +1,179 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/slpsrefmem
+rm /stmpp1/Geoffrey.Manikin/meg/slpsrefmem/*
+cd /stmpp1/Geoffrey.Manikin/meg/slpsrefmem
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`echo $ymdh | cut -c1-8`
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+
+ymdh=2013032421
+ymd=`echo $ymdh | cut -c1-8`
+dayoweek=Sun
+
+hours="21"
+mdl1="em"
+mdl2="nmm"
+mdl3="nmb"
+
+for fhr in $hours; do
+
+verymdh="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} $fhr -1`"
+verymd=`echo $verymdh | cut -c1-8`
+ 
+fmdl1=/com/nawips/prod/sref.${ymd}/sref212_${ymdh}_${mdl1}_ctl
+fmdl2=/com/nawips/prod/sref.${ymd}/sref212_${ymdh}_${mdl1}_p1
+fmdl3=/com/nawips/prod/sref.${ymd}/sref212_${ymdh}_${mdl1}_p2
+fmdl4=/com/nawips/prod/sref.${ymd}/sref212_${ymdh}_${mdl1}_p3
+fmdl5=/com/nawips/prod/sref.${ymd}/sref212_${ymdh}_${mdl1}_n1
+fmdl6=/com/nawips/prod/sref.${ymd}/sref212_${ymdh}_${mdl1}_n2
+fmdl7=/com/nawips/prod/sref.${ymd}/sref212_${ymdh}_${mdl1}_n3
+fmdl8=/com/nawips/prod/sref.${ymd}/sref212_${ymdh}_${mdl2}_ctl
+fmdl9=/com/nawips/prod/sref.${ymd}/sref212_${ymdh}_${mdl2}_p1
+fmdl10=/com/nawips/prod/sref.${ymd}/sref212_${ymdh}_${mdl2}_p2
+fmdl11=/com/nawips/prod/sref.${ymd}/sref212_${ymdh}_${mdl2}_p3
+fmdl12=/com/nawips/prod/sref.${ymd}/sref212_${ymdh}_${mdl2}_n1
+fmdl13=/com/nawips/prod/sref.${ymd}/sref212_${ymdh}_${mdl2}_n2
+fmdl14=/com/nawips/prod/sref.${ymd}/sref212_${ymdh}_${mdl2}_n3
+fmdl15=/com/nawips/prod/sref.${ymd}/sref212_${ymdh}_${mdl3}_ctl
+fmdl16=/com/nawips/prod/sref.${ymd}/sref212_${ymdh}_${mdl3}_p1
+fmdl17=/com/nawips/prod/sref.${ymd}/sref212_${ymdh}_${mdl3}_p2
+fmdl18=/com/nawips/prod/sref.${ymd}/sref212_${ymdh}_${mdl3}_p3
+fmdl19=/com/nawips/prod/sref.${ymd}/sref212_${ymdh}_${mdl3}_n1
+fmdl20=/com/nawips/prod/sref.${ymd}/sref212_${ymdh}_${mdl3}_n2
+fmdl21=/com/nawips/prod/sref.${ymd}/sref212_${ymdh}_${mdl3}_n3
+fmdl22=/com/nawips/prod/gdas.${verymd}/gdas_${verymdh}f000
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f${fhr} 
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = pmsl 
+ CINT     = 4 
+ LINE     = 0 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/  SREF SLP  $ymd ${cyc}z  F${fhr}    VER - RED
+ DEVICE   = GIF|sref${mdl}slppos_${ymdh}f${fhr}.gif | 800;850
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-75;25;/1;1;1;1
+ GAREA    = 34.;-79.;42.;-65.
+ CLEAR    = y
+ PANEL    = 0 
+ TEXT     = 1/11/1/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = ;23/;x/1020-1060;920-1016/5/1;1/yes
+ HLSYM    = 2;0/3/;21/4;2/HW
+ CLRBAR   = 0
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 0 
+ FLINE    = 0
+ TYPE     = c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl22
+ GDATTIM  = f00
+ CLEAR    = n
+ TITLE    = 1/1/VALID $verymdh   GREEN-EM   BLUE-NMM   ORG-NMB
+ LINE     = 0
+ HILO     = ;2/;X/;920-1016/5/1;1/yes
+ HLSYM    = 2;0/3/;1/4;2/HW
+r
+
+ex
+EOF
+
+   gdplot2 << EOF
+ GDFILE   = $fmdl2
+ GDATTIM  = f${fhr}
+ TITLE    = 0 
+ LINE     = 0 
+ HILO     = ;23/;x/1020-1060;920-1016/5/1;1/yes
+ HLSYM    = 2;0/3/21;21/4;2/HW
+r
+
+ GDFILE   = $fmdl2
+r
+
+ GDFILE   = $fmdl3
+r
+
+ GDFILE   = $fmdl4
+r
+
+ GDFILE   = $fmdl5
+r
+
+ GDFILE   = $fmdl6
+r
+
+ GDFILE   = $fmdl7
+r
+
+ GDFILE   = $fmdl8
+ HILO     = ;25/;x/1020-1060;920-1016/5/1;1/yes
+r
+
+ GDFILE   = $fmdl9
+r
+
+ GDFILE   = $fmdl10
+r
+
+ GDFILE   = $fmdl11
+r
+
+ GDFILE   = $fmdl12
+r
+
+ GDFILE   = $fmdl13
+r
+
+ GDFILE   = $fmdl14
+r
+
+ GDFILE   = $fmdl15
+ HILO     = ;17/;x/1020-1060;920-1016/5/1;1/yes
+r
+
+ GDFILE   = $fmdl16
+r
+
+ GDFILE   = $fmdl17
+r
+
+ GDFILE   = $fmdl18
+r
+
+ GDFILE   = $fmdl19
+r
+
+ GDFILE   = $fmdl20
+r
+
+ GDFILE   = $fmdl21
+r
+ 
+ex
+EOF
+done
+gpend
+
+exit

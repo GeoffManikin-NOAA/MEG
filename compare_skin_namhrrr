@@ -1,0 +1,59 @@
+#!/bin/sh
+echo 'into'
+
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/meg
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/meg/skin
+rm /lfs/h2/emc/stmp/geoffrey.manikin/meg/skin/*
+cd /lfs/h2/emc/stmp/geoffrey.manikin/meg/skin
+cp /lfs/h2/emc/vpppg/save/geoffrey.manikin/meg/coltbl.xwp .
+
+version=v4.2
+version2=v4.1
+ymdh=2023020912
+ymd=`echo $ymdh | cut -c1-8`
+
+times="00"
+for fhr in $times; do
+
+fmdl1=/lfs/h1/ops/prod/com/nam/${version}/nam.${ymd}/gempak/nam32_${ymdh}f0${fhr}
+fmdl2=/lfs/h1/ops/prod/com/hrrr/${version2}/hrrr.${ymd}/conus/gempak/hrrr_${ymdh}f0${fhr}00
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 2 
+ GVCORD   = hght 
+ GDPFUN   = tmpf 
+ WIND     =
+ CINT     = 0 
+ LINE     = 0 
+ DEVICE   = GIF|namhrrrskin_${ymdh}f${fhr}.gif | 800;850
+ PROJ     = lcc/25.;-80.;25./2;2;1;1
+ GAREA    = 40.;-84;44.5;-76
+ TITLE    = 1//~  NAM  SKIN TEMP 
+ CLEAR    = y
+ SCALE    = 0
+ PANEL    = t 
+ HILO     = 0
+ HLSYM    = 0 
+ CLRBAR   = 1/V/UL/.04;0.4/0.8;.03/2
+ TEXT     = 0.8/11/2
+ FINT     = 17;20;23;26;29;32;35;38;41;44;47;50;53;56;59;62 
+ FLINE    = 0;12;30;29;28;4;25;26;27;24;23;22;21;5;20;10;17;16;2;15;14;32 
+ TYPE     = f 
+r
+
+ GDFILE   = $fmdl2
+ TITLE    = 1//~  HRRR  SKIN TEMP 
+ PANEL    = b 
+ CLEAR    = n
+ CLRBAR   = 0
+r
+
+ex
+EOF
+done
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test/.
+exit

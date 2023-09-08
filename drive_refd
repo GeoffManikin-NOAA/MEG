@@ -1,0 +1,11 @@
+#!/bin/ksh
+
+set -x
+
+cyc=$1
+cd /meso/save/Geoffrey.Manikin/meg/
+./run_nagrib_hireswpcp ${cyc}
+./run_nagrib_nsslwrf ${cyc}
+bsub < run_gempak_poe_refd 
+./compare_24pcp_hires ${cyc}
+exit

@@ -1,0 +1,61 @@
+#!/bin/ksh
+set -x
+
+cyc=$1
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymdh=2014010521
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+DAPATH=/meso/noscrub/wx20er/com/nam/test/nam.${ymd}
+DAPATH=/ptmp/Jun.Du/com/sref/prod/sref.${ymd}/${cyc}/pgrb
+#DAPATH=/ptmp/Geoffrey.Manikin/hold/pgrb
+export DAPATH 
+. /nwprod/gempak/.gempak
+
+mkdir /stmp/Geoffrey.Manikin/sref
+rm /stmp/Geoffrey.Manikin/sref/*
+cd /stmp/Geoffrey.Manikin/sref
+
+hours="03 06 09 12 15 18 21 24 27 30 33 36 39 42 45 48 51 54 57 60 63 66 69 72 75 78 81 84 87" 
+models="nmm em nmb"
+models="nmb"
+perts="ctl p1 n1 p2 n2 p3 n3"
+for mdl in $models
+do
+for pert in $perts
+do
+for fhr in $hours
+do
+
+cp ${DAPATH}/sref_${mdl}.t${cyc}z.pgrb212.${pert}.f${fhr} fmdl
+fhr3=`expr $fhr - 3`
+fhra=`expr $fhr3 + 3`
+wgrib fmdl | grep kpds5=61:kpds6=1:kpds7=0:TR=4:P1=${fhr3}:P2=${fhra} | wgrib fmdl -i -grib -o sref212.grd 
+rm fmdl
+cat sref212.grd >> ${mdl}_${pert}.grb
+done
+
+   nagrib << EOF
+GBFILE  = ${mdl}_${pert}.grb 
+INDXFL  =
+GDOUTF  = sref212_${ymdh}_${mdl}_${pert} 
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+exit
+EOF
+
+done
+done
+mv sref212* /ptmp/Geoffrey.Manikin/hold/.
+exit

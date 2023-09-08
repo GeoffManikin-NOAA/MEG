@@ -1,0 +1,86 @@
+#!/bin/sh
+echo 'into'
+
+ymdh=2021051806
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+stnm1=722146
+stnm2=722050
+
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/meg
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/meg/snd
+rm /gpfs/dell1/stmp/Geoffrey.Manikin/meg/snd/*
+cd /gpfs/dell1/stmp/Geoffrey.Manikin/meg/snd
+cp /gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/coltbl.xwp .
+
+#ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+#ymd=`cut -c 7-14 /com/date/t${cyc}z`
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+dayoweek=hold3
+
+cp /gpfs/dell1/nco/ops/com/gfs/prod/gfs.${ymd}/${cyc}/atmos/gempak/gfs_${ymdh}.snd fmdl1
+
+times="00 03 06 09 12 15 18 21 24 27 30 33 36"
+times="00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15"
+times="00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15"
+times="108 109 110 111 112 113 114"
+times="00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21"
+times=180
+for time in $times; do
+
+validtime="`/gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/advtime ${ymdh} $time -1 x`"
+echo validtime = $validtime
+dattim=`echo $validtime | cut -c5-11`
+echo dattim = $dattim
+
+if [ $time -lt 10 ]
+then
+fhr=0${time}
+else
+fhr=$time
+fi
+
+    snprof << EOF
+ SNFILE   = fmdl1
+ DATTIM   = $dattim
+ AREA     = @${stnm1}
+ SNPARM   = tmpc;dwpc
+ LINE     = 2;4/1/7
+ PTYPE    = skewt
+ VCOORD   = PRES
+ STNDEX   = capv;cins
+ STNCOL   = 24
+ WIND     = bk1
+ WINPOS   = 1
+ MARKER   = 0
+ BORDER   = 1//2
+ TITLE    = 1//  GFS 
+ DEVICE   = gif|${ymdh}_gfssnd${stnm1}_${stnm2}ff${fhr}.gif | 800;850
+ YAXIS    = 1050/300/50/1;1;1
+ XAXIS    = -10/45/5/;1
+ FILTER   = 0.9 
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 0.8 
+ THTALN   = 8/3/1/250/500/5
+ THTELN   = 23/1/1/250/500/5
+ MIXRLN   = 17/10/2/0/40./1.
+r
+
+ AREA     = @${stnm2}
+ CLEAR    = n
+ PANEL    = b
+r
+
+ex
+EOF
+
+done
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+#scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/cases/${ymd}/.
+exit

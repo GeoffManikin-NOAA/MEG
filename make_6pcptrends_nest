@@ -1,0 +1,126 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/6pcp
+rm /stmpp1/Geoffrey.Manikin/meg/6pcp/*
+cd /stmpp1/Geoffrey.Manikin/meg/6pcp
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymd1=20150221
+cyc1=18
+ymdh=${ymd1}${cyc1}
+dayoweek=hold2
+
+ymdh2="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -6 -1`"
+ymdh3="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -12 -1`"
+ymdh4="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -18 -1`"
+
+ymd2=`echo $ymdh2 | cut -c1-8`
+ymd3=`echo $ymdh3 | cut -c1-8`
+ymd4=`echo $ymdh4 | cut -c1-8`
+cyc2=`echo $ymdh2 | cut -c9-10`
+cyc3=`echo $ymdh3 | cut -c9-10`
+cyc4=`echo $ymdh4 | cut -c9-10`
+
+hours="00 06"
+for fhr1 in $hours; do
+
+verymdh="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} ${fhr1} -1`"
+fhr2=`expr $fhr1 + 6`
+fhr3=`expr $fhr1 + 12`
+fhr4=`expr $fhr1 + 18`
+typeset -Z2 fhr2 fhr3 fhr4
+
+fhr1b=`expr $fhr1 - 3`
+fhr2b=`expr $fhr2 - 3`
+fhr3b=`expr $fhr3 - 3`
+fhr4b=`expr $fhr4 - 3`
+typeset -Z2 fhr1b fhr2b fhr3b fhr4b
+
+cp /com/nawips/prod/nam.${ymd1}/nam_conusnest_${ymdh}f0${fhr1} fmdl1
+cp /com/nawips/prod/nam.${ymd1}/nam_conusnest_${ymdh}f0${fhr1b} fmdl1b
+cp /com/nawips/prod/nam.${ymd2}/nam_conusnest_${ymdh2}f0${fhr2} fmdl2
+cp /com/nawips/prod/nam.${ymd2}/nam_conusnest_${ymdh2}f0${fhr2b} fmdl2b
+cp /com/nawips/prod/nam.${ymd3}/nam_conusnest_${ymdh3}f0${fhr3} fmdl3
+cp /com/nawips/prod/nam.${ymd3}/nam_conusnest_${ymdh3}f0${fhr3b} fmdl3b
+cp /com/nawips/prod/nam.${ymd4}/nam_conusnest_${ymdh4}f0${fhr4} fmdl4
+cp /com/nawips/prod/nam.${ymd4}/nam_conusnest_${ymdh4}f0${fhr4b} fmdl4b
+
+    gdplot2 << EOF
+ GDFILE   = fmdl1 + fmdl1b
+ GDATTIM  = last 
+ GLEVEL   = 0 
+ GVCORD   = none
+ GDPFUN   = add(p03i^${ymd1}/${cyc}f${fhr1b}+2,p03i^${ymd1}/${cyc}f$fhr1)
+ CINT     = 4 
+ LINE     = 1 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1//  4 KM NAM 6-HR PCP  ${ymd1} ${cyc1}z  F${fhr1}
+ DEVICE   = GIF|nest6pcptr_${ymd1}f${fhr1}.gif|800;850
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-75;25;/1;1;1;1
+ GAREA    = md 
+ CLEAR    = y
+ PANEL    = 0.;0.42;0.48;1.
+ TEXT     = 0.8/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/H/UL/.02;0.92/1.5;.03/1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = .01;.1;.25;.5;.75;1.;1.5;2.;2.5;3.;3.5
+ FLINE    = 0;21;22;23;4;25;27;28;29;30;2;15
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ PANEL    = 0.52;0.42;1.;1.
+ GDFILE   = fmdl3 + fmdl3b
+ GDPFUN   = add(p03i^${ymd3}/${cyc3}f${fhr3b}+2,p03i^${ymd3}/${cyc3}f$fhr3)
+ HILO     = 0
+ HLSYM    = 0
+ TYPE     = f
+ CLEAR    = n
+ CLRBAR   = 0 
+ TITLE    = 1//  4 KM NAM 6-HR PCP  ${ymd2} ${cyc2}z  F${fhr2}
+r
+
+ TITLE    = 2/1/VERIFYING TIME   $verymdh
+r
+
+ PANEL    = 0;0;0.48;0.58
+ GDATTIM  = f$fhr2 
+ GDFILE   = fmdl2 + fmdl2b 
+ GDPFUN   = add(p03i^${ymd2}/${cyc2}f${fhr2b}+2,p03i^${ymd2}/${cyc2}f$fhr2)
+ HILO     = 0
+ HLSYM    = 0
+ TYPE     = f
+ TITLE    = 1//  4 KM NAM 6-HR PCP  ${ymd3} ${cyc3}z  F${fhr3}
+r
+
+ PANEL    = 0.52;0;1.;0.58
+ GDATTIM  = f$fhr4
+ GDFILE   = fmdl4 + fmdl4b
+ GDPFUN   = add(p03i^${ymd4}/${cyc4}f${fhr4b}+2,p03i^${ymd4}/${cyc4}f$fhr4)
+ HILO     = 0
+ HLSYM    = 0
+ TYPE     = f
+ TITLE    = 1//  4 KM NAM 6-HR PCP  ${ymd4} ${cyc4}z  F${fhr4}
+r
+
+ex
+EOF
+
+done
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

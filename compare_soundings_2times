@@ -1,0 +1,126 @@
+2!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+ymdh=2012061112
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+stnm=744550
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/snd
+rm /stmpp1/Geoffrey.Manikin/meg/snd/*
+cd /stmpp1/Geoffrey.Manikin/meg/snd
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+#ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+#ymd=`cut -c 7-14 /com/date/t${cyc}z`
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+
+fmdl1=/com/nawips/prod/nam.${ymd}/nam_${ymdh}.snd
+fmdl2=/com/nawips/prod/gfs.${ymd}/gfs_${ymdh}.snd
+
+time1=30
+time2=36
+
+validtime1="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} $time1 -1 x`"
+echo validtime1 = $validtime1
+dattim1=`echo $validtime1 | cut -c5-11`
+echo dattim1 = $dattim1
+
+validtime2="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} $time2 -1 x`"
+echo validtime2 = $validtime2
+dattim2=`echo $validtime2 | cut -c5-11`
+echo dattim2 = $dattim2
+
+if [ $time1 -lt 10 ]
+then
+fhr1=0${time1}
+else
+fhr1=$time1
+fi
+
+if [ $time2 -lt 10 ]
+then
+fhr2=0${time2}
+else
+fhr2=$time2
+fi
+
+    snprof << EOF
+ SNFILE   = $fmdl1
+ DATTIM   = $dattim1
+ AREA     = @${stnm}
+ SNPARM   = tmpc;dwpc
+ LINE     = 2;4/2/7
+ PTYPE    = skewt
+ VCOORD   = PRES
+ STNDEX   = cape;cins
+ STNCOL   = 24
+ WIND     = 0 
+ WINPOS   = 0
+ MARKER   = 0
+ BORDER   = 1//2
+ TITLE    = 1//  NAM 
+ DEVICE   = gif|${cyc}snd${stnm}_$fhr1-$fhr2.gif | 800;850
+ YAXIS    = 1050/300/50/1;1;1
+ XAXIS    = -20/40/10/;1
+ FILTER   = n 
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 0.8 
+ THTALN   = 8/3/1/250/500/5
+ THTELN   = 23/1/1/250/500/5
+ MIXRLN   = 17/10/2/0/40./1.
+r
+
+ DATTIM   = $dattim2
+ LINE     = 2;4/1/6
+ CLEAR    = n
+r
+
+ SNFILE   = $fmdl2
+ DATTIM   = $dattim1
+ LINE     = 2;4/2/6
+ TITLE    = 1//  GFS
+ PANEL    = b
+r
+
+ DATTIM   = $dattim2
+ LINE     = 2;4/1/6
+r
+
+ex
+EOF
+
+gpend
+
+. /u/Geoffrey.Manikin/.Utils
+export w1=wd20mg
+export w2=$rzdm
+
+ftp -n -v << EOF > /meso/save/Geoffrey.Manikin/casework/rzftp.out
+open emcrzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/today
+mput ${cyc}*gif
+bye
+EOF
+
+ftp -n -v << EOF > /meso/save/Geoffrey.Manikin/casework/rzftp.out
+open emcrzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/${dayoweek}
+mput ${cyc}*gif
+bye
+EOF
+
+exit

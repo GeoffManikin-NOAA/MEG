@@ -1,0 +1,115 @@
+#!/bin/ksh
+echo 'into'
+
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/meg
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/meg/all925wv
+rm /gpfs/dell1/stmp/Geoffrey.Manikin/meg/all925wv/*
+cd /gpfs/dell1/stmp/Geoffrey.Manikin/meg/all925wv
+cp /gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/coltbl.xwp .
+
+ymdh=2022012012
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+ymdhs="`/gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/advtime ${ymdh} -3 -1`"
+ymds=`echo $ymdhs | cut -c1-8`
+cycs=`echo $ymdhs | cut -c9-10`
+
+hours="06 09 10 11 12 13 14 15"
+hours="00"
+for fhr in $hours; do
+
+ymdh1="`/gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/advtime ${ymdh} -1 -1`"
+ymdh2="`/gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/advtime ${ymdh} -2 -1`"
+ymdh3="`/gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg//advtime ${ymdh} -3 -1`"
+ymd1=`echo $ymdh1 | cut -c1-8`
+ymd2=`echo $ymdh2 | cut -c1-8`
+ymd3=`echo $ymdh3 | cut -c1-8`
+
+cyc1=`expr $cyc - 1`
+cyc2=`expr $cyc - 2`
+cyc3=`expr $cyc - 3`
+
+fhr1=`expr $fhr + 1`
+fhr2=`expr $fhr + 2`
+fhr3=`expr $fhr + 3`
+
+typeset -Z2 fhr1 fhr2 fhr3
+DAPATH=/gpfs/hps/nco/ops/com/hrrr/prod
+fmdl1=${DAPATH}/hrrr.${ymd}/conus/gempak/hrrr_${ymdh}f0${fhr}00
+fmdl2=${DAPATH}/hrrr.${ymd1}/conus/gempak/hrrr_${ymdh1}f0${fhr1}00
+fmdl3=${DAPATH}/hrrr.${ymd2}/conus/gempak/hrrr_${ymdh2}f0${fhr2}00
+fmdl4=${DAPATH}/hrrr.${ymd3}/conus/gempak/hrrr_${ymdh3}f0${fhr3}00
+
+garea="md+"
+proj="lcc/25.;-77.;25./2;2;1;1"
+
+
+if [ $cyc1 -lt 0 ]; then
+cyc1=`expr $cyc + 23`   
+fi                      
+
+if [ $cyc2 -lt 0 ]; then
+cyc2=`expr $cyc + 22`   
+fi
+
+if [ $cyc3 -lt 0 ]; then
+cyc3=`expr $cyc + 21`
+fi
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 925
+ GVCORD   = pres 
+ GDPFUN   = kntv(wind)
+ WIND     = BK4/0.6/1/2/1
+ CINT     =  
+ LINE     = 0 
+ DEVICE   = GIF|${ymd}${cyc}hrrr925wv_f${fhr}.gif | 800;850
+ PROJ     = $proj 
+ GAREA    = $garea 
+# \$MAPFIL = county
+ TITLE    = 1//~  ${cyc}z HRRR   925 WIND
+ CLEAR    = y
+ SCALE    = 0
+ PANEL    = lr 
+ HILO     = 0
+ HLSYM    = 0 
+ CLRBAR   = 0
+ TEXT     = 0.9/11/2
+ FINT     = 0 
+ FLINE    = 0
+ TYPE     = b 
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhr1
+ PANEL    = ll
+ CLEAR    = n
+ TITLE    = 1//~  ${cyc1}z HRRR   925 WIND 
+ CLRBAR   = 1/H/UL/.26;0.98/1.4;.03/1
+r
+
+ GDFILE   = $fmdl3
+ GDATTIM  = f$fhr2
+ PANEL    = ur 
+ TITLE    = 1//~  ${cyc2}z HRRR   925 WIND 
+ CLRBAR   = 0 
+r
+
+ GDFILE   = $fmdl4
+ GDATTIM  = f$fhr3
+ PANEL    = ul
+ TITLE    = 1//~  ${cyc3}z HRRR   925 WIND 
+ CLRBAR   = 0
+r
+
+ex
+EOF
+done
+gpend
+
+#mv *gif /stmpp1/Geoffrey.Manikin/meg/hold925wv/.
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test5/.
+exit

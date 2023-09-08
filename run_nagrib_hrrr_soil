@@ -1,0 +1,50 @@
+#!/bin/ksh
+
+set -x
+
+ymd=20180606
+DAPATH=/com2/hrrr/prod/hrrr.${ymd}
+
+mkdir /stmpp1/Geoffrey.Manikin/nagrib
+rm /stmpp1/Geoffrey.Manikin/nagrib/*
+cd /stmpp1/Geoffrey.Manikin/nagrib/
+
+export DAPATH 
+. /nwprod/gempak/.gempak
+
+cycles="00"
+fhrs="03"
+for cyc in $cycles
+do
+for fhr in $fhrs
+do
+
+typeset -Z2 fhr
+/nwprod/util/exec/cnvgrib -g21 ${DAPATH}/hrrr.t${cyc}z.wrfprsf${fhr}.grib2 hrrr.t${cyc}z.wrfprsf${fhr}
+wgrib hrrr.t${cyc}z.wrfprsf${fhr} | grep kpds5=144:kpds6=112 | wgrib hrrr.t${cyc}z.wrfprsf${fhr} -i -grib -o new1.fil
+
+nagrib << EOF
+GBFILE  = new1.fil 
+INDXFL  =
+GDOUTF  = dummyhrrr.grd
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+GBFILE  = new2.fil
+r
+
+exit
+EOF
+done
+mv dummyhrrr.grd /meso/save/Geoffrey.Manikin/meg/hrrrsoil_${ymd}${cyc}
+done
+gpend
+exit

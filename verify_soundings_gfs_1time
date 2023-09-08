@@ -1,0 +1,90 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+
+validymdh=2022071200
+validymd=`echo $validymdh | cut -c1-8`
+validcyc=`echo $validymdh | cut -c9-10`
+stations="744550 726320 722150"
+stations="723570 723400 724560 726590"
+stations="723270 724400 723400"
+stations="725620 722080 726450 722300 722150 722350"
+stations="724560 744550 725580 724400"
+stations="725580 724560 744550 745600 726490"
+stations="725580 724560 723630"
+stations="725620 724510 727470 726450 726320"
+stations="724510 722650 723630"
+stations="723570 723630 724510 724560 725580 725620 726590 744550 745600 724690 726620"
+stations="723570 744550 726620 725580 724560 724510 727640 726490 726590 725620"
+stations="723630 723570 722490 722650 722610 724510"
+
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/gempak.sound
+rm /gpfs/dell1/stmp/Geoffrey.Manikin/gempak.sound/*
+cd /gpfs/dell1/stmp/Geoffrey.Manikin/gempak.sound
+cp /gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/coltbl.xwp .
+
+cp /gpfs/dell2/emc/verification/noscrub/Geoffrey.Manikin/obs/uair/${validymd}.snd fobs
+times="12 24 36 48 60 72 84 96 108 120 132 144 156 168"
+times="00"
+for time in $times; do
+for stnm in $stations; do
+
+dattim="`/gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/advtime ${validymdh} -$time -1`"
+echo $dattim
+mdlymdh=`echo $dattim | cut -c1-10`
+mdlymd=`echo $dattim | cut -c1-8`
+mdlcyc=`echo $dattim | cut -c9-10`
+#cp /gpfs/dell1/nco/ops/com/gfs/prod/gfs.${mdlymd}/${mdlcyc}/atmos/gempak/gfs_${mdlymdh}.snd fmdl
+cp /gpfs/dell1/ptmp/Geoffrey.Manikin/bufr2/gfs_${mdlymdh}.snd fmdl
+
+stn=`echo $stnm | cut -c1-5`
+if [ $time -lt 10 ]
+then
+fhr=0${time}
+else
+fhr=$time
+fi
+
+    snprof << EOF
+ SNFILE   = fmdl
+ DATTIM   = $validymd/$validcyc
+ AREA     = @${stnm}
+ SNPARM   = tmpc;dwpc
+ LINE     = 2;4/2/6
+ PTYPE    = skewt
+ VCOORD   = PRES
+ STNDEX   = capv;cinv;lclp
+ STNCOL   = 24
+ WIND     = bk1
+ WINPOS   = 2
+ MARKER   = 0
+ BORDER   = 1//2
+ TITLE    = 1//  OPS GFS DASHED   OBS SOLID/LEFT WINDS
+ DEVICE   = gif|gfs${stnm}_${mdlymdh}f$fhr.gif|1000;1000
+ YAXIS    = 1050/300/50/1;1;1
+ XAXIS    = -15/50/5/;1
+ FILTER   = 0.7
+ CLEAR    = y
+ PANEL    = 0
+! TEXT     = 1.0/11/2/SW
+ TEXT     = 1.1/23/SW
+ THTALN   = 8/3/1/250/500/5
+ THTELN   = 23/1/1/250/500/5
+ MIXRLN   = 17/10/2/0/40./1.
+r
+
+ SNFILE   = fobs
+ CLEAR    = n
+ WINPOS   = 1
+ LINE     = 2;4/1/6 
+ AREA     = @${stn}
+r
+
+ex
+EOF
+
+done
+done
+gpend
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test8/.
+exit

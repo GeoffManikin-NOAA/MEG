@@ -1,0 +1,74 @@
+#!/bin/ksh --login
+#
+#BSUB -oo /gpfs/dell1/ptmp/Geoffrey.Manikin/output/nest_nagrib.out
+#BSUB -eo /gpfs/dell1/ptmp/Geoffrey.Manikin/output/nest_nagrib.out
+#BSUB -J cloud00 
+#BSUB -n 1 
+#BSUB -R span[ptile=1]
+#BSUB -W 01:45
+#BSUB -cwd /gpfs/dell1/stmp/Geoffrey.Manikin
+#BSUB -q "dev"
+#BSUB -R "affinity[core]"
+#BSUB -P NAM-T2O
+#BSUB -x
+
+set -x
+
+ymd=20210507
+
+mkdir /gpfs/dell1/ptmp/Geoffrey.Manikin/nestsnow4
+rm /gpfs/dell1/ptmp/Geoffrey.Manikin/nestsnow4/*
+cd /gpfs/dell1/ptmp/Geoffrey.Manikin/nestsnow4/
+
+DAPATH2=/meso2/noscrub/Eric.Rogers/com/nam/para/nam.${ymd}
+DAPATH2=/com2/nam/para/nam.${ymd}
+DAPATH=/gpfs/dell1/ptmp/Geoffrey.Manikin/nest2
+DAPATH=/gpfs/dell1/nco/ops/com/nam/prod/nam.${ymd}
+#DAPATH2=/ptmp/Geoffrey.Manikin/hold
+
+export DAPATH
+
+cycles="00 06 12 18"
+cycles="18"
+fhrs="03 06 09 12 15 18 21 24 27 30 33 36 39 42 45 48 51 54 57 60"
+fhrs="03 06 09 12 15 18 21 24 27 30 33 36 39 42 45"
+for cyc in $cycles
+do
+for fhr in $fhrs
+do
+
+cp ${DAPATH}/nam.t${cyc}z.conusnest.hiresf${fhr}.tm00.grib2 .
+/gpfs/hps/nco/ops/nwprod/grib_util.v1.1.1/exec/cnvgrib -g21 nam.t${cyc}z.conusnest.hiresf${fhr}.tm00.grib2 nam.t${cyc}z.conusnest.hiresf${fhr}.tm00
+
+/gpfs/hps/nco/ops/nwprod/grib_util.v1.1.1/exec/wgrib -i -d 873 nam.t${cyc}z.conusnest.hiresf${fhr}.tm00 -grib -o new.fil
+/gpfs/hps/nco/ops/nwprod/grib_util.v1.1.1/exec/wgrib -i -d 875 nam.t${cyc}z.conusnest.hiresf${fhr}.tm00 -grib -o new2.fil
+
+  nagrib << EOF
+GBFILE  = new.fil 
+INDXFL  =
+GDOUTF  = dummynest.grd 
+PROJ    =
+GRDAREA =
+KXKY    = 
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+GBFILE  = new2.fil
+r
+
+exit
+EOF
+
+rm new*.fil
+rm *grib2
+done
+#mv dummynest.grd /meso/save/Geoffrey.Manikin/meg/namnestsnow_${ymd}${cyc}
+mv dummynest.grd /gpfs/dell2/emc/verification/noscrub/Geoffrey.Manikin/mayilsnow/namnestsnow_${ymd}${cyc}
+done
+gpend
+exit

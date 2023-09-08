@@ -1,0 +1,88 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/6pcp
+rm /stmpp1/Geoffrey.Manikin/meg/6pcp/*
+cd /stmpp1/Geoffrey.Manikin/meg/6pcp
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=2017122700
+ymd=`echo $ymdh | cut -c1-8`
+dayoweek=hold7
+
+fmdl1=/meso/save/Geoffrey.Manikin/meg/gfspcp_${ymdh}
+
+fhr1=006
+fhr2=012
+fhr3=018
+fhr4=024
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f${fhr1} 
+ GLEVEL   = 0 
+ GVCORD   = none
+ GDPFUN   = p06i
+ CINT     = 4 
+ LINE     = 1 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   GFS 6-HR PCP 
+ DEVICE   = GIF|gfs6pcpms_${ymdh}.gif|750;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-84;25;/1;1;1;1
+# GAREA    = 32.;-84.;48.;-62. 
+ GAREA    = ms+ 
+ CLEAR    = y
+ PANEL    = ul 
+ TEXT     = 0.8/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 0 
+ CONTUR   = 0
+ SKIP     = 0
+# FINT     = .01;.1;.25;.5;.75;1.;1.5;2.;2.5;3.;3.5
+ FINT     = .01;.05;.1;.2;.3;.4;.5;.6;.7;.8;.9;1.
+ FLINE    = 0;21;22;23;25;27;28;30;2;15;10;5
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ PANEL    = ur 
+ GDATTIM  = f${fhr2} 
+ CLEAR    = n
+r
+
+ PANEL    = ll
+ GDATTIM  = f${fhr3}
+ CLRBAR   = 1/H/UL/.08;0.94/1.6;.02/1
+r
+
+ PANEL    = lr
+ GDATTIM  = f${fhr4}
+ CLRBAR   = 0
+r
+
+ PANEL    = 0
+ CLEAR    = y
+ GDPFUN   = p24i
+ CLRBAR   = 1/H/UL/.02;0.96/0.96;.02/1
+ TITLE    = 1/-1/~   GFS 24-HR PCP
+ DEVICE   = GIF|gfs24pcpms_${ymdh}.gif|750;900
+r
+
+ex
+EOF
+
+gpend
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+
+exit

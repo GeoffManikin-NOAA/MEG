@@ -1,0 +1,95 @@
+#!/bin/sh
+echo 'into'
+
+ymdh=2021090112
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/meg
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/meg/850wv
+rm /gpfs/dell1/stmp/Geoffrey.Manikin/meg/850wv/*
+cd /gpfs/dell1/stmp/Geoffrey.Manikin/meg/850wv
+cp /gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/coltbl.xwp .
+
+hours="12"
+for fhr in $hours; do
+
+fmdl1=/gpfs/dell1/nco/ops/com/gfs/prod/gfs.${ymd}/${cyc}/atmos/gempak/gfs_0p25_${ymdh}f000
+fmdl2=/gpfs/hps/nco/ops/com/rap/prod/rap.${ymd}/gempak/rap13_${ymdh}f000
+cp /gpfs/dell2/emc/verification/noscrub/Geoffrey.Manikin/ida/hiresw.${ymd}/hiresw_conusarw_${ymdh}f0${fhr} fmdl1
+cp /gpfs/dell2/emc/verification/noscrub/Geoffrey.Manikin/ida/hiresw.${ymd}/hiresw_conusarwmem2_${ymdh}f0${fhr} fmdl2
+echo $fmdl1
+
+    gdplot2 << EOF
+ GDFILE   = fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 850
+ GVCORD   = pres
+ GDPFUN   = knts(sped)
+ CINT     = 5 
+ LINE     = 0 
+ DEVICE   = GIF|850arws_f0${fhr}.gif | 800;850
+ PROJ     = lcc/25.;-75.;25./2;2;1;1
+ GAREA    = 30.;-82.;44.;-60. 
+ GAREA    = nj 
+ PROJ     =
+ TITLE    = 1//~  ARW  850 MB  WIND (KT) 
+ CLEAR    = y
+ SCALE    = 0
+ PANEL    = t
+ HILO     = 0
+ HLSYM    = 0 
+ CLRBAR   = 1/V/UL/.04;0.4/0.8;.03/2
+ TEXT     = 1.1/11/2
+ FINT     = 20;30;40;50;60;70;80;90;100
+ FINT     = 40;55;70;85;100;115;130;145;160
+ FINT     = 20;30;40;50;60;70;80;90;100
+ FLINE    = 0;29;26;4;23;21;5;17;2;15
+ TYPE     = f 
+r
+
+ CINT     = 
+ WIND     = BK1/0.8/2/122
+ GDPFUN   = kntv(wnd)
+ SKIP     = /7;7
+ TYPE     = b
+ TITLE    = 0
+ CLRBAR   = 0
+ CLEAR    = n
+r
+
+ GDFILE   = fmdl2
+ GDATTIM  = f$fhr
+ GLEVEL   = 850
+ GVCORD   = pres
+ GDPFUN   = knts(sped)
+ CINT     = 5
+ LINE     = 0
+ TITLE    = 1//~  ARW2  850 MB  WIND (KT)
+ CLEAR    = n
+ PANEL    = b
+ SCALE    = 0
+ HILO     = 0
+ HLSYM    = 0 
+ CLRBAR   = 0
+ TEXT     = 1.1/11/2
+ TYPE     = f
+r
+
+ CINT     =
+ WIND     = BK1/0.8/2/122
+ GDPFUN   = kntv(wnd)
+ SKIP     = /7;7
+ TYPE     = b
+ TITLE    = 0
+ CLRBAR   = 0
+ CLEAR    = n
+r
+
+ex
+EOF
+done
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test7/.
+exit

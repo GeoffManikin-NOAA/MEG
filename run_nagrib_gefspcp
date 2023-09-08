@@ -1,0 +1,49 @@
+ #/bin/ksh
+
+set -x
+
+cyc=$1
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+ymdh=2013053000
+ymd=20130530
+
+DAPATH=/com/gens/prod/gefs.${ymd}/${cyc}/pgrba
+#DAPATH=/ptmp/Geoffrey.Manikin/hold/
+
+export DAPATH
+. /nwprod/gempak/.gempak
+
+fhrs="06 12 18 24 30 36 42 48 54 60 66 72 78 84 90 96 102 118 120 126 132 138 144 150 156 162 168"
+
+for fhr in $fhrs
+do
+
+wgrib -i -d 63 ${DAPATH}/geavg.t${cyc}z.pgrbaf${fhr} -grib -o new.fil
+
+/nwprod/gempak/nawips1/os/aix5/bin/nagrib_nc << EOF
+GBFILE  = new.fil 
+INDXFL  =
+GDOUTF  = dummygefs.grd 
+PROJ    =
+GRDAREA =
+KXKY    = 
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+exit
+EOF
+
+rm new.fil
+done
+mv dummygefs.grd gefspcp_${ymdh}
+exit
+

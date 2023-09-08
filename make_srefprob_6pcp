@@ -1,0 +1,84 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmp/Geoffrey.Manikin/meg
+mkdir /stmp/Geoffrey.Manikin/meg/gefspcpprob
+rm /stmp/Geoffrey.Manikin/meg/gefspcpprob/*
+cd /stmp/Geoffrey.Manikin/meg/gefspcpprob
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`cut -c 7-14 /com/date/t${cyc}z`
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+
+ymdh=2013030606
+dayoweek=Wed
+ymdhs="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -3 -1`"
+ymds=`echo $ymdhs | cut -c1-8`
+cycs=`echo $ymdhs | cut -c9-10`
+
+hours="09"
+for fhrs in $hours; do
+
+fmdl1=/com/nawips/prod/sref.${ymds}/sref212_${ymdhs}_prob
+
+    gdplot2 << EOF
+
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhrs
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = P06M0006PA 
+ CINT     = 10
+ LINE     = 21/1/3/5 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~    SREF 6-HR PROB of 0.25"
+ DEVICE   = GIF|${cycs}srefprob1_6pcp_f0${fhrs}.gif|750;900
+ SATFIL   =
+ RADFIL   =
+ PROOJ    = lcc/25;-75;25;/1;1;1;1
+ GAREA    = md 
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0 
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 0
+ CONTUR   = 4/3 
+ SKIP     = 0
+ FINT     = 10;30;50;70;90 
+ FLINE    = 0;21;23;28;30;2 
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+
+ GDPFUN  = P06M0012PA 
+ PANEL   = b
+ TITLE   = 1/-1/~    SREF 6-HR PROB of 0.5"
+ CLEAR   = n
+ CLRBAR  = 1/H/UL/.2;.99/0.6;.03/1 
+r
+
+ex
+EOF
+
+gpend
+done
+
+. /u/Geoffrey.Manikin/.Utils
+export w1=wd20mg
+export w2=$rzdm
+
+exit

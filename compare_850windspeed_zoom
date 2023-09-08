@@ -1,0 +1,101 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/850w
+rm /stmpp1/Geoffrey.Manikin/meg/850w/*
+cd /stmpp1/Geoffrey.Manikin/meg/850w
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=2019071100
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+dayoweek=hold8
+
+hours="00 06 12 18 24 30 36 42 48 54 60 66 72 78 84"
+hours="00 06 12 18 24 30 36"
+hours="84"
+for fhr in $hours; do
+
+fmdl1=/com2/nawips/prod/ecmwf.${ymd}/ecmwf_hr_${ymdh}f0${fhr}
+fmdl2=/gpfs/dell1/nco/ops/com/gfs/prod/gfs.${ymd}/${cyc}/gempak/gfs_0p25_${ymdh}f0${fhr}
+echo $fmdl1
+echo $fmdl2
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 850
+ GVCORD   = pres
+ GDPFUN   = knts(sped) 
+ CINT     = 3/104/164
+ LINE     = 4/1/3/2
+ DEVICE   = GIF|${cyc}850zwf0${fhr}z.gif | 800;850
+ PROJ     = lcc/25.;-91.;25./2;2;1;1
+ GAREA    = 20.;-124.;50.;-62. 
+ GAREA    = 31.;-88.;45.;-64.
+ GAREA    = la 
+ TITLE    = 1//~  NAM  850 MB  HT/WIND 
+ CLEAR    = y
+ SCALE    = 0
+ PANEL    = t
+ HILO     = 0
+ HLSYM    = 0 
+ CLRBAR   = 1/V/UL/.04;0.4/0.8;.03/2
+ TEXT     = 1.1/11/2
+ FINT     = 20;30;40;50;60;70;80;90;100
+# FINT     = 25;30;35;40;45;50;55;60;65;70
+ FLINE    = 0;30;28;26;4;23;21;5;17;2;15
+ TYPE     = f 
+r
+
+ CINT     = 
+ WIND     = BK1/0.8/2/122
+ GDPFUN   = kntv(wnd)
+ SKIP     = /7;7
+ TYPE     = b
+ TITLE    = 0
+ CLRBAR   = 0
+ CLEAR    = n
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhr
+ GLEVEL   = 850
+ GVCORD   = pres
+ GDPFUN   = knts(sped) 
+ CINT     = 
+ LINE     = 4/1/3/2
+ TITLE    = 1//~  GFS  850 MB  HT/WIND 
+ CLEAR    = n
+ PANEL    = b
+ SCALE    = 0
+ HILO     = 0
+ HLSYM    = 0 
+ CLRBAR   = 0
+ TEXT     = 1.1/11/2
+ FINT     = 20;30;40;50;60;70;80;90;100
+# FINT     = 25;30;35;40;45;50;55;60;65;70
+ FLINE    = 0;30;28;26;4;23;21;5;17;2;15
+ TYPE     = f
+r
+
+ CINT     =
+ WIND     = BK1/0.8/2/122
+ GDPFUN   = kntv(wnd)
+ SKIP     = /7;7
+ TYPE     = b
+ TITLE    = 0
+ CLRBAR   = 0
+ CLEAR    = n
+r
+
+ex
+EOF
+done
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

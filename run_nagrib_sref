@@ -1,0 +1,49 @@
+#/bin/ksh
+
+set -x
+
+export cyc=$1
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`echo $ymdh | cut -c1-8`
+hh=`echo $ymdh | cut -c9-10`
+
+mkdir /ptmp/wx20mg/sref.${ymdh}
+OUTPATH=/ptmp/wx20mg/sref.${ymdh}
+DAPATH=/ptmp/wx20bz/faa_gif_32km/${ymd}/avia
+
+export DAPATH
+. /nwprod/gempak/.gempak
+
+#fhrs="00 03 06 09 12 15 18 21 24 27 30 33 36 39 42 45 48 51 54 57 60 63 66"
+fhrs="03"
+
+for fhr in $fhrs
+do
+
+nagrib << EOF
+GBFILE  = ${DAPATH}/avia_com_sprd.t${hh}z.prb212.f${fhr}
+INDXFL  =
+GDOUTF  = ${OUTPATH}/srefspread_${ymdh}f0${fhr}
+PROJ    =
+GRDAREA =
+KXKY    = 
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = f/out1.fil 
+GBTBLS  =
+GBDIAG  =
+PDSEXT  = y
+r
+
+GBFILE  = ${DAPATH}/avia_sref_com.t09z.prb212.f${fhr}
+GDOUTF  = ${OUTPATH}/srefspread2_${ymdh}f0${fhr}
+OUTPUT  = f/out2.fil
+r
+
+exit
+EOF
+
+done
+exit
+

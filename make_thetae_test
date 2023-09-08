@@ -1,0 +1,112 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=18
+
+da00=`cut -c 7-14 /com/date/t${cyc}z`
+hr00=`cut -c 15-16 /com/date/t${cyc}z`
+month=`cut -c 11-12 /com/date/t${cyc}z`
+day=`cut -c 13-14 /com/date/t${cyc}z`
+
+mkdir /stmpp1/wx20mg/gempak.rap13/launch15/thetae
+cd /stmpp1/wx20mg/gempak.rap13/launch15/thetae
+cp /meso/save/wx20mg/casework/coltbl.xwp .
+
+counter=0
+times="03"
+for fhr in $times; do
+
+fmdl=/meso/save/wx20mg/gempak/nagribx/ruc2_${da00}${hr00}
+fmdl2=/meso/save/wx20mg/gempak/nagribx/rap13x_${da00}${hr00}
+
+echo $fmdl
+echo $fmdl2
+
+    gdplot2 << EOF
+
+ GDFILE   = $fmdl
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = mxte 
+ GDPFUN   = pres 
+ CINT     = 500 
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 0
+ DEVICE   = GIF|comparethte_${cyc}f${fhr}.gif|900;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-95.;25./2;2;1;1
+ GAREA    = grid
+ CLEAR    = y
+ PANEL    = 0.;.51;1.;1.
+ TEXT     = 1.2/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/V/UL/.15;0.5/.8;.03/-2
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 500;550;600;650;700;750;800;850;900;950;1000
+ FLINE    = 30;28;26;24;23;21;20;5;10;17;2;15
+ TYPE     = f/c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ TITLE    = 1/1/ ${fhr}-HR RUC2 LVL of MAX THETA-E 
+ CLEAR    = n
+ TEXT     = 1.2/11/2
+ GDPFUN   = blurk
+ CINT     = -2000/-2000/-2000
+ TYPE     = f/c
+ CLRBAR   = 0
+r
+
+ TITLE    = 29/-1/ FCST MADE ${cyc}Z  ${month}/$day
+ TEXT     = 1.1/11/1/SW
+r
+
+ TITLE    = 1/1/ ${fhr}-HR RAPX   LVL of MAX THETA-E
+ GAREA    = 16.;-126.;55.;-57.
+ GDFILE   = $fmdl2 
+ TEXT     = 1.2/11/2
+ PANEL    = 0;0;1;.49
+r
+
+ GDFILE   = $fmdl2 
+ GDPFUN   = plft 
+ GVCORD   = pdly 
+ GLEVEL   = 255:0 
+ TITLE    = 0
+ LINE     = 0
+ CINT     = 500 
+r
+
+ex
+EOF
+
+gpend
+done
+
+. /u/wx20mg/.Utils
+export w1=wd20mg
+export w2=$rzdm
+export w3=emcmmb
+export w4=$web
+
+ftp -n -v << EOF > /meso/save/wx20mg/gempak.rap13/rzftp.out
+open rzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/rap/para/${cyc}z/images
+prompt
+mput *.gif
+bye
+EOF
+
+exit

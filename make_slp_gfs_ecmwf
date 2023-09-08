@@ -1,0 +1,73 @@
+#!/bin/sh
+echo 'into'
+
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/meg
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/meg/slp
+rm /gpfs/dell1/stmp/Geoffrey.Manikin/meg/slp/*
+cd /gpfs/dell1/stmp/Geoffrey.Manikin/meg/slp
+cp /gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/coltbl.xwp .
+
+vtime=2021070700
+hours="96 84 72 60 48 36 24 12 00"
+for fhr in $hours; do
+
+dattim="`/gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/advtime $vtime -$fhr -1`"
+validtime=`echo $dattim | cut -c1-11`
+ymdh=`echo $validtime | cut -c1-10`
+ymd=`echo $validtime | cut -c1-8`
+cyc=`echo $validtime | cut -c9-10`
+
+DAPATH1=/gpfs/dell1/nco/ops/com/gfs/prod/gfs.${ymd}/${cyc}/atmos/gempak
+DAPATH2=/gpfs/dell1/nco/ops/com/ecmwf/prod/ecmwf.${ymd}/gempak
+
+fmdl1=${DAPATH1}/gfs_0p25_${ymdh}f0${fhr}
+fmdl2=${DAPATH2}/ecmwf_hr_${ymdh}f0${fhr}
+echo $fmdl1
+echo $fmdl2
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = last 
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = pmsl 
+ CINT     = 2 
+ LINE     = 4/1/3/2 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   GFS SLP 
+ DEVICE   = GIF|${ymdh}slpf${fhr}.gif|750;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-80;25;/1;1;1;1
+ GAREA    = 20.;-91.;32.;-71. 
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = ;2/;S13#/;920-1016/5/2;2/yes
+ HLSYM    = 2;1/3/1;1/3;2/HW
+ CLRBAR   = 1/V/UL/.03;0.5/1.0;.03/2 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 0
+ FLINE    = 
+ TYPE     = c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl2
+ CLEAR    = n
+ PANEL    = b
+ CLRBAR   = 0
+ TITLE    = 1/-1/~   ECMWF  SLP 
+r
+
+ex
+EOF
+done
+gpend
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test8/.
+exit

@@ -1,0 +1,20 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+cd /stmpp1/Geoffrey.Manikin/meg
+if [ $cyc -eq 00 -o $cyc -eq 12 ]; then
+/meso/save/Geoffrey.Manikin/meg/compare_6pcp_on ${cyc} &
+else
+/meso/save/Geoffrey.Manikin/meg/compare_6pcp_off ${cyc} &
+fi
+/meso/save/Geoffrey.Manikin/meg/compare_84pcp ${cyc} &
+wait
+
+echo beforeexit5
+exit
+
+

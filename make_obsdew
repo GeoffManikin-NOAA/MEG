@@ -1,0 +1,174 @@
+#!/bin/sh
+echo 'into'
+. /nwprod/gempak/.gempak
+
+mkdir /stmpp1/wx20mg/gempak.ruc20/case
+rm /stmpp1/wx20mg/gempak.ruc20/case/*
+cd /stmpp1/wx20mg/gempak.ruc20/case
+
+ymdh=2004071200
+day=`echo $ymdh | cut -c7-8`
+hr=`echo $ymdh | cut -c9-10`
+dattim=`echo $ymdh | cut -c1-8`
+obsfile=${dattim}.sfc
+echo obsfile = $obsfile
+                                                                            
+. /u/wx20mg/.Utils
+export w1=wd20mg
+export w2=$hp60
+                                                                            
+ftp -n -i emc1 << EOF > /meso/save/wx20mg/casework/sfcftp.out
+user $w1 $w2
+binary
+cd /export-3/emc2/data/observations/sao
+pwd
+get $obsfile
+bye
+EOF
+                                                                            
+
+/nwprod/util/ush/startxvfb.sh /bin/sh
+. ./STARTXVFB
+
+gpcolor << EOF > /dev/null
+COLORS  = 1=black;101=white
+DEVICE  = GF
+run
+
+ex
+EOF
+
+   sfmap << EOF
+ AREA      = 31;-125.;49.;-101.
+ GAREA     = 31;-125.;49.;-101. 
+ SATFIL    =       
+ RADFIL    =         
+ SFPARM    = dwpf<90
+ DATTIM    = ${day}/${hr}
+ SFFILE    = $obsfile 
+ DEVICE    = GF|${ymdh}_obsdew.gif
+ COLORS    = 32 
+ MAP       = 1
+ LATLON    = 0
+ TITLE     = 0
+ CLEAR     = y 
+ PANEL     = 0 
+ PROJ      = MER/0;0;0/2;2;0;1
+ FILTER    = no 
+ TEXT      = 0.9/21/1/HW
+ LUTFIL    = 
+ STNPLT    =  
+ CLRBAR    =
+r
+
+
+ SFPARM    = dwpf<78
+ COLORS    = 15 
+ CLEAR     = n 
+r
+
+ SFPARM    = dwpf<74
+ COLORS    = 2 
+r
+
+ SFPARM    = dwpf<70
+ COLORS    = 12 
+r
+
+ SFPARM    = dwpf<66
+ COLORS    = 30 
+r
+
+ SFPARM    = dwpf<62
+ COLORS    = 29 
+r
+
+ SFPARM    = dwpf<58
+ COLORS    = 28 
+r
+
+ SFPARM    = dwpf<54
+ COLORS    = 24 
+r
+
+ SFPARM    = dwpf<50
+ COLORS    = 4 
+r
+
+ SFPARM    = dwpf<46
+ COLORS    = 26 
+r
+
+ SFPARM    = dwpf<42
+ COLORS    = 27
+r
+
+ SFPARM    = dwpf<38
+ COLORS    = 23 
+r
+                                                                                
+ SFPARM    = dwpf<34
+ COLORS    = 22
+r
+                                                                                
+ SFPARM    = dwpf<30
+ COLORS    = 21
+r
+
+ SFPARM    = dwpf<26
+ COLORS    = 5 
+r
+                                                                                
+ SFPARM    = dwpf<22
+ COLORS    = 20
+r
+
+ SFPARM    = dwpf<18
+ COLORS    = 19 
+r
+                                                                                
+ SFPARM    = dwpf<14
+ COLORS    = 10 
+r
+
+ SFPARM    = dwpf<10
+ COLORS    = 17 
+r
+                                                                                
+ SFPARM    = dwpf<6
+ COLORS    = 18 
+r
+
+ SFPARM    = dwpf<0
+ COLORS    = 8 
+r
+
+ SFPARM    = dwpf<-6
+ COLORS    = 0
+r
+
+ TITLE     = 1/0/~   OBSERVED DEW POINT 
+ TEXT      = 1.0/1/1
+ SFPARM    = 0
+r
+ 
+ex
+EOF
+gpend
+
+/nwprod/util/ush/stopxvfb.sh /bin/sh
+
+. /u/wx20mg/.Utils
+export w1=wd20mg
+export w2=$rzdm
+
+ftp -n -v << EOF > /meso/save/wx20mg/gempak.ruc20/rzftp.out
+open rzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/ruc2/para/cases/${ymdh}
+mput *gif
+bye
+EOF
+
+exit

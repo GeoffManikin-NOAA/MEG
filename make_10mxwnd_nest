@@ -1,0 +1,65 @@
+#!/bin/ksh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/max10nest
+rm /stmpp1/Geoffrey.Manikin/meg/max10nest/*
+cd /stmpp1/Geoffrey.Manikin/meg/max10nest
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=`cut -c 7-16 /meso/save/Geoffrey.Manikin/meg/NMCDATE`
+ymd=`cut -c 7-14 /meso/save/Geoffrey.Manikin/meg/NMCDATE`
+
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+
+ymdh=2015063012
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+dayoweek=hold2
+
+hours="00 01 02 03 04 05"
+hours="09 12 15 18"
+for fhr in $hours; do
+
+typeset -Z2 fhr1 fhr2 fhr3
+fmdl1=/com/nawips/prod/nam.${ymd}/nam_conusnest_${ymdh}f0${fhr}
+
+garea="md"
+proj="lcc/25.;-77.;25./2;2;1;1"
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 10 
+ GVCORD   = hght 
+ GDPFUN   = knts(sqrt(add(mul(mx10u01,mx10u01),mul(mx10v01,mx10v01)))
+ CINT     = 5 
+ LINE     = 0 
+ DEVICE   = GIF|${ymd}${cyc}nest10mxwnd_f${fhr}.gif | 800;850
+ PROJ     = $proj 
+ GAREA    = $garea 
+ TITLE    = 1//~  ${cyc}z NAM NEST   10-M MAX WIND SPEED 
+ CLEAR    = y
+ SCALE    = 0
+ PANEL    = 0 
+ HILO     = 0
+ HLSYM    = 0 
+ CLRBAR   = 1/H/UL/.04;0.95/0.9;.03/2
+ TEXT     = 0.9/11/2
+ FINT     = 10;20;30;40;50;60;70;80
+ FLINE    = 0;30;28;26;23;21;5;10;2;15
+ TYPE     = f 
+r
+
+ex
+EOF
+done
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

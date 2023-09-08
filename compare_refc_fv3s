@@ -1,0 +1,62 @@
+#!/bin/sh
+echo 'into'
+
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/meg
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/meg/dew
+rm /gpfs/dell1/stmp/Geoffrey.Manikin/meg/dew/*
+cd /gpfs/dell1/stmp/Geoffrey.Manikin/meg/dew
+cp /gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/coltbl.xwp .
+
+ymdh=2021061200
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+hours="00 03 06 09 12 15 18 21 24 27 30 33 36 39 42 45 48"
+hours="00 01 03 06 09"
+for fhr in $hours; do
+
+DAPATH1=/gpfs/hps/nco/ops/com/hiresw/prod/hiresw.${ymd}/gempak
+DAPATH2=/gpfs/dell1/ptmp/Geoffrey.Manikin/lamdax
+fmdl1=${DAPATH1}/hiresw_conusfv3_${ymdh}f0${fhr}
+fmdl2=${DAPATH2}/lamdax_${ymdh}f0${fhr}
+
+gdplot2 << EOF
+GDFILE   = $fmdl1
+GDATTIM  = f$fhr
+GLEVEL   = 0 
+GVCORD   = none 
+GDPFUN   = refc 
+CINT     = 5 
+LINE     = 0 
+DEVICE   = GIF|${cyc}lamdax_f${fhr}.gif | 800;850
+PROJ     = lcc/25;-92;25;/1;1;1;1
+GAREA    = 34.;-102.;48.;-80. 
+TITLE    = 1//~  HIRESW FV3  REFC
+CLEAR    = y
+SCALE    = 0
+PANEL    = t 
+HILO     = 0
+HLSYM    = 0 
+CLRBAR   = 0
+TEXT     = 0.9/11/2
+FINT     = 5;10;15;20;25;30;35;40;45;50;55;60;65;70
+FLINE    = 0;27;26;4;21;22;23;5;20;17;16;15;14;7;29
+TYPE     = f 
+r
+
+GDFILE   = $fmdl2
+PANEL    = b 
+CLEAR    = n
+TITLE    = 1//~  LAMDAX  REFC 
+CLRBAR   = 1/H/UL/.02;0.96/1.0;.03/1
+r
+
+ex
+EOF
+
+done
+gpend
+
+#mv *gif /stmpp1/Geoffrey.Manikin/meg/holdrefc/.
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test7/.
+exit

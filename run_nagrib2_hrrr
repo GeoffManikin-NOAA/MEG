@@ -1,0 +1,45 @@
+#!/bin/ksh
+
+set -x
+
+cyc=$1
+
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/nagrib2
+rm /gpfs/dell1/stmp/Geoffrey.Manikin/nagrib2/*
+cd /gpfs/dell1/stmp/Geoffrey.Manikin/nagrib2
+cp /gpfs/dell2/emc/verification/save/Geoffrey.Manikin/gempak/nagrib2/*tbl .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymdh=2021112312
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+DAPATH=/gpfs/hps/nco/ops/com/hrrr/prod/hrrr.${ymd}/conus
+DAPATH=/gpfs/dell1/ptmp/Geoffrey.Manikin/hrrr
+export DAPATH
+
+fhrs="00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18"
+for fhr in $fhrs
+do
+
+   nagrib2 << EOF
+GBFILE  = ${DAPATH}/hrrr.t${cyc}z.wrfsfcf${fhr}.grib2 
+INDXFL  =
+GDOUTF  = hrrr_${ymdh}f0${fhr}00
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+exit
+EOF
+done
+
+move hrrr_* /gpfs/dell1/ptmp/Geoffrey.Manikin/hrrr/.
+exit

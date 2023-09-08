@@ -1,0 +1,143 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/rtmawv
+rm /stmpp1/Geoffrey.Manikin/meg/rtmawv/*
+cd /stmpp1/Geoffrey.Manikin/meg/rtmawv
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=2017061512
+dayoweek=hold5
+ymd=`echo $ymdh | cut -c1-8`
+
+hours="03 04 05"
+for fhr in $hours; do
+DAPATH=
+DAPATH=/ptmpd2/Geoffrey.Manikin/hold
+fmdl1=${DAPATH}/hiresw_arw_${ymdh}f0${fhr}
+fmdl2=${DAPATH}/hiresw_nmmb_${ymdh}f0${fhr}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = last 
+ GLEVEL   = 10 
+ GVCORD   = hght 
+ GDPFUN   = dwpf 
+ CINT     = 0 
+ LINE     = 1 
+ MAP      = 1/1/2
+ WIND     = 0
+ TITLE    = 1/-1/~   ARW 10m WIND 
+ DEVICE   = GIF|${ymdh}f${fhr}_arw10wz.gif|850;950
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-97;25;/1;1;1;1
+# GAREA    = 30.;-104.;40.;-88.
+ GAREA    = 28.;-91.5;34.;-81.5 
+ GAREA    = ks+ 
+ CLEAR    = y
+ PANEL    = 0
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 0 
+ CONTUR   = 0
+ SKIP     = /20;20
+ FINT     = 0 
+ FLINE    = 0
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ CINT     = 
+ WIND     = AK15/0.5/1/2/0.5
+ GDPFUN   = kntv(wnd)
+ SKIP     = /40;40
+ TYPE     = a
+ TITLE    = 0
+ CLRBAR   = 0
+ CLEAR    = n
+r
+
+ CLEAR    = y
+ DEVICE   = GIF|${ymdh}f${fhr}_arw10wrefcz.gif|850;950
+r
+
+ GLEVEL   = 0
+ GVCORD   = none
+ GDPFUN   = refc
+ TITLE    = 1/-1/~   ARW 10m WIND / REFC
+ TYPE     = f
+ FINT     = 5;10;15;20;25;30;35;40;45;50;55;60;65 
+ FLINE    = 0;24;4;26;23;22;21;20;5;10;17;2;15;29 
+ CTYPE    = f
+ CLEAR    = n
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = last 
+ GLEVEL   = 10 
+ GVCORD   = hght 
+ GDPFUN   = dwpf 
+ CINT     = 0 
+ LINE     = 1 
+ MAP      = 1/1/2
+ WIND     = 0
+ TITLE    = 1/-1/~   NMMB 10m WIND 
+ DEVICE   = GIF|${ymdh}f${fhr}_nmmb10wz.gif|850;950
+ SATFIL   =
+ RADFIL   =
+ CLEAR    = y
+ PANEL    = 0
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 0 
+ CONTUR   = 0
+ SKIP     = /20;20
+ FINT     = 0 
+ FLINE    = 0
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ CINT     = 
+ WIND     = AK15/0.5/1/2/0.5
+ GDPFUN   = kntv(wnd)
+ SKIP     = /40;40
+ TYPE     = a
+ TITLE    = 0
+ CLRBAR   = 0
+ CLEAR    = n
+r
+
+ CLEAR    = y
+ DEVICE   = GIF|${ymdh}f${fhr}_nmmb10wrefcz.gif|850;950
+r
+
+ GLEVEL   = 0
+ GVCORD   = none
+ GDPFUN   = refc
+ TITLE    = 1/-1/~   NMMB 10m WIND / REFC
+ TYPE     = f
+ FINT     = 5;10;15;20;25;30;35;40;45;50;55;60;65 
+ FLINE    = 0;24;4;26;23;22;21;20;5;10;17;2;15;29 
+ CTYPE    = f
+ CLEAR    = n
+r
+ 
+ex
+EOF
+done
+gpend
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

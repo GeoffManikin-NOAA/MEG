@@ -1,0 +1,80 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/hiresrefd3
+rm /stmpp1/Geoffrey.Manikin/meg/hiresrefd3/*
+cd /stmpp1/Geoffrey.Manikin/meg/hiresrefd3
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=2013053112
+ymd=`echo $ymdh | cut -c1-8`
+dayoweek=Fri
+
+hours="00 03 06 09 12 15 18 21 24 27 30 33 36 39 42 45 48"
+hours="21 22 23 24 25 26 27 28 29 30"
+hours="10 11 12 13 14 15 16 17 18"
+for fhr in $hours; do
+
+fmdl1=/com/nawips/prod/nam.${ymd}/nam_conusnest_${ymdh}f0${fhr}
+fmdl2=/com/nawips/prod/hiresw.${ymd}/hiresw_conusarw_${ymdh}f0${fhr}
+fmdl3=/com/nawips/prod/hiresw.${ymd}/hiresw_conusnmmb_${ymdh}f0${fhr}
+fmdl4=/meso/noscrub/Eric.Rogers/com/nawips/para/nam.${ymd}/nam_conusnest_${ymdh}f0${fhr}
+fmdl2=/meso/save/Geoffrey.Manikin/meg/hireswarw_${ymdh}
+fmdl3=/meso/save/Geoffrey.Manikin/meg/hireswnmm_${ymdh}
+
+garea="31.;-103.;43.;-85."
+proj="lcc/25.;-95.;25./2;2;1;1"
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 1000 
+ GVCORD   = hght 
+ GDPFUN   = refd 
+ CINT     = 5 
+ LINE     = 0 
+ DEVICE   = GIF|${cyc}hires1refdtarget_f${fhr}.gif | 800;850
+ PROJ     = $proj 
+ GAREA    = $garea 
+ TITLE    = 1//~  NAM CONUS NEST  1 KM REFD
+ CLEAR    = y
+ SCALE    = 0
+ PANEL    = ul 
+ HILO     = 0
+ HLSYM    = 0 
+ CLRBAR   = 0
+ TEXT     = 0.9/11/2
+ FINT     = 5;10;15;20;25;30;35;40;45;50;55;60;65;70
+ FLINE    = 0;27;26;4;21;22;23;5;20;17;16;15;14;7;29
+ TYPE     = f 
+r
+
+ GDFILE   = $fmdl2
+ PANEL    = ll
+ CLEAR    = n
+ TITLE    = 1//~  HIRESW ARW  1 KM REFD 
+ CLRBAR   = 1/H/UL/.46;0.94/1.1;.03/1
+r
+
+ GDFILE   = $fmdl3
+ PANEL    = lr 
+ TITLE    = 1//~  HIRESW NMMB  1 KM REFD 
+ CLRBAR   = 0 
+r
+
+ GDFILE   = $fmdl4
+ PANEL    = ur
+ TITLE    = 1//~  NAMX CONUS NEST  1 KM REFD 
+ CLRBAR   = 0
+r
+
+ex
+EOF
+
+done
+mv *gif /stmpp1/Geoffrey.Manikin/meg/holdrefd/.
+exit

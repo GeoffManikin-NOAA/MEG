@@ -1,0 +1,80 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmp/wx20mg/meg
+mkdir /stmp/wx20mg/meg/10w
+rm /stmp/wx20mg/meg/10w/*
+cd /stmp/wx20mg/meg/10w
+cp /meso/save/wx20mg/casework/coltbl.xwp .
+
+ymdh=2012072412
+ymd=`echo $ymdh | cut -c1-8`
+dayoweek=Fri
+
+hours="00 01 02 03 04 05 06 07 08 09 10 11 12"
+hours="45 48"
+
+for fhr in $hours; do
+fmdl1=/com/nawips/prod/nam.${ymd}/nam_conusnest_${ymdh}f0${fhr}
+fmdl1=/ptmp/wx20mg/hold/conusnest_${ymdh}f0${fhr}
+fmdl1=/ptmp/wx20mg/hold/nam40_${ymdh}f0${fhr}
+
+     gdprof << EOF
+ GPOINT   = HGR 
+ GDATTIM  = last
+ GVCORD   = pres 
+ GFUNC    = tmpc
+ GVECT    = WND
+ GDFILE   = $fmdl1 
+ LINE     = 2/1/4
+ MARKER   = 0
+ BORDER   = 1
+ PTYPE    = skewt 
+ SCALE    = 0
+ YAXIS    = 1050/300/50/1;1;1
+ XAXIS    = -20/45/10/;1
+ WIND     = BM1
+ REFVEC   =  
+ WINPOS   = 1
+ FILTER   = YES
+ TITLE    = 1
+ PANEL    = 0
+ CLEAR    = YES
+ TEXT     = 1
+ DEVICE   = GIF|nam_hgrf${fhr}.gif|800;850
+ OUTPUT   = T
+ THTALN   = 8/3/1/250/500/5
+ THTELN   = 23/1/1/250/500/5
+ MIXRLN   = 17/10/2/0/40./1.
+r
+
+ CLEAR    = NO
+ GFUNC    = dwpc
+ LINE     = 3/1/4
+r
+
+ex
+EOF
+
+done
+gpend
+
+. /u/wx20mg/.Utils
+export w1=wd20mg
+export w2=$rzdm
+
+ftp -n -v << EOF > /meso/save/wx20mg/casework/rzftp.out
+open emcrzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek
+mput *gif
+bye
+EOF
+
+rm *gif
+exit

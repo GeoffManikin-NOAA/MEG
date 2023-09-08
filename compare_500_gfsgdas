@@ -1,0 +1,167 @@
+!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/500z
+rm /stmpp1/Geoffrey.Manikin/meg/500z/*
+cd /stmpp1/Geoffrey.Manikin/meg/500z
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`cut -c 7-14 /com/date/t${cyc}z`
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+
+fmdl1=/com2/nawips/prod/gfs.${ymd}/gfs40_${ymdh}f000
+fmdl2=/com2/nawips/prod/gfs.${ymd}/gdas_${ymdh}f000
+
+    gdplot2 << EOF
+
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 500
+ GVCORD   = pres
+ GDPFUN   = avor
+ CINT     = 2/10/46
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   GFS 500 mb  Z/AVOR
+ DEVICE   = GIF|500models_f0${fhr}.gif|850;950
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-95;25;/1;1;1;1
+ GAREA    = grid 
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 5
+ LATLON   = 0
+ HILO     = 2/x#;/14-46;/5//yes
+ HLSYM    = 1//21;//HW
+ CLRBAR   = 1/V/UL/.04;0.22/.4;.02/2
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 16;20;24;28;32;36
+ FLINE    = 0;23;21;5;19;17;16
+ TYPE     = f/c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDPFUN   = quo(hght,10)
+ CINT     = 6
+ LINE     = 4/1/3/3
+ TITLE    = 0
+ CLEAR    = n
+ SCALE    = 0
+ HILO     = 0
+ HLSYM    = 2;2//2/4/SW
+ TEXT     = 1.2/11/2
+ FINT     = 0
+ FLINE    = 0
+ TYPE     = c
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhr
+ GLEVEL   = 500
+ GVCORD   = pres
+ GDPFUN   = avor
+ CINT     = 2/10/46
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   GFS 500 mb Z/AVOR
+ SATFIL   =
+ RADFIL   =
+ PANEL    = b
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 5
+ LATLON   = 0
+ HILO     = 2/x#;/14-46;/5//yes
+ HLSYM    = 1//21;//HW
+ CLRBAR   = 0 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 16;20;24;28;32;36
+ FLINE    = 0;23;21;5;19;17;16
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDPFUN   = quo(hght,10)
+ CINT     = 6
+ LINE     = 4/1/3/3
+ TITLE    = 0
+ CLEAR    = n
+ SCALE    = 0
+ HILO     = 0
+ HLSYM    = 2;2//2/4/SW
+ TEXT     = 1.2/11/2
+ FINT     = 0
+ FLINE    = 0
+ TYPE     = c
+r
+
+ex
+EOF
+
+    gdcntr << EOF
+
+ GDFILE   = $fmdl2 + $fmdl1
+ GDATTIM  = f${fhr}
+ GLEVEL   = 500
+ GVCORD   = pres
+ GFUNC    = sub(hght+2,hght)
+ CINT     = 10
+ LINE     = 1
+ MAP      = 1
+ WIND     = bk1/0.7/2/122
+ TITLE    = 1//~ 500 Z   NAM - GFS
+ DEVICE   = GIF|500diff_f0${fhr}.gif | 600;650
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-95.;25./2;2;1;1
+ GAREA    = grid
+ CLEAR    = y
+ PANEL    = 0
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/H/UL/.1;.88/.8;.02/-1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = -150;-120;-90;-60;-30;30;60;90;120;150
+ FLINE    = 30;28;26;27;22;0;5;10;17;2;15
+ CTYPE    = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ex
+EOF
+
+done
+gpend
+
+for fhr in $times; do
+
+CONV=/usrx/local/ImageMagick/6.8.3-3/bin
+$CONV/convert -crop 0x0 500models_f0${fhr}.gif 5001.gif
+$CONV/convert -crop 0x0 500diff_f0${fhr}.gif 5002.gif
+$CONV/montage -geometry 800x850 5001.gif 5002.gif ${cyc}500${fhr}.gif
+done
+
+mv ${cyc}*gif /stmpp1/Geoffrey.Manikin/meg/holdshort/.
+rm *gif
+exit

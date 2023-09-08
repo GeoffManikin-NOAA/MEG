@@ -1,0 +1,68 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /stmp/wx20mg/meg
+mkdir /stmp/wx20mg/meg/scapew
+rm /stmp/wx20mg/meg/scapew/*
+cd /stmp/wx20mg/meg/scapew
+cp /meso/save/wx20mg/casework/coltbl.xwp .
+
+ymdh=2012080700
+ymd=`echo $ymdh | cut -c1-8`
+dayoweek=Tue
+
+hours="00 01 02 03 04 05 06 07 08 09 10 11 12"
+hours="24 36"
+for fhr in $hours; do
+
+fmdl1=/com/nawips/prod/nam.${ymd}/nam_conusnest_${ymdh}f0${fhr}
+#fmdl1=/ptmp/wx20mg/hold/conusnest_${ymdh}f0${fhr}
+
+    gdplot2 << EOF
+
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 180:0 
+ GVCORD   = pdly 
+ GDPFUN   = cape 
+ CINT     = 500 
+ LINE     = 0 
+ DEVICE   = GIF|conusnestbestcape_${ymdh}f0${fhr}.gif | 800;scape
+ PROJ     = lcc/25.;-95.;25./2;2;1;1
+ GAREA    = 34.;-92.;46.;-70. 
+ TITLE    = 1//~  NAM CONUS NEST BEST CAPE 
+ CLEAR    = y
+ SCALE    = 0
+ PANEL    = 0
+ HILO     = 0
+ HLSYM    = 0 
+ CLRBAR   = 1/V/UL/.03;0.9/0.8;.03/1
+ TEXT     = 1.1/11/2
+ FINT     = 50;500;1000;1500;2000;2500;3000;3500;4000;4500;5000
+ FLINE    = 0;25;21;22;23;5;10;17;16;2;15;32
+ TYPE     = f 
+r
+
+ex
+EOF
+
+done
+gpend
+
+. /u/wx20mg/.Utils
+export w1=wd20mg
+export w2=$rzdm
+
+ftp -n -v << EOF > /meso/save/wx20mg/casework/rzftp.out
+open emcrzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek
+mput *gif 
+bye
+EOF
+
+rm *gif
+exit

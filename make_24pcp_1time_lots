@@ -1,0 +1,150 @@
+#!/bin/ksh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/24pcptrnam
+rm /stmpp1/Geoffrey.Manikin/meg/24pcptrnam/*
+cd /stmpp1/Geoffrey.Manikin/meg/24pcptrnam
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=2020021912
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+dayoweek=hold7
+
+hours="48"
+for fhr in $hours; do
+
+verymdh="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} ${fhr} -1`"
+fhr2=`expr $fhr + 6`
+fhr3=`expr $fhr + 12`
+fhr4=`expr $fhr + 18`
+typeset -Z2 fhr2 fhr3 fhr4
+
+DAPATH=/meso/noscrub/Geoffrey.Manikin/feb20ncstorm
+fmdl1=${DAPATH}/nampcp_${ymdh}
+fmdl2=${DAPATH}/gfspcp_${ymdh}
+fmdl3=${DAPATH}/namnestpcp_${ymdh}
+fmdl4=${DAPATH}/gfsv14pcp_${ymdh}
+fmdl5=${DAPATH}/hireswarwpcp_${ymdh}
+fmdl6=${DAPATH}/hireswnmmbpcp_${ymdh}
+fmdl7=/com2/nawips/prod/ecmwf.${ymd}/ecmwf_0p25_${ymdh}f0${fhr}
+fmdl7=${DAPATH}/ecmwf_hires_${ymdh}f0${fhr}
+fmdl8=/gpfs/hps/nco/ops/com/rap/prod/rap.2019071315/nawips/rap13_${ymdh}f027
+#fmdl9=/gpfs/hps/nco/ops/com/hrrr/prod/hrrr.${ymd}/conus/nawips/hrrr_${ymdh}f02400
+fmdl9=${DAPATH}/hrrr_${ymdh}f02400
+fmdl10=${DAPATH}/hireswarw2pcp_${ymdh}
+fmdl11=${DAPATH}/href_mean_${ymdh}
+fmdl12=${DAPATH}/href_pmmn_${ymdh} 
+
+   gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f${fhr} 
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = p24i 
+ CINT     = 0.25 
+ LINE     = 0
+ MAP      = 1
+ \$MAPFIL = 0
+# \$MAPFIL = county
+ WIND     = 0
+ TITLE    = 1//  NAM 24-HR PCP  $ymd1 ${cyc}z  F${fhr}
+ DEVICE   = GIF|nam24pcpz_${ymdh}f0${fhr}.gif | 800;850
+ SATFIL   =
+ RADFIL   =
+ GAREA    = 28.;-86.;40.;-70. 
+ GAREA    = nc+
+ PROJ     = lcc/25;-78;25/2;2;1;1
+ CLEAR    = y
+ PANEL    = 0 
+ TEXT     = 0.8/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/H/UL/.05;0.96/0.9;.02/1|0.8/1
+# CLRBAR   = 1/V/UL/.02;0.9/0.8;.02/1|0.8/1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = .01;.1;.25;.5;.75;1;1.5;2;2.5;3;3.5
+# FLINE    = 0;21;22;23;4;25;27;28;29;30;2;15
+# FINT     = .01;.25;.5;0.75;1.;1.5;2;2.5;3;4;5;7.5;10;12.5;15;20
+ FLINE    = 0;21;22;23;4;25;27;28;29;30;2;15;16;17;10;5;1
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl2
+ TITLE    = 1//  GFS 24-HR PCP  $ymd ${cyc}z  F${fhr}
+ CLEAR    = y
+ DEVICE   = GIF|gfs24pcpz_${ymdh}f0${fhr}.gif | 800;850
+r
+
+ GDFILE   = $fmdl3
+ TITLE    = 1//  NAM3 24-HR PCP  $ymd ${cyc}z  F${fhr}
+ DEVICE   = GIF|nest24pcpz_${ymdh}f0${fhr}.gif | 800;850
+r
+
+ GDFILE   = $fmdl4
+ TITLE    = 1//  GFSv14  24-HR PCP  $ymd ${cyc}z  F${fhr}
+ DEVICE   = GIF|gfsx24pcpz_${ymdh}f0${fhr}.gif | 800;850
+r
+
+ GDFILE   = $fmdl5
+ TITLE    = 1//  ARW 24-HR PCP  $ymd ${cyc}z  F${fhr}
+ DEVICE   = GIF|arw24pcpz_${ymdh}f0${fhr}.gif | 800;850
+r
+
+ GDFILE   = $fmdl6
+ TITLE    = 1//  NMMB 24-HR PCP  $ymd ${cyc}z  F${fhr}
+ DEVICE   = GIF|nmmb24pcpz_${ymdh}f0${fhr}.gif | 800;850
+r
+
+ GDFILE   = $fmdl7
+ GDPFUN   = quo(mul(pxxm,1000),25.4)
+ TITLE    = 1//  ECMWF 24-HR PCP  $ymd ${cyc}z  F${fhr}
+ DEVICE   = GIF|ecmwf24pcpz_${ymdh}f0${fhr}.gif | 800;850
+r
+
+ GDFILE   = $fmdl8
+ GDPFUN   = p24i
+ TITLE    = 1//  RAP 24-HR PCP  $ymd ${cyc}z  F21
+ DEVICE   = GIF|rap24pcpz_${ymdh}f0${fhr}.gif | 800;850
+r
+
+ GDFILE   = $fmdl9 
+# GDPFUN   = sub(p24i+2,p24i^20190716/00f12)
+ TITLE    = 1//  HRRR 24-HR PCP  $ymd ${cyc}z  F${fhr}
+ DEVICE   = GIF|hrrr24pcpz_${ymdh}f0${fhr}.gif | 800;850
+r
+
+ GDFILE   = $fmdl10
+ GDPFUN   = p24i
+ TITLE    = 1//  ARW2 24-HR PCP  $ymd ${cyc}z  F${fhr}
+ DEVICE   = GIF|arw224pcpz_${ymdh}f0${fhr}.gif | 800;850
+r
+
+ GDFILE   = $fmdl11
+ TITLE    = 1//  HREF MEAN 24-HR PCP  $ymd ${cyc}z  F${fhr} 
+ DEVICE   = GIF|hrefmean24pcpz_${ymdh}f0${fhr}.gif | 800;850
+r
+
+ GDFILE   = $fmdl12
+ TITLE    = 1//  HREF PMM 24-HR PCP  $ymd ${cyc}z  F${fhr}
+ DEVICE   = GIF|hrefpmm24pcpz_${ymdh}f0${fhr}.gif | 800;850
+r
+
+ex
+EOF
+gpend
+done
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

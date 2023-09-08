@@ -1,0 +1,115 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/2dew
+rm /stmpp1/Geoffrey.Manikin/meg/2dew/*
+cd /stmpp1/Geoffrey.Manikin/meg/2dew
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=2012071700
+ymd=`echo $ymdh | cut -c1-8`
+date
+date > holddate
+echo $holddate
+dayoweek=Mon
+
+fmdl1=/com/nawips/prod/gfs.${ymd}/gfs_${ymdh}f000
+fmdl2=/com/nawips/prod/gdas.${ymd}/gdas_${ymdh}f000
+
+    gdplot2 << EOF
+
+ GDFILE   = $fmdl1
+ GDATTIM  = f00
+ GLEVEL   = 2 
+ GVCORD   = hght 
+ GDPFUN   = dwpf 
+ CINT     = 4 
+ LINE     = 1 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   GFS 2-M  DWPF 
+ DEVICE   = GIF|2dewmodels_f000.gif|850;950
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-95;25;/1;1;1;1
+ GAREA    = 21.;-121.;51.;-65. 
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/V/UL/.01;0.4/0.8;.03/2 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = -12;-8;-4;0;4;8;12;16;20;24;28;32;36;40;44;48;52;56;60;64;68;72;76;80
+ FLINE    = 0;11;9;12;7;30;29;28;4;25;26;27;24;23;22;21;5;20;10;17;16;2;15;14;32
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f00
+ TITLE    = 1/-1/~  GDAS 2-M DWPF 
+ PANEL    = b
+ CLRBAR   = 0
+ CLEAR    = n
+r
+
+ex
+EOF
+
+    gdcntr << EOF
+
+ GDFILE   = $fmdl2 + $fmdl1
+ GDATTIM  = f00
+ GLEVEL   = 2  
+ GVCORD   = hght 
+ GFUNC    = sub(dwpf+2,dwpf)
+ CINT     = 2 
+ LINE     = 1
+ MAP      = 1
+ WIND     = bk1/0.7/2/122
+ TITLE    = 1//~ 2-M DWPF (F)   GFS - GDAS
+ DEVICE   = GIF|2dewdiff_f000.gif | 500;550
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-95.;25./2;2;1;1
+ GAREA    = 21.;-121.;51.;-65. 
+ CLEAR    = y
+ PANEL    = 0
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/H/UL/.1;.9/.8;.02/-1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = -5;-4;-3;-2;-1;1;2;3;4;5 
+ FLINE    = 30;28;26;27;22;0;5;10;17;2;15
+ CTYPE    = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ex
+EOF
+gpend
+
+/usrx/local/im_beta/bin/convert -crop 0x0 2dewmodels_f000.gif 2dew1.gif
+/usrx/local/im_beta/bin/convert -crop 0x0 2dewdiff_f000.gif 2dew2.gif
+
+CONV=/usrx/local/imajik/bin
+$CONV/montage -geometry 800x850 2dew1.gif 2dew2.gif ${cyc}2dew00gfsgdas.gif
+
+mv ${cyc}*gif /stmpp1/Geoffrey.Manikin/meg/holdshort/.
+rm *gif
+exit

@@ -1,0 +1,49 @@
+#/bin/ksh
+
+set -x
+
+cyc=$1
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+ymdh=2015100818
+ymd=`echo $ymdh | cut -c1-8`
+
+DAPATH=/com/nam/prod/nam.${ymd}
+#DAPATH2=/meso/noscrub/Eric.Rogers/com/nam/para/nam.${ymd}
+#DAPATH=/ptmp/Geoffrey.Manikin/hold3/
+COMOUT=/ptmpd2/Geoffrey.Manikin/com2/nawips/prod/nam.${ymd}
+
+export DAPATH
+. /nwprod/gempak/.gempak
+
+fhrs="01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36"
+
+fhrs="26"
+for fhr in $fhrs
+do
+
+  nagrib << EOF
+GBFILE  = ${DAPATH}/nam.t${cyc}z.firewxnest.hiresf${fhr}.tm00 
+INDXFL  =
+GDOUTF  = dummynest.grd 
+PROJ    =
+GRDAREA =
+KXKY    = 
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+exit
+EOF
+mv dummynest.grd ${COMOUT}/namfirewxnest_${ymdh}f0${fhr}
+done
+gpend
+exit
+

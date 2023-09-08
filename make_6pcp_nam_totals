@@ -1,0 +1,84 @@
+#!/bin/ksh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/6pcptrnam
+rm /stmpp1/Geoffrey.Manikin/meg/6pcptrnam/*
+cd /stmpp1/Geoffrey.Manikin/meg/6pcptrnam
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymdh=2017122206
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+dayoweek=hold7
+fhr1=06
+fhr2=12
+fhr3=18
+fhr4=24
+
+fmdl1=/meso/save/Geoffrey.Manikin/meg/nampcp_${ymdh}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1 
+ GDATTIM  = f${fhr1}
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = p06i 
+ CINT     = 0.25 
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1//  NAM 6-HR PCP  ${ymd1} ${cyc}z  F${fhr1}
+ DEVICE   = GIF|nam6pcp_${ymd}.gif | 800;850
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-70;25;/1;1;1;1
+ GAREA    = me+
+# GAREA    = 28.;-88.;44.;-66. 
+ CLEAR    = y
+ PANEL    = 0.;0.42;0.48;1.
+ TEXT     = 0.8/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/H/UL/.02;0.92/1.5;.03/1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = .01;.1;.25;.5;.75;1;1.5;2;2.5;3;3.5
+ FLINE    = 0;21;22;23;4;25;27;28;29;30;2;15
+ TYPE     = f/c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ CLEAR    = n
+ GDATTIM  = f${fhr2}
+ TITLE    = 1//  NAM 6-HR PCP  $ymd ${cyc}z  F${fhr2}
+ PANEL    = 0.52;0.42;1.;1.
+ CLRBAR   = 0
+r
+
+ TITLE    = 2/1/VERIFYING TIME   $verymdh
+r
+
+ GDATTIM  = f${fhr3}
+ TITLE    = 1//  NAM 6-HR PCP  $ymd ${cyc}z  F${fhr3}
+ PANEL    = 0;0;0.48;0.58
+r
+
+ GDATTIM  = f${fhr4}
+ TITLE    = 1//  NAM 6-HR PCP  $ymd ${cyc}z  F${fhr4}
+ PANEL    = 0.52;0;1.;0.58
+r
+
+ex
+EOF
+gpend
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

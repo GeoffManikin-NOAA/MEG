@@ -1,0 +1,123 @@
+#!/bin/sh
+echo 'into'
+
+ymdh=2020091700
+dayoweek=hold7
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/meg
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/meg/ver
+rm /gpfs/dell1/stmp/Geoffrey.Manikin/meg/ver/*
+cd /gpfs/dell1/stmp/Geoffrey.Manikin/meg/ver/
+cp /gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/coltbl.xwp .
+
+garea="23.;-128.;61.;-54."
+garea="ak"
+#garea="26.;-112.;50.;-80."
+#garea=de
+#garea="22.;-123.;54.;-65."
+proj="lcc/25;-135;25;/1;1;1;1"
+#garea="nj"
+
+base=10
+basem1=9.9
+basem2=5
+basem3=4
+basem4=3
+basem5=2
+basem6=1
+
+     sfmap << EOF
+ AREA     = $garea
+ GAREA    = $garea
+ SATFIL   =
+ RADFIL   =
+ SFPARM   = vsby 
+ DATTIM   = ${day}/${cyc}
+# SFFILE   = /dcom/us007003/ldmdata/gempak/hrly/${ymd}.hrly 
+ SFFILE   = /gpfs/dell2/emc/verification/noscrub/Geoffrey.Manikin/obs/hrly/${ymd}.hrly
+ COLORS   = 1 
+ MAP      = 1
+ LATLON   = 0
+ TITLE    = 1/-1/~   ALL OBS 
+ CLEAR    = no 
+ PANEL    = 0 
+ DEVICE   = GIF|${ymdh}_vis2.gif|800;800 
+ PROJ     = $proj 
+ FILTER   = none 
+ TEXT     = 1.0/21/2/SW
+ LUTFIL   =
+ STNPLT   =
+ CLRBAR   =
+r
+
+ SFPARM   = vsby<$basem1
+ COLORS   = 28 
+ TITLE    = 0
+r
+
+ SFPARM   = vsby<$basem2
+ COLORS   = 26
+r
+
+ SFPARM   = vsby<$basem3
+ COLORS   = 21 
+r
+
+ SFPARM   = vsby<$basem4
+ COLORS   = 5 
+r
+
+ SFPARM   = vsby<$basem5
+ COLORS   = 17 
+r
+
+ SFPARM   = vsby<$basem6
+ COLORS   = 2 
+r
+
+ SFFILE   = /ptmpp1/hpcops/obs/${ymd}${cyc}.ship
+ SFPARM   = vsby<$base
+ COLORS   = 1 
+ TITLE    = 0
+r
+
+ SFPARM   = vsby<$basem1
+ COLORS   = 28
+ TITLE    = 0
+r
+
+ SFPARM   = vsby<$basem2
+ COLORS   = 26
+r
+
+ SFPARM   = vsby<$basem3
+ COLORS   = 21
+r
+
+ SFPARM   = vsby<$basem4
+ COLORS   = 5
+r
+
+ SFPARM   = vsby<$basem5
+ COLORS   = 17
+r
+
+ SFPARM   = vsby<$basem6
+ COLORS   = 2
+r
+
+ SFFILE   = /ptmpp1/hpcops/obs/${ymd}${cyc}.ship
+ SFPARM   = vsby<$base
+ COLORS   = 1
+ TITLE    = 0
+r
+
+ex
+EOF
+gpend
+
+#scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test4/.
+exit

@@ -1,0 +1,78 @@
+#!/bin/ksh
+
+set -x
+
+# @ step_name = nagrib
+# @ output = /nfsuser/g01/wx20mg/gempak/nagrib.out
+# @ error = /nfsuser/g01/wx20mg/gempak/nagrib.out
+# @ class = dev
+# @ queue
+
+. /nwprod/gempak/.gempak
+
+export cyc=$1
+export PS4='PRDGEN${fhr}_T$SECONDS + '
+export XLFRTEOPTS="unit_vars=yes"
+
+da00=20020109
+hr00=00
+
+echo $da00
+echo $hr00
+echo $cyc
+
+if [ -s /nfsuser/g01/wx20mg/gempak/nagrib/dummy.grd ]
+then
+ exit
+fi
+
+cd /nfsuser/g01/wx20mg/gempak/nagrib
+
+nagrib << EOF
+ GBFILE   = /ptmp/wx20mg/ruc2/ruc2.t${cyc}z.pgrbanl
+ INDXFL   =
+ GDOUTF   = dummy.grd
+ PROJ     = MER
+ GRDAREA  =
+ KXKY     = 10;10
+ MAXGRD   = 3000
+ CPYFIL   = gds 
+ GAREA    = grid
+ OUTPUT   = T
+ GBTBLS   =
+ GBDIAG   =
+
+r
+exit
+EOF
+
+fhrs="01 02 03 06 09 12"
+
+for hh in $fhrs
+do
+
+nagrib << EOF
+ GBFILE   = /ptmp/wx20mg/ruc2/ruc2.t${cyc}z.pgrbf${hh} 
+ INDXFL   =  
+ GDOUTF   = dummy.grd 
+ PROJ     = MER
+ GRDAREA  =  
+ KXKY     = 10;10
+ MAXGRD   = 3000 
+ CPYFIL   = gds 
+ GAREA    = grid 
+ OUTPUT   = T
+ GBTBLS   =  
+ GBDIAG   =  
+
+r
+exit
+EOF
+
+done
+
+gpend
+chmod 777 dum*
+mv dummy.grd ruc2_${da00}${cyc} 
+
+exit

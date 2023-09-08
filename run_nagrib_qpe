@@ -1,0 +1,51 @@
+#/bin/ksh
+
+set -x
+
+mkdir /stmp/Geoffrey.Manikin/pcp
+rm /stmp/Geoffrey.Manikin/pcp/*
+cd /stmp/Geoffrey.Manikin/pcp
+
+ymdh=2013091212
+ymd=`echo $ymdh | cut -c1-8`
+
+DAPATH=/com/nam/prod/nam.${ymd}
+DAPATH=/dcom/us007003/${ymd}/wgrbbul
+export DAPATH 
+. /nwprod/gempak/.gempak
+
+fhrs="6 12 18 24"
+for fhr in $fhrs
+do
+
+fhr6=`expr $fhr - 6`
+#typeset -Z2 fhr fhr6
+#
+wgrib ${DAPATH}/QPE.009.152 | grep kpds5=61:kpds6=1:kpds7=0:TR=4:P1=${fhr6}:P2=${fhr} | wgrib ${DAPATH}/QPE.009.152 -i -grib -o mdl1 
+
+cat mdl1 >> qpe_${ymdh}.tmp
+rm mdl1
+done
+
+nagrib << EOF
+GBFILE  = qpe_${ymdh}.tmp
+INDXFL  =
+GDOUTF  = qpe_${ymdh}
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds 
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+exit
+EOF
+
+gpend
+mv qpe_${ymdh} /meso/save/Geoffrey.Manikin/meg
+
+exit

@@ -1,0 +1,230 @@
+#!/bin/ksh
+#
+#PBS -N href_nagrib1
+#PBS -o /lfs/h2/emc/vpppg/save/geoffrey.manikin/meg/href_nagrib.out1
+#PBS -e /lfs/h2/emc/vpppg/save/geoffrey.manikin/meg/href_nagrib.err1
+#PBS -l select=1:ncpus=10:mpiprocs=1:mem=50GB
+#PBS -q dev
+#PBS -l walltime=00:30
+#PBS -A VERF-DEV
+
+set -x
+
+ymd=20220926
+version=v3.1
+
+DAPATH=/lfs/h1/ops/prod/com/href/${version}/href.${ymd}/ensprod
+DAPATH=/lfs/h2/emc/ptmp/geoffrey.manikin/href2/
+WGRIB=/apps/ops/prod/libs/intel/19.1.3.304/grib_util/1.2.2/bin/wgrib
+
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/hrefnagrib1
+rm /lfs/h2/emc/stmp/geoffrey.manikin/hrefnagrib1/*
+cd /lfs/h2/emc/stmp/geoffrey.manikin/hrefnagrib1/
+cp /lfs/h1/ops/prod/packages/href.v3.1.3/gempak/fix/* .
+export DAPATH 
+
+cycles="00 12"
+#fhrs="06 12 18 24 30 36 42 48 54 60"
+#fhrs="06 12 18 24 30 36 42 48 54 60"
+fhrs="03 06 09 12 15 18 21 24 27 30 33 36 39 42 45 48"
+
+for cyc in $cycles
+do
+for fhr in $fhrs
+do
+
+#cp ${DAPATH}/href.t${cyc}z.conus.mean.f${fhr}.grib2 . 
+cp ${DAPATH}/href.t${cyc}z.conus.lpmm.f${fhr}.grib2 .
+cp ${DAPATH}/href.t${cyc}z.conus.pmmn.f${fhr}.grib2 .
+
+   nagrib2 << EOF
+GBFILE  = ${DAPATH}/href.t${cyc}z.conus.mean.f${fhr}.grib2 
+INDXFL  =
+GDOUTF  = dummyhrefmean.grd 
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+GBFILE  = href.t${cyc}z.conus.lpmm.f${fhr}.grib2
+GDOUTF  = dummyhreflpmm.grd
+r
+
+GBFILE  = href.t${cyc}z.conus.pmmn.f${fhr}.grib2
+GDOUTF  = dummyhrefpmmn.grd
+r
+
+exit
+EOF
+done
+done
+
+for cyc in $cycles
+do
+
+  gddelt << EOF
+GDFILE  = dummyhrefmean.grd
+GVCORD  = pres
+GLEV    = all
+GFUN    = all
+GDATTIM = all
+r
+
+GVCORD  = hght
+r
+
+GVCORD  = hybl
+r
+
+GVCORD  = sgma
+r
+
+GVCORD  = trop
+r
+
+GVCORD  = dpth
+r
+
+GVCORD  = PBLY
+r
+
+GVCORD  = FRZL
+r
+
+GVCORD  = HTFL
+r
+
+GVCORD  = MCTL
+r
+
+GVCORD  = LCTL
+r
+
+GVCORD  = HCTL
+r
+
+GVCORD  = MCBL
+r
+
+GVCORD  = MCLY
+r
+
+GVCORD  = HCLY
+r
+
+GVCORD  = LCLY
+r
+
+GVCORD  = PDLY
+r
+
+GVCORD  = ATMO
+r
+
+GVCORD  = MWSL
+r
+
+GVCORD  = TOPA
+r
+
+GVCORD  = RPBL 
+r
+
+GVCORD  = LCLV
+r
+
+GVCORD  = CLDT
+r
+
+GVCORD  = CLDL
+r
+
+GVCORD  = CCBL
+r
+
+GVCORD  = CEIL
+r
+
+GVCORD  = NONE
+GLEVEL  = 0
+GFUNC   = P01M
+r
+
+GFUN    = SWEM01
+r
+
+GFUN    = SWEM03
+r
+ 
+GFUN    = wxtr
+r
+
+GFUN    = wxts
+r
+
+GFUN    = wxtp
+r
+
+GFUN    = wxtz
+r
+
+ex
+EOF
+
+  gddelt << EOF
+GDFILE  = dummyhreflpmm.grd
+GVCORD  = pres
+GLEV    = all
+GFUN    = all
+GDATTIM = all
+r
+
+GVCORD  = hght
+r
+
+GVCORD  = NONE
+GLEVEL  = 0
+GFUNC   = P01M
+r
+
+GFUN    = ECHTOP 
+r
+
+ex
+EOF
+
+   gddelt << EOF
+GDFILE  = dummyhrefpmmn.grd
+GVCORD  = pres
+GLEV    = all
+GFUN    = all
+GDATTIM = all
+r
+
+GVCORD  = hght
+r
+
+GVCORD  = NONE
+GLEVEL  = 0
+GFUNC   = P01M
+r
+
+GFUN    = ECHTOP
+r
+
+exit
+EOF
+done
+
+mv dummyhrefmean.grd /lfs/h2/emc/vpppg/noscrub/geoffrey.manikin/ian/hrefmeanpcp_${ymd}${cyc}
+mv dummyhreflpmm.grd /lfs/h2/emc/vpppg/noscrub/geoffrey.manikin/ian/hreflpmmpcp_${ymd}${cyc}
+mv dummyhrefpmmn.grd /lfs/h2/emc/vpppg/noscrub/geoffrey.manikin/ian/hrefpmmnpcp_${ymd}${cyc}
+
+gpend
+exit

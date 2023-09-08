@@ -1,0 +1,15 @@
+#!/bin/ksh
+
+mkdir /stmpp1p1/Geoffrey.Manikin/change
+rm /stmpp1p1/Geoffrey.Manikin/change/*
+cd /stmpp1p1/Geoffrey.Manikin/change
+cp /meso/save/Geoffrey.Manikin/gempak.rap13/make* .
+cp /meso/save/Geoffrey.Manikin/gempak.rap13/lau* .
+echo 'into'
+for f in *
+do
+cat $f|sed "s/stmpp1/stmpp1p1/g"|grep -i stmpp1
+echo $f
+sleep 1
+done
+exit

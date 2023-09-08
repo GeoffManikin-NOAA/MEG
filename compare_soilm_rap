@@ -1,0 +1,121 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /stmpp1/Geoffrey.Manikin/meg/soilm
+rm /stmpp1/Geoffrey.Manikin/meg/soilm/*
+cd /stmpp1/Geoffrey.Manikin/meg/soilm
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+cp /meso/save/Geoffrey.Manikin/gempak/nagrib/ncepgrib2.tbl .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`cut -c 7-14 /com/date/t${cyc}z`
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+
+ymdh=2013051412
+ymd=20130514
+cyc=12
+dayoweek=Tue
+
+DAPATH=/com/rap/prod/rap.${ymd}
+times="00"
+for fhr in $times; do
+
+wgrib -i -d 722 ${DAPATH}/rap.t${cyc}z.awp130bgrbf${fhr} -grib -o new1.grd
+wgrib -i -d 723 ${DAPATH}/rap.t${cyc}z.awp130bgrbf${fhr} -grib -o new2.grd
+
+/nwprod/gempak/nawips1/os/aix5/bin/nagrib_nc << EOF
+GBFILE  = new1.grd
+INDXFL  =
+GDOUTF  = rapsoilmf${fhr}.grd
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+GBFILE  = new2.grd
+r
+
+ex
+EOF
+
+fmdl1=rapsoilmf${fhr}.grd
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr 
+ GLEVEL   = 5 
+ GVCORD   = dpth 
+ GDPFUN   = soim 
+ CINT     = 4 
+ LINE     = 0 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~ RAP  @ SOIL MOISTURE
+ DEVICE   = GIF|rapsoim_${ymd}${cyc}f0${fhr}.gif|750;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-90;25;/1;1;1;1 
+ GAREA    = 14;-124.;56.;-50. 
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0 
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 0 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = .02;.05;.1;.15;.2;.25;.3;.35;.4;.45;.5 
+ FLINE    = 0;18;16;17;10;5;20;21;22;23;27;4
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ CLEAR    = n
+ GLEVEL   = 20
+ TITLE    = 1/-1/~ RAP @ SOIL MOISTURE
+ CLRBAR   = 1/H/UL/.08;0.96/.8;.02/2 
+ PANEL    = b
+r
+
+ex
+EOF
+gpend
+done
+
+. /u/Geoffrey.Manikin/.Utils
+export w1=wd20mg
+export w2=$rzdm
+
+ftp -n -v << EOF > /meso/save/Geoffrey.Manikin/casework/rzftp.out
+open emcrzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/today
+mput *gif
+bye
+EOF
+
+ftp -n -v << EOF > /meso/save/Geoffrey.Manikin/casework/rzftp.out
+open emcrzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/${dayoweek}
+mput *gif
+bye
+EOF
+
+exit

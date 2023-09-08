@@ -1,0 +1,76 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+ymdh=2017022412
+ymd=`echo $ymdh | cut -c1-8`
+month=`echo $ymdh | cut -c5-6`
+day=`echo $ymdh | cut -c7-8`
+cyc=`echo $ymdh | cut -c9-10`
+dayoweek=hold5
+
+mkdir /stmpp1/Geoffrey.Manikin/850w
+cd /stmpp1/Geoffrey.Manikin/850w
+rm /stmpp1/Geoffrey.Manikin/850w/*
+cp /meso/save/Geoffrey.Manikin/gempak.rap13/coltbl.xwp .
+
+times="00 24 48 72 96"
+for fhr in $times; do
+
+fmdl1=/com2/nawips/prod/gfs.${ymd}/gfs_0p25_${ymd}${cyc}f0${fhr}
+echo $fmdl1
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = quo(pwtr,25.4) 
+ CINT     = 10
+ LINE     = 0 
+ MAP      = 1
+ WIND     = 0 
+ TITLE    = 1/-1/~ GFS  ${fhr}-HR FCST 850 MB WIND(kt) / PW
+ DEVICE   = GIF|gfs850pw_${ymdh}f${fhr}.gif|900;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-120.;25./2;2;1;1 
+ GAREA    = 19.;-135.;41.;-103. 
+ CLEAR    = y
+ PANEL    = 0
+ TEXT     = 1.0/1/2
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 1;1/2/21;21/4;2/HW 
+ CLRBAR   = 1/H/UL/.05;0.98/.8;.03/-1
+ CONTUR   = 0
+ SKIP     = 0 
+ FINT     = .25;.5;.75;1.;1.25;1.5;1.75;2.;2.25;2.5
+ FLINE    = 0;21;22;23;28;30;2;15;17;10;5
+ TYPE     = f 
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GLEVEL   = 850
+ GVCORD   = pres
+ CINT     =
+ WIND     = BK1/0.8/2/122
+ GDPFUN   = kntv(wnd)
+ SKIP     = /7;7
+ TYPE     = b
+ TITLE    = 0
+ CLRBAR   = 0
+ CLEAR    = n
+r
+ 
+ex
+EOF
+
+gpend
+done
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit
+

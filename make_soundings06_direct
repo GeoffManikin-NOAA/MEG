@@ -1,0 +1,117 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+length=$2
+
+da00=`cut -c 7-14 /com/date/t${cyc}z`
+hr00=`cut -c 15-16 /com/date/t${cyc}z`
+month=`cut -c 11-12 /com/date/t${cyc}z`
+day=`cut -c 13-14 /com/date/t${cyc}z`
+#stations="722010 724030 722500 723630 723570 724560 745600 723870 727470 725720 726620 722150"
+stations="722010 722150 724030 725010 722500 723630 723570 724560 726320 745600 727470 726620 723870 725720 727970 722740"
+
+#da00=`cut -c 7-14 t${cyc}z`
+#hr00=`cut -c 15-16 t${cyc}z`
+
+#da00=20040609
+#hr00=18
+
+mkdir /stmpp1/wx20mg/gempak.ruc20/launch12/snd06
+cd /stmpp1/wx20mg/gempak.ruc20/launch12/snd06
+
+ /nwprod/util/ush/startxvfb.sh /bin/sh
+ . ./STARTXVFB
+
+if [ $length -eq 12 ]
+then
+times="06"
+else
+times="06"
+fi
+
+counter=0
+for fhr in $times; do
+
+validtime="`/meso/save/wx20mg/board/advtime ${da00}${hr00} $fhr -1 x`"
+dattim=`echo $validtime | cut -c5-11`
+
+for stnm in $stations; do
+
+fmdl=/com/nawips/prod/ruc2.${da00}/ruc2_${da00}${hr00}.snd
+#fmdl=/nfsuser/g01/wx20mg/gempak/nagribx/ruc2_${da00}${hr00}
+fmdl2=/ptmpp1/wx20mg/ruc2/ruc2a.${da00}/ruc2_${da00}${hr00}.snd
+echo $fmdl
+echo $fmdl2
+
+# negate the colors ahead of time except white and black
+gpcolor << EOFC
+COLORS=0=255:255:255?
+COLORS=101=255:255:255;1=0:0:0
+DEVICE   = GF
+r
+
+ex
+EOFC
+
+    snprof << EOF
+ SNFILE   = $fmdl
+ DATTIM   = $dattim
+ AREA     = @${stnm}
+ SNPARM   = tmpc;dwpc
+ LINE     = 2;4/1/5
+ PTYPE    = skewt
+ VCOORD   = PRES
+ STNDEX   = lift;cape;cins
+ STNCOL   = 24
+ WIND     = bk1
+ WINPOS   = 1
+ MARKER   = 0
+ BORDER   = 1//2
+ TITLE    = 1// $stnm   SOLID-ops  DASHED-exper
+ DEVICE   = gf|rucsnd06_${cyc}f${counter}.gif|650;750
+ YAXIS    = 1050/450/100/1;1;1
+ XAXIS    = -25/35/10/;1
+ FILTER   = 0.6
+ CLEAR    = y
+ PANEL    = 0
+ TEXT     = 1.0
+ THTALN   = 8/3/1/250/500/5
+ THTELN   = 23/1/1/250/500/5
+ MIXRLN   = 17/10/2/0/40./1.
+r
+
+ SNFILE   = $fmdl2
+ LINE     = 2;4/10/4
+ CLEAR    = n
+ WINPOS   = 2
+ TITLE    = 0
+r 
+ 
+ex
+EOF
+
+gpend
+counter=`expr $counter + 1`
+done
+done
+
+/nwprod/util/ush/stopxvfb.sh /bin/sh
+ 
+. /u/wx20mg/.Utils
+export w1=wd20mg
+export w2=$rzdm
+ 
+ftp -n -v << EOF > /meso/save/wx20mg/gempak.ruc20/rzftp.out
+open rzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/ruc2/para/${cyc}z/images/today
+prompt
+mput *.gif
+bye
+EOF
+ 
+exit

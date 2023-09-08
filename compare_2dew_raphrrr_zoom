@@ -1,0 +1,75 @@
+#!/bin/sh
+echo 'into'
+
+cyc=$1
+
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/meg
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/meg/2dewz
+rm /lfs/h2/emc/stmp/geoffrey.manikin/meg/2dewz/*
+cd /lfs/h2/emc/stmp/geoffrey.manikin/meg/2dewz
+cp /lfs/h2/emc/vpppg/save/geoffrey.manikin/casework/coltbl.xwp .
+
+ymdh=2023031500
+ymd=`echo $ymdh | cut -c1-8`
+dayoweek=hold
+
+times="00 03 06 09 12"
+times="00 06 12 18 24"
+times="00 06 12 15 18 21 24"
+times="18 21"
+for fhr in $times; do
+
+#fmdl1=/lfs/h1/ops/prod/com/nawips/prod/nam.${ymd}/nam20_${ymdh}f0${fhr}
+#fmdl2=/lfs/h1/ops/prod/com/nawips/prod/gfs.${ymd}/gfs_0p25_${ymdh}f0${fhr}
+fmdl2=/lfs/h2/emc/vpppg/noscrub/geoffrey.manikin/dews/hrrr_${ymdh}f0${fhr}00
+fmdl1=/lfs/h2/emc/vpppg/noscrub/geoffrey.manikin/dews/rap13_${ymdh}f0${fhr}
+echo $fmdl1
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 2 
+ GVCORD   = hght 
+ GDPFUN   = dwpf 
+ CINT     = 4 
+ LINE     = 1 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   RAP 2-M  DEW PT 
+ DEVICE   = GIF|2dewzraphrrr_${ymdh}f0${fhr}.gif|850;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-78;25;/1;1;1;1
+ GAREA    = 36.;-85.;45.;-71. 
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/V/UL/.01;0.4/0.8;.03/2 
+ CONTUR   = 0
+ SKIP     = 0
+ FLINE    = 0;12;30;29;28;24;4;25;26;27;23;22;21;5;20;10;17;16;2;15;14;32
+ FINT     = -12;-8;-4;0;4;8;12;16;20;24;28;32;36;40;44;48;52;56;60;64;68
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhr
+ TITLE    = 1/-1/~  HRRR 2-M DEW PT 
+ PANEL    = b
+ CLRBAR   = 0
+ CLEAR    = n
+r
+
+ex
+EOF
+done
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test9/.
+exit

@@ -1,0 +1,59 @@
+#!/bin/ksh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/refc
+rm /stmpp1/Geoffrey.Manikin/meg/refc/*
+cd /stmpp1/Geoffrey.Manikin/meg/refc
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=2018060712
+ymd=`echo $ymdh | cut -c1-8`
+dayoweek=hold
+
+counter=11
+hours="00 01 02 03 04 05 06 07 08 09 10 11 12"
+hours="00 01 02 03 04 05 06"
+hours="00 01 02 03 04"
+for fhr in $hours; do
+
+DAPATH=/com2/nawips/prod/nam.${ymd}
+fmdl1=${DAPATH}/nam_conusnest_${ymdh}f0${fhr}
+echo $fmdl1
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = refc 
+ CINT     = 5 
+ LINE     = 0 
+ DEVICE   = GIF|nam3refc_${ymdh}f${fhr}.gif | 800;850
+ PROJ     = lcc/25.;-98.;25./2;2;1;1
+ GAREA    = 32.;-104.;41.;-92. 
+# \$MAPFIL = county
+ TITLE    = 1//~  NAM3  COMPOSITE REFL 
+ CLEAR    = y
+ SCALE    = 0
+ PANEL    = 0
+ HILO     = 0
+ HLSYM    = 0 
+ CLRBAR   = 1/H/UL/.06;0.97/0.8;.03/1
+ TEXT     = 1.1/11/2
+ FINT     = 5;10;15;20;25;30;35;40;45;50;55;60;65;70
+ FLINE    = 0;27;26;4;21;22;23;5;20;17;16;15;14;7;29
+ TYPE     = f 
+r
+
+ex
+EOF
+done
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

@@ -1,0 +1,169 @@
+#!/bin/ksh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/sfccapetrrap
+rm /stmpp1/Geoffrey.Manikin/meg/sfccapetrrap/*
+cd /stmpp1/Geoffrey.Manikin/meg/sfccapetrrap
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=2015080403
+ymd1=`echo $ymdh | cut -c1-8`
+cyc1=`echo $ymdh | cut -c9-10`
+ymdh2="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -1 -1`"
+ymdh3="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -2 -1`"
+ymdh4="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -3 -1`"
+ymdh5="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -4 -1`"
+ymdh6="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -5 -1`"
+ymdh7="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -6 -1`"
+ymdh8="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -7 -1`"
+ymdh9="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -8 -1`"
+
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+dayoweek=hold2
+
+hours="00"
+
+ymd2=`echo $ymdh2 | cut -c1-8`
+ymd3=`echo $ymdh3 | cut -c1-8`
+ymd4=`echo $ymdh4 | cut -c1-8`
+ymd5=`echo $ymdh5 | cut -c1-8`
+ymd6=`echo $ymdh6 | cut -c1-8`
+ymd7=`echo $ymdh7 | cut -c1-8`
+ymd8=`echo $ymdh8 | cut -c1-8`
+ymd9=`echo $ymdh9 | cut -c1-8`
+cyc2=`echo $ymdh2 | cut -c9-10`
+cyc3=`echo $ymdh3 | cut -c9-10`
+cyc4=`echo $ymdh4 | cut -c9-10`
+cyc5=`echo $ymdh5 | cut -c9-10`
+cyc6=`echo $ymdh6 | cut -c9-10`
+cyc7=`echo $ymdh7 | cut -c9-10`
+cyc8=`echo $ymdh8 | cut -c9-10`
+cyc9=`echo $ymdh9 | cut -c9-10`
+counter=1
+
+for fhr1 in $hours; do
+
+fhr2=`expr $fhr1 + 1`
+fhr3=`expr $fhr1 + 2`
+fhr4=`expr $fhr1 + 3`
+fhr5=`expr $fhr1 + 4`
+fhr6=`expr $fhr1 + 5`
+fhr7=`expr $fhr1 + 6`
+fhr8=`expr $fhr1 + 7`
+fhr9=`expr $fhr1 + 8`
+typeset -Z2 fhr2 fhr3 fhr4 fhr5 fhr6 fhr7 fhr8 fhr9
+
+verymdh="`/meso/save/Geoffrey.Manikin/meteograms.rap/advtime ${ymdh} ${fhr1} -1`"
+fmdl1=/com/nawips/prod/rap.${ymd1}/rap13_${ymdh}f0${fhr1}
+fmdl2=/com/nawips/prod/rap.${ymd2}/rap13_${ymdh2}f0${fhr2}
+fmdl3=/com/nawips/prod/rap.${ymd3}/rap13_${ymdh3}f0${fhr3}
+fmdl4=/com/nawips/prod/rap.${ymd4}/rap13_${ymdh4}f0${fhr4}
+fmdl5=/com/nawips/prod/rap.${ymd5}/rap13_${ymdh5}f0${fhr5}
+fmdl6=/com/nawips/prod/rap.${ymd6}/rap13_${ymdh6}f0${fhr6}
+fmdl7=/com/nawips/prod/rap.${ymd7}/rap13_${ymdh7}f0${fhr7}
+fmdl8=/com/nawips/prod/rap.${ymd8}/rap13_${ymdh8}f0${fhr8}
+fmdl9=/com/nawips/prod/rap.${ymd9}/rap13_${ymdh9}f0${fhr9}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f${fhr1} 
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = cape 
+ CINT     = 0.25 
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1//  RAP SFC CAPE  $ymd1 ${cyc1}z  F${fhr1}
+ DEVICE   = GIF|rapsfccapetr9_${ymdh}f${fhr1}.gif | 800;850
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-75;25;/1;1;1;1
+# GAREA    = 36.;-106.;50.;-84. 
+ GAREA    = 36.;-102.;50.;-80.
+ GAREA    = md
+ CLEAR    = y
+ PANEL    = m1 
+ TEXT     = 0.7/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/H/UL/.1;0.92/2.2;.02/1
+ CONTUR   = 0
+ SKIP     = 0
+# FINT     = 100;500;1000;1500;2000;2500;3000;3500;4000;4500;5000
+ FINT     = 500;1000;1500;2000;2500;3000;3500;4000;5000;6000;7000
+ FLINE    = 0;25;21;22;23;5;10;17;16;2;15;32
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f${fhr2}
+ TITLE    = 1//  RAP SFC CAPE  $ymd2 ${cyc2}z  F${fhr2}
+ PANEL    = m2 
+ CLRBAR   = 0
+ CLEAR    = n
+r
+
+ GDFILE   = $fmdl3
+ GDATTIM  = f${fhr3}
+ TITLE    = 1//  RAP SFC CAPE  $ymd3 ${cyc3}z  F${fhr3}
+ PANEL    = m3 
+r
+
+ TITLE    = 2/1/VERIFYING TIME   $verymdh
+r
+
+ GDFILE   = $fmdl4
+ GDATTIM  = f${fhr4}
+ TITLE    = 1//  RAP SFC CAPE  $ymd4 ${cyc4}z  F${fhr4}
+ PANEL    = m4 
+r
+
+ GDFILE   = $fmdl5
+ GDATTIM  = f${fhr5}
+ TITLE    = 1//  RAP SFC CAPE  $ymd5 ${cyc5}z  F${fhr5}
+ PANEL    = m5 
+r
+
+ GDFILE   = $fmdl6
+ GDATTIM  = f${fhr6}
+ TITLE    = 1//  RAP SFC CAPE  $ymd6 ${cyc6}z  F${fhr6}
+ PANEL    = m6 
+r
+
+ GDFILE   = $fmdl7
+ GDATTIM  = f${fhr7}
+ TITLE    = 1//  RAP SFC CAPE  $ymd7 ${cyc7}z  F${fhr7}
+ PANEL    = m7 
+r
+
+ GDFILE   = $fmdl8
+ GDATTIM  = f${fhr8}
+ TITLE    = 1//  RAP SFC CAPE  $ymd8 ${cyc8}z  F${fhr8}
+ PANEL    = m8 
+r
+
+ GDFILE   = $fmdl9
+ GDATTIM  = f${fhr9}
+ TITLE    = 1//  RAP SFC CAPE  $ymd9 ${cyc9}z  F${fhr9}
+ PANEL    = m9 
+r
+
+
+ex
+EOF
+gpend
+counter=`expr $counter + 1`
+done
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

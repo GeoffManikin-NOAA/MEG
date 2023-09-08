@@ -1,0 +1,48 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /ptmpp1/wx20mg/menu
+rm /ptmpp1/wx20mg/menu/*
+cd /ptmpp1/wx20mg/menu
+
+. /u/wx20mg/.Utils
+export w1=wd20mg
+export w2=$rzdm
+
+ftp -n -i << EOF > /meso/save/wx20mg/gempak.rap13/animate.out
+open rzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/rap/para/01z
+prompt
+mget menu*
+bye
+EOF
+
+cycles="00 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23"
+for cyc in $cycles; do
+
+cp menu01.html menu${cyc}.html
+vi menu${cyc}.html << EOF > /dev/null
+:1,\$ s/01f/${cyc}f
+:wq
+EOF
+
+. /u/wx20mg/.Utils
+export w1=wd20mg
+export w2=$rzdm
+
+ftp -n -i << EOF > /meso/save/wx20mg/gempak.rap13/ftp.out
+open rzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/rap/para/${cyc}z
+prompt
+mput menu${cyc}.html 
+bye
+EOF
+done
+
+exit

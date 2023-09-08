@@ -1,0 +1,46 @@
+#!/bin/ksh
+
+set -x
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/nagribref
+rm /stmpp1/Geoffrey.Manikin/nagribref/*
+cd /stmpp1/Geoffrey.Manikin/nagribref
+cp /meso/save/Geoffrey.Manikin/gempak/nagrib2/*tbl .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymdh=2015020109
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+DAPATH=/ptmpp2/Geoffrey.Manikin/hold
+
+export DAPATH
+. /nwprod/gempak/.gempak
+
+fhrs="00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15"
+for fhr in $fhrs
+do
+
+   nagrib2 << EOF
+GBFILE  = ${DAPATH}/hrrr.t${cyc}z.wrfsubhf${fhr}.grib2 
+INDXFL  =
+GDOUTF  = hrrrsubh_${ymdh}f${fhr} 
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+exit
+EOF
+done
+
+mv hrrr* /ptmpd2/Geoffrey.Manikin/com/nawips/prod/hrrr.${ymd}/
+exit

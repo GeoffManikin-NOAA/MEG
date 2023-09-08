@@ -1,0 +1,75 @@
+#!/bin/sh
+echo 'into'
+
+cyc=$1
+
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/meg
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/meg/veg
+rm /lfs/h2/emc/stmp/geoffrey.manikin/meg/veg/*
+cd /lfs/h2/emc/stmp/geoffrey.manikin/meg/veg
+cp /lfs/h2/emc/vpppg/save/geoffrey.manikin/casework/coltbl.xwp .
+
+ymdh=2023031500
+ymd=`echo $ymdh | cut -c1-8`
+dayoweek=hold
+
+times="00 03 06 09 12"
+times="00 06 12 18 24"
+times="00 06 12 15 18 21 24"
+times="00"
+for fhr in $times; do
+
+#fmdl1=/lfs/h1/ops/prod/com/nawips/prod/nam.${ymd}/nam20_${ymdh}f0${fhr}
+#fmdl2=/lfs/h1/ops/prod/com/nawips/prod/gfs.${ymd}/gfs_0p25_${ymdh}f0${fhr}
+fmdl2=/lfs/h2/emc/vpppg/noscrub/geoffrey.manikin/dews/gfs_0p25_${ymdh}f0${fhr}
+fmdl1=/lfs/h2/emc/vpppg/noscrub/geoffrey.manikin/dews/nam32_${ymdh}f0${fhr}
+echo $fmdl1
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = veg 
+ CINT     = 4 
+ LINE     = 1 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   NAM  VEG FRAC 
+ DEVICE   = GIF|vegnamgfs_${ymdh}f0${fhr}.gif|850;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-78;25;/1;1;1;1
+ GAREA    = 36.;-85.;45.;-71. 
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/V/UL/.01;0.4/0.8;.03/2 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 10;20;30;40;50;60;70;80;90
+ FLINE    = 8;18;17;10;5;20;21;23;28;30;25
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhr
+ TITLE    = 1/-1/~  GFS  VEG FRAC 
+ PANEL    = b
+ CLRBAR   = 0
+ CLEAR    = n
+r
+
+ex
+EOF
+done
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test9/.
+exit

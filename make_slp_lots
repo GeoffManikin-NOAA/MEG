@@ -1,0 +1,200 @@
+#!/bin/sh
+echo 'into'
+
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/meg
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/meg/slp
+rm /gpfs/dell1/stmp/Geoffrey.Manikin/meg/slp/*
+cd /gpfs/dell1/stmp/Geoffrey.Manikin/meg/slp
+cp /gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/coltbl.xwp .
+
+ymdh=2021070400
+ymd=`echo $ymdh | cut -c1-8`
+dayoweek=hold4
+
+hours="72"
+for fhr in $hours; do
+
+DAPATH1=/gpfs/dell1/nco/ops/com/nam/prod/nam.${ymd}/gempak
+DAPATH2=/gpfs/dell1/nco/ops/com/gfs/prod/gfs.${ymd}/${cyc}/atmos/gempak
+DAPATH3=/gpfs/hps/nco/ops/com/rap/prod/rap.${rapymd}/gempak
+DAPATH4=/gpfs/hps/nco/ops/com/hrrr/prod/hrrr.${ymd}/conus/gempak
+DAPATH5=/gpfs/hps/nco/ops/com/hiresw/prod/hiresw.${ymd}/gempak
+DAPATH6=/com2/nawips/prod/sref.${ymds}
+DAPATH7=/gpfs/dell1/nco/ops/com/ecmwf/prod/ecmwf.${ymd}/gempak
+
+fmdl1=${DAPATH1}/nam20_${ymdh}f0${fhr}
+fmdl2=${DAPATH2}/gfs_0p25_${ymdh}f0${fhr}
+fmdl3=${DAPATH3}/rap13_${rapymdh}f0${fhr2}
+fmdl4=${DAPATH1}/nam_conusnest_${ymdh}f0${fhr}
+fmdl5=${DAPATH4}/hrrr_${ymdh}f0${fhr}00
+fmdl6=${DAPATH5}/hiresw_conusarw_${ymdh}f0${fhr}
+fmdl7=${DAPATH5}/hiresw_conusmem2arw_${ymdh}f0${fhr}
+fmdl8=${DAPATH5}/hiresw_conusfv3_${ymdh}f0${fhr}
+fmdl9=${DAPATH7}/ecmwf_hr_${ymdh}f0${fhr}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = last 
+ GLEVEL   = 2 
+ GVCORD   = hght 
+ GDPFUN   = slp 
+ CINT     = 5 
+ LINE     = 1 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   NAM  2M TEMP 
+ DEVICE   = GIF|${ymdh}slpnamgfs${fhr}.gif|750;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-99;25;/1;1;1;1
+ GAREA    = 38.;-107.;50.;-89. 
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/V/UL/.03;0.5/1.0;.03/2 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 15;20;25;30;35;40;45;50;55;60;65;70;75;80;85;90;95;100;105;110
+ FLINE    = 0;12;30;29;28;4;25;26;27;24;23;22;21;5;20;10;17;16;2;15;32
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl2
+ CLEAR    = n
+ PANEL    = b
+ CLRBAR   = 0
+ TITLE    = 1/-1/~   GFS  2M TEMP
+r
+
+ GDFILE   = $fmdl1
+ CLEAR    = y
+ PANEL    = t
+ TITLE    = 1/-1/~   NAM  2M TEMP
+ CLRBAR   = 1/V/UL/.03;0.5/1.0;.03/2
+ DEVICE   = GIF|${ymdh}slpnamrap${fhr}.gif|750;900
+r
+
+ GDFILE   = $fmdl3
+ CLEAR    = n
+ PANEL    = b
+ CLRBAR   = 0
+ TITLE    = 1/-1/~   RAP  2M TEMP
+r
+
+ GDFILE   = $fmdl1
+ CLEAR    = y
+ PANEL    = t
+ TITLE    = 1/-1/~   NAM  2M TEMP
+ CLRBAR   = 1/V/UL/.03;0.5/1.0;.03/2
+ DEVICE   = GIF|${ymdh}slpnamnest${fhr}.gif|750;900
+r
+
+ GDFILE   = $fmdl4
+ CLEAR    = n
+ PANEL    = b
+ CLRBAR   = 0
+ TITLE    = 1/-1/~   NAM4  2M TEMP
+r
+
+ GDFILE   = $fmdl3
+ CLEAR    = y
+ PANEL    = t
+ TITLE    = 1/-1/~   RAP  2M TEMP
+ CLRBAR   = 1/V/UL/.03;0.5/1.0;.03/2
+ DEVICE   = GIF|${ymdh}slpraphrrr${fhr}.gif|750;900
+r
+
+ GDFILE   = $fmdl5
+ CLEAR    = n
+ PANEL    = b
+ CLRBAR   = 0
+ TITLE    = 1/-1/~   HRRR  2M TEMP
+r
+
+ GDFILE   = $fmdl1
+ CLEAR    = y
+ PANEL    = t
+ TITLE    = 1/-1/~   NAM  2M TEMP
+ CLRBAR   = 1/V/UL/.03;0.5/1.0;.03/2
+ DEVICE   = GIF|${ymdh}slpnamx${fhr}.gif|750;900
+r
+
+ GDFILE   = $fmdl6
+ CLEAR    = n
+ PANEL    = b
+ CLRBAR   = 0
+ TITLE    = 1/-1/~   NAMX  2M TEMP
+r
+
+ GDFILE   = $fmdl4
+ CLEAR    = y
+ PANEL    = t
+ TITLE    = 1/-1/~   NAM4  2M TEMP
+ CLRBAR   = 1/V/UL/.03;0.5/1.0;.03/2
+ DEVICE   = GIF|${ymdh}slpnam4x${fhr}.gif|750;900
+r
+
+ GDFILE   = $fmdl7
+ CLEAR    = n
+ PANEL    = b
+ CLRBAR   = 0
+ TITLE    = 1/-1/~   NAM4X  2M TEMP
+r
+
+ GDFILE   = $fmdl2
+ CLEAR    = y
+ PANEL    = t
+ TITLE    = 1/-1/~   GFS  2M TEMP
+ CLRBAR   = 1/V/UL/.03;0.5/1.0;.03/2
+ DEVICE   = GIF|${ymdh}slpgfsx${fhr}.gif|750;900
+r
+
+ GDFILE   = $fmdl8
+ CLEAR    = n
+ PANEL    = b
+ CLRBAR   = 0
+ TITLE    = 1/-1/~   GFSX  2M TEMP
+r
+
+ GDFILE   = $fmdl5
+ CLEAR    = y
+ PANEL    = t
+ TITLE    = 1/-1/~   HRRR  2M TEMP
+ CLRBAR   = 1/V/UL/.03;0.5/1.0;.03/2
+ DEVICE   = GIF|${ymdh}slphrrrx${fhr}.gif|750;900
+r
+
+ GDFILE   = $fmdl9
+ CLEAR    = n
+ PANEL    = b
+ CLRBAR   = 0
+ TITLE    = 1/-1/~   HRRRX  2M TEMP
+r
+
+ GDFILE   = $fmdl10
+ CLEAR    = y
+ PANEL    = t
+ TITLE    = 1/-1/~   ARW  2M TEMP
+ CLRBAR   = 1/V/UL/.03;0.5/1.0;.03/2
+ DEVICE   = GIF|${ymdh}slphiresw${fhr}.gif|750;900
+r
+
+ GDFILE   = $fmdl11
+ CLEAR    = n
+ PANEL    = b
+ CLRBAR   = 0
+ TITLE    = 1/-1/~   NMMB  2M TEMP
+r
+
+ex
+EOF
+done
+gpend
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/test8/.
+exit

@@ -1,0 +1,245 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/swem
+rm /stmpp1/Geoffrey.Manikin/meg/swem/*
+cd /stmpp1/Geoffrey.Manikin/meg/swem
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+
+ymdh=2015031006
+ymd=`echo $ymdh | cut -c1-8`
+month=`echo $ymdh | cut -c5-6`
+day=`echo $ymdh | cut -c7-8`
+dayoweek=hold2
+
+DAPATH=/com/gfs/prod/gfs.${ymd}
+
+times="00"
+for fhr in $times; do
+
+wgrib -i -d 76 ${DAPATH}/gfs.t${cyc}z.sfluxgrbf${fhr} -grib -o new.fil
+/nwprod/util/exec/copygb -g 212 -x new.fil gfs212.grd
+
+  nagrib << EOF
+GBFILE  = gfs212.grd 
+INDXFL  =
+GDOUTF  = gfssnowf${fhr}.grd 
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid 
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+ex
+EOF
+
+fmdl1=/com/nawips/prod/nam.${ymd}/nam12_${ymdh}f0${fhr}
+fmdl2=gfssnowf${fhr}.grd
+fmdl3=/com/nawips/prod/rap.${ymd}/rap13_${ymdh}f0${fhr}
+fmdl4=/meso/noscrub/Eric.Rogers/com/nawips/test/nam.${ymd}/nam12_${ymdh}f0${fhr}
+
+echo $fmdl1
+echo $fmdl2
+
+garea="ct-"
+proj="lcc/25.;-75.;25./2;2;1;1"
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = quo(mul(sndm,100),2.54) 
+ CINT     = 2 
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 0
+ DEVICE   = GIF|1sndmf${fhr}.gif|900;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = $proj 
+ GAREA    = $garea 
+ CLEAR    = y
+ PANEL    = 0.;.51;1.;1.
+ TEXT     = 1.2/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/V/UL/.14;0.5/.8;.03/-1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 0.1;1;3;5;7.5;10;15;20;25;50;75;100;125
+ FLINE    = 0;28;26;4;21;23;20;5;10;17;2;15;9;32
+ TYPE     = f/c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ TITLE    = 1/1/ ${fhr}-HR NAM SNOW DEPTH (IN)
+ TEXT     = 1.2/11/2
+ CLEAR    = n
+ GDPFUN   = blurk
+ CINT     = -2000/-2000/-2000
+ CLRBAR   = 0
+r
+
+ TITLE    = 7/-1/ FCST MADE ${cyc}Z  ${month}/$day
+ TEXT     = 1.1/11/1/SW
+r
+
+ TITLE    = 1/1/ ${fhr}-HR GFS  SNOW DEPTH (in)
+ GDFILE   = $fmdl2 
+ TEXT     = 1.2/11/2
+ PANEL    = 0;0;1;.49
+r
+
+ GDFILE   = $fmdl2
+ GDPFUN   = quo(mul(sndm,100),2.54) 
+ TITLE    = 0
+ CINT     = 2 
+r
+
+ex
+EOF
+
+     gdplot2 <<  EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0
+ GVCORD   = none
+ GDPFUN   = quo(mul(sndm,100),2.54)
+ CINT     = 2
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 0
+ DEVICE   = GIF|2sndmf${fhr}.gif|900;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = $proj
+ GAREA    = $garea
+ CLEAR    = y
+ PANEL    = 0.;.51;1.;1.
+ TEXT     = 1.2/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/V/UL/.18;0.5/.8;.03/-1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 0.1;1;3;5;7.5;10;15;20;25;50;75;100;125
+ FLINE    = 0;28;26;4;21;23;20;5;10;17;2;15;9;32
+ TYPE     = f/c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ TITLE    = 1/1/ ${fhr}-HR NAM SNOW DEPTH (IN)
+ TEXT     = 1.2/11/2
+ CLEAR    = n
+ GDPFUN   = blurk
+ CINT     = -2000/-2000/-2000
+ CLRBAR   = 0
+r
+
+ TITLE    = 7/-1/ FCST MADE ${cyc}Z  ${month}/$day
+ TEXT     = 1.1/11/1/SW
+r
+
+ TITLE    = 1/1/ ${fhr}-HR  RAP  SNOW DEPTH (in)
+ GDFILE   = $fmdl3
+ TEXT     = 1.2/11/2
+ PANEL    = 0;0;1;.49
+ GDPFUN   = quo(mul(sndm,100),2.54)
+ CINT     = 2
+r
+
+ex
+EOF
+
+     gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0
+ GVCORD   = none
+ GDPFUN   = quo(mul(sndm,100),2.54)
+ CINT     = 2
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 0
+ DEVICE   = GIF|3sndmf${fhr}.gif|900;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = $proj
+ GAREA    = $garea
+ CLEAR    = y
+ PANEL    = 0.;.51;1.;1.
+ TEXT     = 1.2/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/V/UL/.18;0.5/.8;.03/-1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 0.1;1;3;5;7.5;10;15;20;25;50;75;100;125
+ FLINE    = 0;28;26;4;21;23;20;5;10;17;2;15;9;32
+ TYPE     = f/c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ TITLE    = 1/1/ ${fhr}-HR NAM SNOW DEPTH (IN)
+ TEXT     = 1.2/11/2
+ CLEAR    = n
+ GDPFUN   = blurk
+ CINT     = -2000/-2000/-2000
+ CLRBAR   = 0
+r
+
+ TITLE    = 7/-1/ FCST MADE ${cyc}Z  ${month}/$day
+ TEXT     = 1.1/11/1/SW
+r
+
+ TITLE    = 1/1/ ${fhr}-HR  NAMB  SNOW DEPTH (in)
+ GDFILE   = $fmdl4
+ TEXT     = 1.2/11/2
+ PANEL    = 0;0;1;.49
+ GDPFUN   = quo(mul(sndm,100),2.54)
+ CINT     = 2
+r
+
+ex
+EOF
+gpend
+done
+
+CONV=/usrx/local/ImageMagick/6.8.3-3/bin
+for fhr in $times; do
+$CONV/convert -crop 0x0 1sndmf${fhr}.gif ${ymdh}namgfssndmf${fhr}.gif
+$CONV/convert -crop 0x0 2sndmf${fhr}.gif ${ymdh}namrapsndmf${fhr}.gif
+$CONV/convert -crop 0x0 3sndmf${fhr}.gif ${ymdh}namnambsndmf${fhr}.gif
+done
+
+scp ${ymdh}*gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

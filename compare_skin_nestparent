@@ -1,0 +1,90 @@
+#!/bin/ksh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/nestpcp
+rm /stmpp1/Geoffrey.Manikin/meg/nestpcp/*
+cd /stmpp1/Geoffrey.Manikin/meg/nestpcp
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=2015082512
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+dayoweek=hold
+
+DAPATH=/com/nam/prod/nam.${ymd}
+hours="06"
+for fhr in $hours; do
+
+fmdl1=/com/nawips/prod/nam.${ymd}/nam40_${ymdh}f0${fhr} 
+fmdl2=/com/nawips/prod/nam.${ymd}/nam_conusnest_${ymdh}f0${fhr}
+
+wgrib ${DAPATH}/nam.t${cyc}z.conusnest.hiresf${fhr}.tm00 | grep kpds5=11:kpds6=1:kpds7=0 | wgrib ${DAPATH}/nam.t${cyc}z.conusnest.hiresf${fhr}.tm00 -i -grib -o nestfmdl 
+
+ nagrib << EOF
+GBFILE  = nestfmdl 
+INDXFL  =
+GDOUTF  = fmdl2
+PROJ    =
+GRDAREA =
+KXKY    = 
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+ex
+EOF
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1 
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = none
+ GDPFUN   = tmpf 
+ CINT     = 0.1 
+ LINE     = 1
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~  NAM 6-HR SKIN TEMP 
+ DEVICE   = GIF|${ymdh}skin2f${fhr}.gif|750;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-75;25;/1;1;1;1
+ GAREA    = vt
+ CLEAR    = y
+ PANEL    = t 
+ TEXT     = 0.8/21/1/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 0 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 0;5;10;15;20;25;30;35;40;45;50;55;60;65;70;75;80;85;90;95;100
+ FLINE    = 0;12;30;29;28;4;25;26;27;24;23;22;21;5;20;10;17;16;2;15;14;32
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = fmdl2
+ PANEL    = b 
+ CLRBAR   = 1/H/UL/.04;0.97/0.86;.03/1
+ CLEAR    = n
+ TITLE    = 1/-1/~  4 KM NAM SKIN TEMP 
+r
+
+ex
+EOF
+done
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

@@ -1,0 +1,246 @@
+#!/bin/sh
+echo 'into'
+
+mdlymdh=2022042918
+mdlymd=`echo $mdlymdh | cut -c1-8`
+stations="723570 723630 724510 724560 725580 725620 726590 744550 745600 724690 726620"
+stations="724030 725280 725180 725200"
+stations="745600 744550"
+stations="724030 725010"
+stations="723570 723630 724400 723400"
+stations="723570 723630 722490 725210 722610 723640 724560 725580 727640"
+stations="726490 744550 726450"
+stations="727970 727860 726940"
+stations="726980 727810"
+stations="723570 724510 722490 725580 723400 746470"
+stations="724560 723570"
+stations="724500"
+stations="727970 746470 723546 723550"
+stations="723570 722650"
+stations="724555"
+stations="723570"
+dayoweek=hold9
+
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/gempak.sound
+rm /gpfs/dell1/stmp/Geoffrey.Manikin/gempak.sound/*
+cd /gpfs/dell1/stmp/Geoffrey.Manikin/gempak.sound
+cp /gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/coltbl.xwp .
+
+DAPATH=/gpfs/dell2/emc/verification/noscrub/Geoffrey.Manikin/dec20storm/bufr
+DAPATH=/gpfs/dell2/emc/verification/noscrub/Geoffrey.Manikin/okice
+DAPATH=/gpfs/dell2/emc/verification/noscrub/Geoffrey.Manikin/andover/bufr
+#fmdl1=/com2/nawips/prod/nam.${mdlymd}/nam_conusnest_${mdlymdh}.snd.tm00
+#fmdl2=${DAPATH}/hrrr.${mdlymd}/hrrr_${mdlymdh}.snd
+#fmdl3=${DAPATH}/rap.${mdlymd}/rap_${mdlymdh}.snd
+#fmdl4=/com2/nawips/prod/nam.${mdlymd}/nam_${mdlymdh}.snd.tm00
+#fmdl5=/gpfs/hps/nco/ops/com/nawips/prod/gfs.${mdlymd}/gfs_${mdlymdh}.snd
+
+cp ${DAPATH}/gfs_${mdlymdh}.snd fmdl1
+cp ${DAPATH}/gfsx_${mdlymdh}.snd fmdl2
+cp ${DAPATH}/nam_${mdlymdh}.snd fmdl3
+cp ${DAPATH}/rap_${mdlymdh}.snd fmdl4
+cp ${DAPATH}/nam_conusnest_${mdlymdh}.snd fmdl5
+cp ${DAPATH}/hrrr_${mdlymdh}.snd fmdl6
+cp ${DAPATH}/hiresw_conusarw_${mdlymdh}.snd fmdl7
+cp ${DAPATH}/hiresw_conusmem2arw_${mdlymdh}.snd fmdl8
+cp ${DAPATH}/hiresw_conusfv3_${mdlymdh}.snd fmdl9
+
+times="18 24"
+times="00 12 24 36"
+times="12 24 36"
+times="12 24"
+times="09 10 11 12 13"
+times="03 06"
+for time in $times; do
+for stnm in $stations; do
+
+#cp /ptmpd2/Geoffrey.Manikin/com2/nawips/prod/nam.${mdlymd}/nam_${stnm}_${mdlymdh}.snd nam_${stnm}_${mdlymdh}.snd
+dattim="`/gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/advtime ${mdlymdh} $time -1 x`"
+validtime=`echo $dattim | cut -c1-11`
+ymd=`echo $validtime | cut -c1-8`
+cyc=`echo $validtime | cut -c10-11`
+cp /gpfs/dell2/emc/verification/noscrub/Geoffrey.Manikin/obs/uair/$ymd.snd fobs
+
+stn=`echo $stnm | cut -c1-5`
+if [ $time -lt 10 ]
+then
+fhr=0${time}
+else
+fhr=$time
+fi
+
+echo 'here'
+    snprof << EOF
+ SNFILE   = fmdl1
+ DATTIM   = $ymd/$cyc
+ AREA     = @${stnm}
+ SNPARM   = tmpc;dwpc
+ LINE     = 2;4/2/6
+ PTYPE    = skewt
+ VCOORD   = PRES
+ STNDEX   = capv;cinv;lclp
+ STNCOL   = 24
+ WIND     = bk1
+ WINPOS   = 2
+ MARKER   = 0
+ BORDER   = 1//2
+ TITLE    = 1//  GFS DASHED   OBS SOLID/LEFT WINDS
+ DEVICE   = gif|gfs${stnm}_${mdlymdh}f$fhr.gif|1000;1000
+ YAXIS    = 1050/300/50/1;1;1
+ XAXIS    = -20/40/10/;1
+ FILTER   = 0.7
+ CLEAR    = y
+ PANEL    = 0
+! TEXT     = 1.0/11/2/SW
+ TEXT     = 1.1/23/SW
+ THTALN   = 8/3/1/250/500/5
+ THTELN   = 23/1/1/250/600/5
+ MIXRLN   = 17/10/2/0/40./1.
+r
+
+ SNFILE   = fobs
+ CLEAR    = n
+ WINPOS   = 1
+ LINE     = 2;4/1/6 
+ AREA     = @${stn}
+r
+
+ SNFILE   = fmdl3
+ CLEAR    = y
+ TITLE    = 1//  NAM  DASHED   OBS SOLID/LEFT WINDS
+ DEVICE   = gif|nam${stnm}_${mdlymdh}f$fhr.gif|1000;1000
+ WINPOS   = 2
+ LINE     = 2;4/2/6 
+ AREA     = @${stnm}
+r
+
+ SNFILE   = fobs
+ CLEAR    = n
+ WINPOS   = 1
+ LINE     = 2;4/1/6
+ AREA     = @${stn}
+r
+
+ SNFILE   = fmdl2
+ CLEAR    = y
+ TITLE    = 1//  GFSX DASHED   OBS SOLID/LEFT WINDS
+ DEVICE   = gif|gfsx${stnm}_${mdlymdh}f$fhr.gif|1000;1000
+ WINPOS   = 2
+ LINE     = 2;4/2/6
+ AREA     = @${stnm}
+r
+
+ SNFILE   = fobs
+ CLEAR    = n
+ WINPOS   = 1
+ LINE     = 2;4/1/6
+ AREA     = @${stn}
+r
+
+ SNFILE   = fmdl4
+ CLEAR    = y
+ TITLE    = 1//  RAP DASHED   OBS SOLID/LEFT WINDS
+ DEVICE   = gif|rap${stnm}_${mdlymdh}f$fhr.gif|1000;1000
+ WINPOS   = 2
+ LINE     = 2;4/2/6
+ AREA     = @${stnm}
+r
+
+ SNFILE   = fobs
+ CLEAR    = n
+ WINPOS   = 1
+ LINE     = 2;4/1/6
+ AREA     = @${stn}
+r
+
+ SNFILE   = fmdl5
+ CLEAR    = y
+ TITLE    = 1//  NAM3 DASHED   OBS SOLID/LEFT WINDS
+ DEVICE   = gif|namnest${stnm}_${mdlymdh}f$fhr.gif|1000;1000
+ WINPOS   = 2
+ LINE     = 2;4/2/6
+ AREA     = @${stnm}
+r
+
+ SNFILE   = fobs
+ CLEAR    = n
+ WINPOS   = 1
+ LINE     = 2;4/1/6
+ AREA     = @${stn}
+r
+
+ SNFILE   = fmdl6
+ CLEAR    = y
+ TITLE    = 1//  HRRR DASHED   OBS SOLID/LEFT WINDS
+ DEVICE   = gif|hrrr${stnm}_${mdlymdh}f$fhr.gif|1000;1000
+ WINPOS   = 2
+ LINE     = 2;4/2/6
+ AREA     = @${stnm}
+r
+
+ SNFILE   = fobs
+ CLEAR    = n
+ WINPOS   = 1
+ LINE     = 2;4/1/6
+ AREA     = @${stn}
+r
+
+ SNFILE   = fmdl7
+ CLEAR    = y
+ TITLE    = 1//  ARW DASHED   OBS SOLID/LEFT WINDS
+ DEVICE   = gif|arw${stnm}_${mdlymdh}f$fhr.gif|1000;1000
+ WINPOS   = 2
+ LINE     = 2;4/2/6
+ AREA     = @${stnm}
+r
+
+ SNFILE   = fobs
+ CLEAR    = n
+ WINPOS   = 1
+ LINE     = 2;4/1/6
+ AREA     = @${stn}
+r
+
+ SNFILE   = fmdl8
+ CLEAR    = y
+ TITLE    = 1//  ARW2 DASHED   OBS SOLID/LEFT WINDS
+ DEVICE   = gif|2arw${stnm}_${mdlymdh}f$fhr.gif|1000;1000
+ WINPOS   = 2
+ LINE     = 2;4/2/6
+ AREA     = @${stnm}
+r
+
+ SNFILE   = fobs
+ CLEAR    = n
+ WINPOS   = 1
+ LINE     = 2;4/1/6
+ AREA     = @${stn}
+r
+
+ SNFILE   = fmdl9
+ CLEAR    = y
+ TITLE    = 1//  FV3 DASHED   OBS SOLID/LEFT WINDS
+ DEVICE   = gif|fv3${stnm}_${mdlymdh}f$fhr.gif|1000;1000
+ WINPOS   = 2
+ LINE     = 2;4/2/6
+ AREA     = @${stnm}
+r
+
+ SNFILE   = fobs
+ CLEAR    = n
+ WINPOS   = 1
+ LINE     = 2;4/1/6
+ AREA     = @${stn}
+r
+
+ex
+EOF
+
+done
+done
+gpend
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+#scp hrrr*gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+#scp namnest*gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+#scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test5/.
+exit

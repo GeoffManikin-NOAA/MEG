@@ -1,0 +1,130 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/850w
+rm /stmpp1/Geoffrey.Manikin/meg/850w/*
+cd /stmpp1/Geoffrey.Manikin/meg/850w
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=2016092900
+ymd=`echo $ymdh | cut -c1-8`
+dayoweek=hold2
+
+hours="06 12 18"
+for fhr in $hours; do
+
+#DAPATH=/ptmpd2/Geoffrey.Manikin/com2/nawips/prod
+DAPATH=/com2/nawips/prod
+fmdl1=${DAPATH}/rap.${ymd}/rap13_${ymdh}f0${fhr}
+fmdl2=${DAPATH}/hrrr.${ymd}/hrrr_${ymdh}f0${fhr}00
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 850
+ GVCORD   = pres
+ GDPFUN   = knts(sped)
+ CINT     = 5 
+ LINE     = 0 
+ DEVICE   = GIF|850raphrrr_${ymdh}f0${fhr}.gif | 800;850
+ PROJ     = lcc/25.;-75.;25./2;2;1;1
+ GAREA    = 20.;-124.;50.;-62. 
+! GAREA    = 24.;-96.;52.;-50.
+ GAREA    = md
+ TITLE    = 1//~  RAP  850 MB  WIND (KT) 
+ CLEAR    = y
+ SCALE    = 0
+ PANEL    = t
+ HILO     = 0
+ HLSYM    = 0 
+ CLRBAR   = 1/V/UL/.04;0.4/0.8;.03/2
+ TEXT     = 1.1/11/2
+ FINT     = 20;30;40;50;60;70;80;90;100
+ FLINE    = 0;29;26;4;23;21;5;17;2;15
+ TYPE     = f 
+r
+
+ CINT     = 
+ WIND     = BK1/0.8/2/122
+ GDPFUN   = kntv(wnd)
+ SKIP     = /7;7
+ TYPE     = b
+ TITLE    = 0
+ CLRBAR   = 0
+ CLEAR    = n
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhr
+ GLEVEL   = 850
+ GVCORD   = pres
+ GDPFUN   = knts(sped)
+ CINT     = 5
+ LINE     = 0
+ TITLE    = 1//~  HRRR  850 MB  WIND (KT)
+ CLEAR    = n
+ PANEL    = b
+ SCALE    = 0
+ HILO     = 0
+ HLSYM    = 0 
+ CLRBAR   = 0
+ TEXT     = 1.1/11/2
+ TYPE     = f
+r
+
+ CINT     =
+ WIND     = BK1/0.8/2/122
+ GDPFUN   = kntv(wnd)
+ SKIP     = /7;7
+ TYPE     = b
+ TITLE    = 0
+ CLRBAR   = 0
+ CLEAR    = n
+r
+
+ex
+EOF
+
+    gdcntr << EOF
+
+ GDFILE   = $fmdl2 + $fmdl1
+ GDATTIM  = f${fhr}
+ GLEVEL   = 850
+ GVCORD   = pres
+ GFUNC    = knts(sub(sped+2,sped))
+ CINT     = 10
+ LINE     = 1
+ MAP      = 1
+ WIND     = bk1/0.7/2/122
+ TITLE    = 1//~ 850 WIND SPEED (KT)   RAP - HRRR 
+ DEVICE   = GIF|850diff_f0${fhr}.gif | 600;650
+ SATFIL   =
+ RADFIL   =
+ CLEAR    = y
+ PANEL    = 0
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/H/UL/.1;.92/.8;.02/-1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = -50;-40;-30;-20;-10;10;20;30;40;50
+ FLINE    = 30;28;26;27;22;0;5;10;17;2;15
+ CTYPE    = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ex
+EOF
+done
+gpend
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

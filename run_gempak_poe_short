@@ -1,0 +1,71 @@
+#!/bin/ksh --login
+#
+#BSUB -oo /meso/save/Geoffrey.Manikin/meg/gemshort.out
+#BSUB -eo /meso/save/Geoffrey.Manikin/meg/gemshort.out
+#BSUB -J megshort
+#BSUB -n 19
+#BSUB -R span[ptile=4]
+#BSUB -W 00:30
+#BSUB -R affinity[core(4):distribute=balance]
+#BSUB -P NAM-T2O
+#BSUB -q "dev"
+#BSUB -x
+#BSUB -a poe
+#
+
+set -x
+
+export HOLDIN=/stmpp1/Geoffrey.Manikin
+export GBexec=/nwprod/util/exec
+
+echo intoscript
+rm -rf /stmpp1/Geoffrey.Manikin/meg/*
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/holdshort
+cyc=`cut -c 15-16 /meso/save/Geoffrey.Manikin/meg/NMCDATE`
+ymd=`cut -c 7-14 /meso/save/Geoffrey.Manikin/meg/NMCDATE`
+export cyc
+
+ymdhm1="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymd}${cyc} -1 -1`"
+ymdm1=`echo $validtime | cut -c1-8`
+
+set +x
+set -x
+
+cd $HOLDIN/meg
+
+set -x
+
+rm poescript
+
+echo "/meso/save/Geoffrey.Manikin/meg/launchshort1 ${cyc}" >> poescript
+echo "/meso/save/Geoffrey.Manikin/meg/launchshort2 ${cyc}" >> poescript
+echo "/meso/save/Geoffrey.Manikin/meg/launchshort3 ${cyc}" >> poescript
+echo "/meso/save/Geoffrey.Manikin/meg/launchshort4 ${cyc}" >> poescript
+echo "/meso/save/Geoffrey.Manikin/meg/launchshort5 ${cyc}" >> poescript
+echo "/meso/save/Geoffrey.Manikin/meg/launchshort6 ${cyc}" >> poescript
+echo "/meso/save/Geoffrey.Manikin/meg/launchshort7 ${cyc}" >> poescript
+echo "/meso/save/Geoffrey.Manikin/meg/launchshort8 ${cyc}" >> poescript
+echo "/meso/save/Geoffrey.Manikin/meg/launchshort9 ${cyc}" >> poescript
+echo "/meso/save/Geoffrey.Manikin/meg/launchshort10 ${cyc}" >> poescript
+echo "/meso/save/Geoffrey.Manikin/meg/launchshort11 ${cyc}" >> poescript
+echo "/meso/save/Geoffrey.Manikin/meg/launchshort12 ${cyc}" >> poescript
+echo "/meso/save/Geoffrey.Manikin/meg/launchshort13 ${cyc}" >> poescript
+echo "/meso/save/Geoffrey.Manikin/meg/launchshort14 ${cyc}" >> poescript
+echo "/meso/save/Geoffrey.Manikin/meg/launchshort15 ${cyc}" >> poescript
+echo "/meso/save/Geoffrey.Manikin/meg/launchshort16 ${cyc}" >> poescript
+echo "/meso/save/Geoffrey.Manikin/meg/launchshort17 ${cyc}" >> poescript
+echo "/meso/save/Geoffrey.Manikin/meg/launchshort18 ${cyc}" >> poescript
+echo "/meso/save/Geoffrey.Manikin/meg/launchshort19 ${cyc}" >> poescript
+
+chmod 775 poescript
+export MP_PGMMODEL=mpmd
+export MP_CMDFILE=poescript
+#
+# Execute the script.
+
+echo beforelsf
+mpirun.lsf
+echo pastlsf
+bsub < /meso/save/Geoffrey.Manikin/meg/run_ftp_short
+exit

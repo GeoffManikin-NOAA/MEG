@@ -1,0 +1,84 @@
+#!/bin/sh
+echo 'into'
+
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/meg
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/meg/veg
+rm /gpfs/dell1/stmp/Geoffrey.Manikin/meg/veg/*
+cd /gpfs/dell1/stmp/Geoffrey.Manikin/meg/veg
+cp /gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/coltbl.xwp .
+
+ymdh=2021051312
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+hours="00 03 06 09 12 15 18 21 24 27 30 33 36 39 42 45 48"
+hours="00 06 12 18 24"
+hours="30"
+for fhr in $hours; do
+
+DAPATH1=/gpfs/dell1/nco/ops/com/nam/prod/nam.${ymd}/gempak
+DAPATH2=/gpfs/hps/nco/ops/com/hrrr/prod/hrrr.${ymd}/conus/gempak/
+DAPATH3=/gpfs/dell1/nco/ops/com/gfs/prod/gfs.${ymd}/${cyc}/atmos/gempak
+DAPATH1=/gpfs/dell1/ptmp/Geoffrey.Manikin/veg
+DAPATH2=/gpfs/dell1/ptmp/Geoffrey.Manikin/veg
+DAPATH3=/gpfs/dell1/ptmp/Geoffrey.Manikin/veg
+
+fmdl1=${DAPATH1}/nam32_${ymdh}f0${fhr}
+fmdl2=${DAPATH2}/hrrr_${ymdh}f0${fhr}00
+fmdl3=${DAPATH3}/gfs_0p25_${ymdh}f0${fhr}
+
+gdplot2 << EOF
+GDFILE   = $fmdl1
+GDATTIM  = f$fhr
+GLEVEL   = 2 
+GVCORD   = hght 
+GDPFUN   = tmpf 
+CINT     = 5 
+LINE     = 0 
+DEVICE   = GIF|${ymdh}_veg1_f${fhr}.gif | 800;850
+PROJ     = lcc/25;-92;25;/1;1;1;1
+GAREA    = 34.;-102.;48.;-80. 
+TITLE    = 1//~   NAM  VEG FRAC
+CLEAR    = y
+SCALE    = 0
+PANEL    = t 
+HILO     = 0
+HLSYM    = 0 
+CLRBAR   = 1/V/UL/.02;0.5/1.0;.03/1 
+TEXT     = 0.9/11/
+FINT     = 10;20;30;40;50;60;70;80;90
+FLINE    = 8;18;17;10;5;20;21;23;28;30;25 
+TYPE     = f 
+r
+
+GDFILE   = $fmdl2
+PANEL    = b 
+CLEAR    = n
+TITLE    = 1//~   HRRR  VEG FRAC 
+CLRBAR   = 0 
+r
+
+GDFILE   = $fmdl1
+PANEL    = t 
+CLEAR    = y
+DEVICE   = GIF|${ymdh}_veg2_f${fhr}.gif | 800;850
+TITLE    = 1//~   NAM  VEG FRAC 
+CLRBAR   = 1/V/UL/.02;0.5/1.0;.03/1
+r
+ 
+GDFILE   = $fmdl3
+PANEL    = b 
+CLEAR    = n
+TITLE    = 1//~   GFS  VEG FRAC 
+CLRBAR   = 0 
+r
+
+ex
+EOF
+
+done
+gpend
+
+#mv *gif /stmpp1/Geoffrey.Manikin/meg/holdrefc/.
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test7/.
+exit

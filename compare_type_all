@@ -1,0 +1,403 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/type
+rm /stmpp1/Geoffrey.Manikin/meg/type/*
+cd /stmpp1/Geoffrey.Manikin/meg/type
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=2017031312
+ymd=`echo $ymdh | cut -c1-8`
+dayoweek=hold8
+ymdhs="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -3 -1`"
+ymds=`echo $ymdhs | cut -c1-8`
+cycs=`echo $ymdhs | cut -c9-10`
+
+times="03 06 09 12 15 18 21 24 27 30 33 36 39 42 45 48 51 54 57 60 63 66 69 72 75 78 81 84"
+times="27"
+for fhr in $times; do
+
+fhrs=`expr $fhr + 3`
+fmdl1=/com/nawips/prod/nam.${ymd}/nam32_${ymdh}f0${fhr}
+fmdl2=/com2/nawips/prod/gfs.${ymd}/gfs_0p25_${ymdh}f0${fhr}
+fmdl3=/com2/nawips/para/nam.${ymd}/nam32_${ymdh}f0${fhr}
+fmdl4=/ptmpd2/Geoffrey.Manikin/com2/nawips/para/gfs.${ymd}/gfs_0p25_${ymdh}f0${fhr}
+fmdl5=/com2/nawips/prod/rap.${ymd}/rap13_${ymdh}f0${fhr}
+fmdl6=/com2/nawips/prod/hrrr.${ymd}/hrrr_${ymdh}f0${fhr}00
+fmdl7=/com/nawips/prod/nam.${ymd}/nam_conusnest_${ymdh}f0${fhr}
+fmdl8=/com2/nawips/para/nam.${ymd}/nam_conusnest_${ymdh}f0${fhr}
+fmdl9=/ptmpd2/Geoffrey.Manikin/com2/nawips/prod/hiresw.${ymd}/hiresw_arw_${ymdh}f0${fhr}
+fmdl10=/ptmpd2/Geoffrey.Manikin/com2/nawips/prod/hiresw.${ymd}/hiresw_nmmb_${ymdh}f0${fhr}
+fmdl11=/com2/nawips/prod/sref.${ymds}/sref212_${ymdhs}_mean
+fmdl12=/com/nawips/prod/cmc.${ymd}/cmc_${ymdh}f0${fhr}
+
+div=`expr $fhr % 6`
+ if [ $div -eq 0 ]
+ then
+ gfsvar="06"
+ else
+ gfsvar="03"
+ fi
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0
+ GVCORD   = none 
+ GDPFUN   = wxtr 
+ CINT     = 4 
+ LINE     = 1 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   NAM PCP TYPE 
+ DEVICE   = GIF|nam_ptype_${ymdh}f0${fhr}.gif|850;950
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-74;25;/1;1;1;1
+ GAREA    = nj+ 
+ CLEAR    = y
+ PANEL    = o
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 0 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 0.11;10
+ FLINE    = 0;3
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDPFUN   = wxts
+ CLEAR    = n
+ FLINE    = 0;26
+r
+
+ GDPFUN   = wxtp
+ FLINE    = 0;29
+r
+
+ GDPFUN   = wxtz
+ FLINE    = 0;2
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhr
+ TITLE    = 1/-1/~  GFS PCP TYPE 
+ DEVICE   = GIF|gfs_ptype_${ymdh}f0${fhr}.gif|850;950
+ CLRBAR   = 0
+ CLEAR    = y
+ GDPFUN   = wxtr${gfsvar}
+ FLINE    = 0;3
+r
+
+ GDPFUN   = wxts${gfsvar}
+ CLEAR    = n
+ FLINE    = 0;26
+r
+
+ GDPFUN   = wxtp${gfsvar}
+ FLINE    = 0;29
+r
+
+ GDPFUN   = wxtz${gfsvar}
+ FLINE    = 0;2
+r
+
+ GDFILE   = $fmdl3
+ GDATTIM  = f$fhr
+ TITLE    = 1/-1/~  NAMX PCP TYPE 
+ DEVICE   = GIF|namx_ptype_${ymdh}f0${fhr}.gif|850;950
+ CLRBAR   = 0
+ CLEAR    = y
+ GDPFUN   = wxtr
+ FLINE    = 0;3
+r
+
+ GDPFUN   = wxts
+ CLEAR    = n
+ FLINE    = 0;26
+r
+
+ GDPFUN   = wxtp
+ FLINE    = 0;29
+r
+
+ GDPFUN   = wxtz
+ FLINE    = 0;2
+r
+
+ GDFILE   = $fmdl4
+ GDATTIM  = f$fhr
+ TITLE    = 1/-1/~  GFSX PCP TYPE 
+ DEVICE   = GIF|gfsx_ptype_${ymdh}f0${fhr}.gif|850;950
+ CLRBAR   = 0
+ GDPFUN   = wxtr${gfsvar}
+ CLEAR    = y
+ FLINE    = 0;3
+r
+
+ GDPFUN   = wxts${gfsvar}
+ CLEAR    = n
+ FLINE    = 0;26
+r
+
+ GDPFUN   = wxtp${gfsvar}
+ FLINE    = 0;29
+r
+
+ GDPFUN   = wxtz${gfsvar}
+ FLINE    = 0;2
+r
+
+ GDFILE   = $fmdl5
+ GDATTIM  = f$fhr
+ TITLE    = 1/-1/~  RAP PCP TYPE 
+ CLRBAR   = 0
+ GDPFUN   = wxtr
+ DEVICE   = GIF|rap_ptype_${ymdh}f0${fhr}.gif|850;950
+ CLEAR    = y
+ FLINE    = 0;3
+r
+
+ GDPFUN   = wxts
+ CLEAR    = n
+ FLINE    = 0;26
+r
+
+ GDPFUN   = wxtp
+ FLINE    = 0;29
+r
+
+ GDPFUN   = wxtz
+ FLINE    = 0;2
+r
+
+ GDPFUN   = add(wxtr;wxts)
+ FLINE    = 0;0;11
+ FINT     = 0;1.9
+r
+
+ GDPFUN   = add(wxts;wxtp)
+ FLINE    = 0;0;11
+ FINT     = 0;1.9
+r
+
+ GDPFUN   = add(wxtp;wxtz)
+ FLINE    = 0;0;11
+ FINT     = 0;1.9
+r
+
+ GDPFUN   = add(wxts;wxtz)
+ FLINE    = 0;0;11
+ FINT     = 0;1.9
+r
+
+ GDPFUN   = add(wxtr;wxtp)
+ FLINE    = 0;0;11
+ FINT     = 0;1.9
+r
+
+ GDFILE   = $fmdl6
+ GDATTIM  = f$fhr
+ TITLE    = 1/-1/~  HRRR PCP TYPE 
+ CLRBAR   = 0
+ GDPFUN   = crain 
+ DEVICE   = GIF|hrrr_ptype_${ymdh}f0${fhr}.gif|850;950
+ CLEAR    = y
+ FINT     = 0.11;10
+ FLINE    = 0;3
+r
+
+ GDPFUN   = csnow 
+ CLEAR    = n
+ FLINE    = 0;26
+r
+
+ GDPFUN   = cicep 
+ FLINE    = 0;29
+r
+
+ GDPFUN   = cfrzr 
+ FLINE    = 0;2
+r
+
+GDPFUN   = add(crain;csnow)
+ FLINE    = 0;0;11
+ FINT     = 0;1.9
+r
+
+ GDPFUN   = add(csnow;cicep)
+ FLINE    = 0;0;11
+ FINT     = 0;1.9
+r
+
+ GDPFUN   = add(cicep;cfrzr)
+ FLINE    = 0;0;11
+ FINT     = 0;1.9
+r
+
+ GDPFUN   = add(csnow;cfrzr)
+ FLINE    = 0;0;11
+ FINT     = 0;1.9
+r
+
+ GDPFUN   = add(crain;cicep)
+ FLINE    = 0;0;11
+ FINT     = 0;1.9
+r
+
+ GDFILE   = $fmdl7
+ GDATTIM  = f$fhr
+ TITLE    = 1/-1/~  NAM4 PCP TYPE 
+ DEVICE   = GIF|nam4_ptype_${ymdh}f0${fhr}.gif|850;950
+ CLRBAR   = 0
+ CLEAR    = y
+ GDPFUN   = wxtr
+ FINT     = 0.11;10
+ FLINE    = 0;3
+r
+
+ GDPFUN   = wxts
+ CLEAR    = n
+ FLINE    = 0;26
+r
+
+ GDPFUN   = wxtp
+ FLINE    = 0;29
+r
+
+ GDPFUN   = wxtz
+ FLINE    = 0;2
+r
+
+ GDFILE   = $fmdl8
+ GDATTIM  = f$fhr
+ TITLE    = 1/-1/~  NAM3 PCP TYPE 
+ DEVICE   = GIF|nam3_ptype_${ymdh}f0${fhr}.gif|850;950
+ CLRBAR   = 0
+ CLEAR    = y
+ GDPFUN   = wxtr
+ FLINE    = 0;3
+r
+
+ GDPFUN   = wxts
+ CLEAR    = n
+ FLINE    = 0;26
+r
+
+ GDPFUN   = wxtp
+ FLINE    = 0;29
+r
+
+ GDPFUN   = wxtz
+ FLINE    = 0;2
+r
+
+ GDFILE   = $fmdl9
+ GDATTIM  = f$fhr
+ TITLE    = 1/-1/~  HIRESW ARW PCP TYPE 
+ DEVICE   = GIF|arw_ptype_${ymdh}f0${fhr}.gif|850;950
+ CLRBAR   = 0
+ CLEAR    = y
+ GDPFUN   = wxtr
+ FLINE    = 0;3
+r
+
+ GDPFUN   = wxts
+ CLEAR    = n
+ FLINE    = 0;26
+r
+
+ GDPFUN   = wxtp
+ FLINE    = 0;29
+r
+
+ GDPFUN   = wxtz
+ FLINE    = 0;2
+r
+
+ GDFILE   = $fmdl10
+ GDATTIM  = f$fhr
+ TITLE    = 1/-1/~  HIRESW NMMB PCP TYPE 
+ DEVICE   = GIF|nmmb_ptype_${ymdh}f0${fhr}.gif|850;950
+ CLRBAR   = 0
+ CLEAR    = y
+ GDPFUN   = wxtr
+ FLINE    = 0;3
+r
+
+ GDPFUN   = wxts
+ CLEAR    = n
+ FLINE    = 0;26
+r
+
+ GDPFUN   = wxtp
+ FLINE    = 0;29
+r
+
+ GDPFUN   = wxtz
+ FLINE    = 0;2
+r
+
+ GDFILE   = $fmdl11
+ GDATTIM  = f$fhrs
+ TITLE    = 1/-1/~  SREF DOM PCP TYPE 
+ DEVICE   = GIF|sref_ptype_${ymdh}f0${fhr}.gif|850;950
+ CLRBAR   = 0
+ CLEAR    = y
+ GDPFUN   = wxtrenmw
+ FLINE    = 0;3
+r
+
+ GDPFUN   = wxtsenmw
+ CLEAR    = n
+ FLINE    = 0;26
+r
+
+ GDPFUN   = wxtpenmw
+ FLINE    = 0;29
+r
+
+ GDPFUN   = wxtzenmw
+ FLINE    = 0;2
+r
+
+ GDFILE   = $fmdl12
+ GDATTIM  = f$fhr
+ TITLE    = 1/-1/~  CMC PCP TYPE 
+ DEVICE   = GIF|cmc_ptype_${ymdh}f0${fhr}.gif|850;950
+ CLRBAR   = 0
+ CLEAR    = y
+ GDPFUN   = wxtr
+ FLINE    = 0;3
+r
+
+ GDPFUN   = wxts
+ CLEAR    = n
+ FLINE    = 0;26
+r
+
+ GDPFUN   = wxtp
+ FLINE    = 0;29
+r
+
+ GDPFUN   = wxtz
+ FLINE    = 0;2
+r
+
+ex
+EOF
+
+gpend
+done
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

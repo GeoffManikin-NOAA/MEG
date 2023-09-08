@@ -1,0 +1,152 @@
+#!/bin/sh
+echo 'into'
+
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/meg
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/meg/all925wv
+rm /gpfs/dell1/stmp/Geoffrey.Manikin/meg/all925wv/*
+cd /gpfs/dell1/stmp/Geoffrey.Manikin/meg/all925wv
+cp /gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/coltbl.xwp .
+
+ymdh=2022012000
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+ymdhs="`/gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/advtime ${ymdh} -3 -1`"
+ymds=`echo $ymdhs | cut -c1-8`
+cycs=`echo $ymdhs | cut -c9-10`
+
+hours="06 09 10 11 12 13 14 15"
+hours="12"
+for fhr in $hours; do
+
+ymdha="`/gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/advtime ${ymdh} $fhr -1`"
+ymda=`echo $ymdha | cut -c1-8`
+cyca=`echo $ymdha | cut -c9-10`
+
+fmdl1=/gpfs/dell1/nco/ops/com/nam/prod/nam.${ymd}/gempak/nam_conusnest_${ymdh}f0${fhr}
+fmdl2=/gpfs/hps/nco/ops/com/hiresw/prod/hiresw.${ymd}/gempak/hiresw_conusarw_${ymdh}f0${fhr}
+fmdl3=/gpfs/hps/nco/ops/com/hiresw/prod/hiresw.${ymd}/gempak/hiresw_conusmem2arw_${ymdh}f0${fhr}
+fmdl4=/gpfs/hps/nco/ops/com/hrrr/prod/hrrr.${ymd}/conus/gempak/hrrr_${ymdh}f0${fhr}00
+fmdl5=/gpfs/dell1/nco/ops/com/nam/prod/nam.${ymd}/gempak/nam32_${ymdh}f0${fhr}
+fmdl6=/gpfs/dell1/nco/ops/com/gfs/prod/gfs.${ymd}/${cyc}/atmos/gempak/gfs_0p25_${ymdh}f0${fhr}
+fmdl7=/gpfs/dell1/nco/ops/com/cmc/prod/cmc.${ymd}/gempak/cmc_${ymdh}f0${fhr}
+fmdl9=/gpfs/hps/nco/ops/com/hiresw/prod/hiresw.${ymd}/gempak/hiresw_conusfv3_${ymdh}f0${fhr}
+fmdl8=/gpfs/dell1/nco/ops/com/ecmwf/prod/ecmwf.${ymd}/gempak/ecmwf_hr_${ymdh}f0${fhr}
+fmdl10=/gpfs/dell2/nco/ops/com/sref/prod/sref.${ymds}/${cycs}/gempak/sref212_${ymdhs}_mean
+fmdl11=/gpfs/hps/nco/ops/com/hiresw/prod/href.${ymd}/gempak/href_conus_mean_${ymdh}f0${fhr}
+fmdl12=/gpfs/dell1/nco/ops/com/gfs/prod/gfs.${ymda}/${cyca}/atmos/gempak/gfs_0p25_${ymdha}f000
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 925 
+ GVCORD   = pres 
+ GDPFUN   = kntv(wind)
+ WIND     = BK4/0.6/1/2/1
+ CINT     = 0 
+ LINE     = 1 
+ MAP      = 1
+ TITLE    = 1/-1/~   NAM3 925 mb WIND 
+ DEVICE   = GIF|925wv1_${ymdh}${fhr}.gif|850;950
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-77;25;/1;1;1;1
+ GAREA    = md+ 
+ CLEAR    = y
+ PANEL    = ul 
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CONTUR   = 0
+ SKIP     = /30;30 
+ CLRBAR   = 0 
+ FINT     = 0
+ FLINE    = 0
+ TYPE     = b
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl2
+ CLEAR    = n
+ PANEL    = ll
+ TITLE    = 1/-1/~   ARW 925 mb WIND
+r
+
+ GDFILE   = $fmdl3
+ PANEL    = lr
+ TITLE    = 1/-1/~   ARW2 925 mb WIND
+r
+
+ GDFILE   = $fmdl4
+ PANEL    = ur
+ TITLE    = 1/-1/~   HRRR 925 mb WIND
+r
+
+ GDFILE   = $fmdl5
+ CLEAR    = y
+ DEVICE   = GIF|925wv2_${ymdh}${fhr}.gif|850;950
+ PANEL    = ul
+ TITLE    = 1/-1/~   NAM 925 mb WIND
+r
+
+ GDFILE   = $fmdl6
+ CLEAR    = n
+ PANEL    = ll
+ TITLE    = 1/-1/~   GFS 925 mb WIND
+r
+
+ GDFILE   = $fmdl7
+ PANEL    = lr
+ TITLE    = 1/-1/~   CMC 925 mb WIND
+ SKIP     = 0 
+ CLRBAR   = 0
+r
+
+ GDFILE   = $fmdl8
+ PANEL    = ur
+ GVCORD   = none
+ GLEVEL   = 0
+ TITLE    = 1/-1/~   ECMWF 925 mb WIND
+r
+
+ GDFILE   = $fmdl9
+ GVCORD   = pres 
+ GLEVEL   = 925 
+ PANEL    = ul
+ TITLE    = 1/-1/~   FV3 925 mb WIND
+ DEVICE   = GIF|925wv3_${ymdh}${fhr}.gif|850;950
+ SKIP     = /30;30
+ CLEAR     = y
+r
+
+ GDFILE   = $fmdl10
+ PANEL    = ll
+ CLEAR    = n
+ TITLE    = 1/-1/~   SREF 925 mb WIND
+ GDPFUN   = tmpkenmw
+r
+
+ GDFILE   = $fmdl11
+ GDATTIM  = f$fhr
+ GDPFUN   = kntv(wind)
+ CLRBAR   = 0
+ PANEL    = ur 
+ TITLE    = 1/-1/~   HREF 925 mb WIND
+r
+
+ GDFILE   = $fmdl12
+ GDATTIM  = f000 
+ TITLE    = 1/-1/~   GFS ANL 925 mb WIND
+ PANEL    = lr
+r
+
+ex
+EOF
+
+gpend
+done
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test5/.
+exit

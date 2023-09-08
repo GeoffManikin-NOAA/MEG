@@ -1,0 +1,131 @@
+#!/bin/ksh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/hrrrsnow
+rm /stmpp1/Geoffrey.Manikin/meg/hrrrsnow/*
+cd /stmpp1/Geoffrey.Manikin/meg/hrrrsnow
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=2017031417
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+dayoweek=hold9
+
+ymdh1="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -1 -1`"
+ymdh2="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -2 -1`"
+ymdh3="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -3 -1`"
+ymd1=`echo $ymdh1 | cut -c1-8`
+ymd2=`echo $ymdh2 | cut -c1-8`
+ymd3=`echo $ymdh3 | cut -c1-8`
+cyc1=`echo $ymdh1 | cut -c9-10`
+cyc2=`echo $ymdh2 | cut -c9-10`
+cyc3=`echo $ymdh3 | cut -c9-10`
+
+fhr1=07
+fhr2=08
+fhr3=09
+fhr4=10
+fhr1a=`expr $fhr1 - 6`
+fhr2a=`expr $fhr2 - 6`
+fhr3a=`expr $fhr3 - 6`
+fhr4a=`expr $fhr4 - 6`
+
+verymdh="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} ${fhr1} -1`"
+typeset -Z2 fhr1 fhr2 fhr3 fhr4 fhr1a fhr2a fhr3a fhr4a
+#DAPATH=/com2/nawips/prod
+DAPATH=/ptmpd2/Geoffrey.Manikin/com2/nawips/prod
+DAPATH=/ptmpd2/Geoffrey.Manikin/hrrr
+fmdl1=${DAPATH}/hrrr.${ymd}/hrrr_${ymdh}f0${fhr1}00
+fmdl2=${DAPATH}/hrrr.${ymd1}/hrrr_${ymdh1}f0${fhr2}00
+fmdl3=${DAPATH}/hrrr.${ymd2}/hrrr_${ymdh2}f0${fhr3}00
+fmdl4=${DAPATH}/hrrr.${ymd3}/hrrr_${ymdh3}f0${fhr4}00
+
+fmdl1a=${DAPATH}/hrrr.${ymd}/hrrr_${ymdh}f0${fhr1a}00
+fmdl2a=${DAPATH}/hrrr.${ymd1}/hrrr_${ymdh1}f0${fhr2a}00
+fmdl3a=${DAPATH}/hrrr.${ymd2}/hrrr_${ymdh2}f0${fhr3a}00
+fmdl4a=${DAPATH}/hrrr.${ymd3}/hrrr_${ymdh3}f0${fhr4a}00
+
+fmdl1=${DAPATH}/hrrr_${ymdh}f0${fhr1}00
+fmdl2=${DAPATH}/hrrr_${ymdh1}f0${fhr2}00
+fmdl3=${DAPATH}/hrrr_${ymdh2}f0${fhr3}00
+fmdl4=${DAPATH}/hrrr_${ymdh3}f0${fhr4}00
+
+fmdl1a=${DAPATH}/hrrr_${ymdh}f0${fhr1a}00
+fmdl2a=${DAPATH}/hrrr_${ymdh1}f0${fhr2a}00
+fmdl3a=${DAPATH}/hrrr_${ymdh2}f0${fhr3a}00
+fmdl4a=${DAPATH}/hrrr_${ymdh3}f0${fhr4a}00
+
+garea="40.8;-78.4;43.8;-73.8"
+proj="lcc/25.;-76.;25./2;2;1;1"
+echo $fmdl4
+echo $fmdl4a
+echo $fhr4a
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1a + $fmdl1
+ GDATTIM  = f$fhr1
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = mul(sub(sn07m+2,sn01m^${ymd}/${cyc}f${fhr1a}),39.37)
+ CINT     = 5 
+ LINE     = 0 
+ DEVICE   = GIF|${ymd}${cyc}hrrrsnow6_${ymdh}.gif | 800;850
+ PROJ     = $proj 
+ GAREA    = $garea 
+ \$MAPFIL = county
+ TITLE    = 1//  ${cyc}z HRRR  6-HR ACC SNOW DPTH
+ CLEAR    = y
+ SCALE    = 0
+ PANEL    = lr 
+ HILO     = 0
+ HLSYM    = 0 
+ CLRBAR   = 0
+ TEXT     = 0.9/11/2
+ FINT     = 0.1;1;2;3;4;6;8;10;12;16;20;24;28
+ FLINE    = 0;21;22;23;4;25;27;28;29;30;2;15;16;17;10;5
+ TYPE     = f 
+r
+
+ GDFILE   = $fmdl2a + $fmdl2
+ GDATTIM  = f$fhr2
+ GDPFUN   = mul(sub(sn08m+2,sn02m^${ymd1}/${cyc1}f${fhr2a}),39.37) 
+ PANEL    = ll
+ CLEAR    = n
+ TITLE    = 1//  ${cyc1}z HRRR  6-HR ACC SNOW DPTH 
+ CLRBAR   = 1/H/UL/.02;0.97/1.9;.03/1
+r
+
+ GDFILE   = $fmdl3a + $fmdl3
+ GDATTIM  = f$fhr3
+ GDPFUN   = mul(sub(sn09m+2,sn03m^${ymd2}/${cyc2}f${fhr3a}),39.37)
+ PANEL    = ur 
+ TITLE    = 1// ${cyc2}z HRRR  6-HR ACC SNOW DPTH 
+ CLRBAR   = 0 
+r
+
+ TITLE    = 2/1/VERIFYING TIME   $verymdh
+r
+
+ GDFILE   = $fmdl4a + $fmdl4
+ GDATTIM  = f$fhr4
+ GDPFUN   = mul(sub(sn10m+2,sn04m^${ymd3}/${cyc3}f${fhr4a}),39.37) 
+ PANEL    = ul
+ TITLE    = 1// ${cyc3}z HRRR  6-HR ACC SNOW DPTH 
+ CLRBAR   = 0
+r
+
+ TITLE    = 15/1/ CYCLES RUN ON   $ymd1
+ CLEAR    = n
+r
+
+
+ex
+EOF
+gpend
+
+#mv *gif /stmpp1/Geoffrey.Manikin/meg/holdpcp/.
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

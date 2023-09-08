@@ -1,0 +1,78 @@
+#!/bin/ksh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+ymdh=2018051712
+ymd=`echo $ymdh | cut -c1-8`
+month=`echo $ymdh | cut -c5-6`
+day=`echo $ymdh | cut -c7-8`
+cyc=`echo $ymdh | cut -c9-10`
+dayoweek=hold7
+
+mkdir /stmpp1/Geoffrey.Manikin/dewcape
+rm /stmpp1/Geoffrey.Manikin/dewcape/*
+cd /stmpp1/Geoffrey.Manikin/dewcape
+cp /meso/save/Geoffrey.Manikin/gempak.rap13/coltbl.xwp .
+
+times="12"
+for fhr in $times; do
+
+typeset -Z3 fhr
+fmdl1=/gpfs/hps/nco/ops/com/nawips/prod/gfs.${ymd}/gfs_0p25_${ymdh}f${fhr}
+#fmdl1=/ptmpp1/Geoffrey.Manikin/hold/gfs20_${ymdh}f${fhr}
+echo $fmdl1
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = cape 
+ CINT     = 100;500;1000;1500;2000;2500;3000;3500;4000;4500;5000;5500 
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 0
+ DEVICE   = GIF|comparedewcape0p25_${ymdh}f${fhr}.gif|900;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-115.;25./2;2;1;1
+ GAREA    = or 
+ CLEAR    = y
+ PANEL    = b 
+ TEXT     = 1.2/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/V/UL/.15;0.9/.8;.03/-2
+ TITLE    = 1/-1/~  GFS 0p25 SFC CAPE
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 100;500;1000;1500;2000;2500;3000;3500;4000;4500;5000;5500 
+ FLINE    = 0;0;25;21;22;23;5;10;17;16;2;15;32 
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GLEVEL   = 2
+ GVCORD   = hght 
+ GDPFUN   = dwpf
+ TITLE    = 1/-1/~    GFS 0p25 2m DEW PT 
+ CLEAR    = n
+ PANEL    = t
+ FINT     = -12;-8;-4;0;4;8;12;16;20;24;28;32;36;40;44;48;52;56;60;64;68;72;76;80
+ FLINE    = 0;11;9;12;7;30;29;28;4;25;26;27;24;23;22;21;5;20;10;17;16;2;15;14;32
+r
+
+ex
+EOF
+
+gpend
+done
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+
+exit

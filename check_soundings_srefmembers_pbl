@@ -1,0 +1,126 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+ymdh=2012120921
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+stnm=723418
+#stnm=744550
+#stnm=723400
+
+mkdir /stmp/Geoffrey.Manikin/meg
+mkdir /stmp/Geoffrey.Manikin/meg/snd
+rm /stmp/Geoffrey.Manikin/meg/snd/*
+cd /stmp/Geoffrey.Manikin/meg/snd
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+#ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+#ymd=`cut -c 7-14 /com/date/t${cyc}z`
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+dayoweek=Mon
+
+cycn=`expr $cyc - 3`
+typeset -Z2 cycn
+ymdhn=${ymd}${cycn}
+fmdl1=/com/sref/prod/sref.${ymd}/${cyc}/gempak/nmm_ctl.${ymdh}.snd
+fmdl2=/com/sref/prod/sref.${ymd}/${cyc}/gempak/em_ctl.${ymdh}.snd
+fmdl3=/com/sref/prod/sref.${ymd}/${cyc}/gempak/nmb_ctl.${ymdh}.snd
+fmdl4=/com/nawips/prod/nam.${ymd}/nam_${ymdhn}.snd
+
+times="15"
+for time in $times; do
+
+validtime="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} $time -1 x`"
+echo validtime = $validtime
+dattim=`echo $validtime | cut -c5-11`
+echo dattim = $dattim
+
+if [ $time -lt 10 ]
+then
+fhr=0${time}
+else
+fhr=$time
+fi
+
+    snprof << EOF
+ SNFILE   = $fmdl1
+ DATTIM   = $dattim
+ AREA     = @${stnm}
+ SNPARM   = tmpc;dwpc
+ LINE     = 2;4/1/7
+ PTYPE    = skewt
+ VCOORD   = PRES
+ STNDEX   = capv;cins
+ STNCOL   = 24
+ WIND     = bk1
+ WINPOS   = 2
+ MARKER   = 0
+ BORDER   = 1//2
+ TITLE    = 1//  NMM CTL 
+ DEVICE   = gif|${cyc}srefsnd${stnm}_$fhr.gif | 800;850
+ YAXIS    = 1050/700/50/1;1;1
+ XAXIS    = -15/30/10/;1
+ FILTER   = n 
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 0.8 
+ THTALN   = 8/3/1/250/500/5
+ THTELN   = 23/1/1/250/500/5
+ MIXRLN   = 17/10/2/0/40./1.
+r
+
+ SNFILE   = $fmdl2
+ CLEAR    = n
+ TITLE    = 1//  EM CTL 
+ PANEL    = b
+r
+
+ SNFILE   = $fmdl3
+ CLEAR    = y
+ TITLE    = 1//  NMB CTL
+ PANEL    = t
+ DEVICE   = gif|${cyc}sref2snd${stnm}_$fhr.gif | 800;850
+r
+
+ SNFILE   = $fmdl4
+ CLEAR    = n
+ TITLE    = 1//  NAM
+ PANEL    = b
+r
+
+ex
+EOF
+
+done
+gpend
+
+. /u/Geoffrey.Manikin/.Utils
+export w1=wd20mg
+export w2=$rzdm
+
+ftp -n -v << EOF > /meso/save/Geoffrey.Manikin/casework/rzftp.out
+open emcrzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/today
+mput ${cyc}*gif
+bye
+EOF
+
+ftp -n -v << EOF > /meso/save/Geoffrey.Manikin/casework/rzftp.out
+open emcrzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/${dayoweek}
+mput ${cyc}*gif
+bye
+EOF
+
+exit

@@ -1,0 +1,17 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+cd /stmpp1/Geoffrey.Manikin/meg/
+
+/meso/save/Geoffrey.Manikin/meg/compare_slp_gfsx_medr_ak ${cyc} &
+/meso/save/Geoffrey.Manikin/meg/compare_500_gfsx_medr_ak ${cyc} &
+/meso/save/Geoffrey.Manikin/meg/compare_500_4models  ${cyc} &
+/meso/save/Geoffrey.Manikin/meg/compare_slp_4models ${cyc} &
+wait
+
+echo beforeexit
+exit

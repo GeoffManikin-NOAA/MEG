@@ -1,0 +1,401 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+da00=`cut -c 7-14 /com/date/t${cyc}z`
+hr00=`cut -c 15-16 /com/date/t${cyc}z`
+month=`cut -c 11-12 /com/date/t${cyc}z`
+day=`cut -c 13-14 /com/date/t${cyc}z`
+
+mkdir /stmpp1/wx20mg/obss
+rm /stmpp1/wx20mg/obss/*
+cd /stmpp1/wx20mg/obss/
+cp /meso/save/wx20mg/casework/coltbl.xwp .
+
+garea="34.;-90.;50.;-62."
+proj="lcc/25;-75;25/1;2;1;1"
+
+base=75
+basem1=`expr $base - 5`
+basem2=`expr $base - 10`
+basem3=`expr $base - 15`
+basem4=`expr $base - 20`
+basem5=`expr $base - 25`
+basem6=`expr $base - 30`
+basem7=`expr $base - 35`
+basem8=`expr $base - 40`
+basem9=`expr $base - 45`
+basem10=`expr $base - 50`
+basem11=`expr $base - 55`
+basem12=`expr $base - 60`
+basem13=`expr $base - 65`
+basem14=`expr $base - 70`
+basem15=`expr $base - 75`
+basem16=`expr $base - 80`
+basem17=`expr $base - 85`
+basem18=`expr $base - 90`
+basem19=`expr $base - 95`
+basem20=`expr $base - 100`
+basem21=`expr $base - 105`
+basem22=`expr $base - 110`
+basem23=`expr $base - 115`
+
+     sfmap << EOF
+ AREA     = $garea
+ GAREA    = $garea
+ SATFIL   =
+ RADFIL   =
+ SFPARM   = tmpf 
+ DATTIM   = ${day}/${cyc}
+ SFFILE   = /ptmpp1/hpcops/obs/${da00}.hrly 
+ COLORS   = 15 
+ MAP      = 1
+ LATLON   = 0
+ TITLE    = 1/-1/~   ALL OBS 
+ CLEAR    = yes 
+ PANEL    = 0 
+ DEVICE   = GIF|obs${cyc}_all.gif|800;800 
+ PROJ     = $proj 
+ FILTER   = none 
+ TEXT     = 0.8/21/1/SW
+ LUTFIL   =
+ STNPLT   =
+ CLRBAR   =
+r
+
+ SFPARM   = tmpf<$base
+ COLORS   = 14
+ TITLE    = 0
+r
+
+ SFPARM   = tmpf<$basem1
+ COLORS   = 15
+r
+
+ SFPARM   = tmpf<$basem2
+ COLORS   = 2
+r
+
+ SFPARM   = tmpf<$basem3
+ COLORS   = 16
+r
+
+ SFPARM   = tmpf<$basem4
+ COLORS   = 17
+r
+
+ SFPARM   = tmpf<$basem5
+ COLORS   = 10
+r
+
+ SFPARM   = tmpf<$basem6
+ COLORS   = 20
+r
+
+ SFPARM   = tmpf<$basem7
+ COLORS   = 5
+r
+
+ SFPARM   = tmpf<$basem8
+ COLORS   = 21
+r
+
+ SFPARM   = tmpf<$basem9
+ COLORS   = 22
+r
+
+ SFPARM   = tmpf<$basem10
+ COLORS   = 23
+r
+
+ SFPARM   = tmpf<$basem11
+ COLORS   = 24
+r
+
+ SFPARM   = tmpf<$basem12
+ COLORS   = 27
+r
+
+ SFPARM   = tmpf<$basem13
+ COLORS   = 26
+r
+
+ SFPARM   = tmpf<$basem14
+ COLORS   = 25
+r
+
+ SFPARM   = tmpf<$basem15
+ COLORS   = 4
+r
+
+ SFPARM   = tmpf<$basem16
+ COLORS   = 28
+r
+
+ SFPARM   = tmpf<$basem17
+ COLORS   = 29
+r
+
+ SFPARM   = tmpf<$basem18
+ COLORS   = 30
+r
+
+ SFPARM   = tmpf<$basem19
+ COLORS   = 7
+r
+
+ SFPARM   = tmpf<$basem20
+ COLORS   = 12
+r
+
+ SFPARM   = tmpf<$basem21
+ COLORS   = 9
+r
+
+ SFPARM   = tmpf<$basem22
+ COLORS   = 11
+r
+
+ SFFILE   = /ptmpp1/hpcops/obs/${da00}${cyc}.ship
+ SFPARM   = tmpf
+ COLORS   = 14
+ TITLE    = 0
+r
+
+ SFPARM   = tmpf<$base
+ COLORS   = 14
+r
+
+ SFPARM   = tmpf<$basem1
+ COLORS   = 15
+r
+
+ SFPARM   = tmpf<$basem2
+ COLORS   = 2
+r
+
+ SFPARM   = tmpf<$basem3
+ COLORS   = 16
+r
+
+ SFPARM   = tmpf<$basem4
+ COLORS   = 17
+r
+
+ SFPARM   = tmpf<$basem5
+ COLORS   = 10
+r
+
+ SFPARM   = tmpf<$basem6
+ COLORS   = 20
+r
+
+ SFPARM   = tmpf<$basem7
+ COLORS   = 5
+r
+
+ SFPARM   = tmpf<$basem8
+ COLORS   = 21
+r
+
+ SFPARM   = tmpf<$basem9
+ COLORS   = 22
+r
+
+ SFPARM   = tmpf<$basem10
+ COLORS   = 23
+r
+
+ SFPARM   = tmpf<$basem11
+ COLORS   = 24
+r
+
+ SFPARM   = tmpf<$basem12
+ COLORS   = 27
+r
+
+ SFPARM   = tmpf<$basem13
+ COLORS   = 26
+r
+
+ SFPARM   = tmpf<$basem14
+ COLORS   = 25
+r
+
+ SFPARM   = tmpf<$basem15
+ COLORS   = 4
+r
+
+ SFPARM   = tmpf<$basem16
+ COLORS   = 28
+r
+
+ SFPARM   = tmpf<$basem17
+ COLORS   = 29
+r
+
+ SFPARM   = tmpf<$basem18
+ COLORS   = 30
+r
+
+ SFPARM   = tmpf<$basem19
+ COLORS   = 7
+r
+
+ SFPARM   = tmpf<$basem20
+ COLORS   = 12
+r
+
+ SFPARM   = tmpf<$basem21
+ COLORS   = 9
+r
+
+ SFPARM   = tmpf<$basem22
+ COLORS   = 11
+r
+
+ex
+EOF
+
+count="1 2 3 4"
+for counter in $count; do
+ file="/ptmpp1/wx20mg/mesonet/msonet${cyc}.gem.00${counter}"
+
+     sfmap << EOF
+ AREA     = $garea
+ GAREA    = $garea
+ SATFIL   =
+ RADFIL   =
+ SFPARM   = tmpf 
+ DATTIM   = last 
+ SFFILE   = $file 
+ COLORS   = 1
+ MAP      = 1
+ LATLON   = 0
+ TITLE    = 0 
+ CLEAR    = NO 
+ PANEL    = 0 
+ DEVICE   = GIF|obs${cyc}_all.gif|800;800 
+ PROJ     = $proj
+ FILTER   = none
+ TEXT     = 0.8/21/1/SW
+ LUTFIL   =
+ STNPLT   =
+ CLRBAR   =
+r
+
+FPARM   = tmpf<$base
+ COLORS   = 14
+ TITLE    = 0
+r
+
+ SFPARM   = tmpf<$basem1
+ COLORS   = 15
+r
+
+ SFPARM   = tmpf<$basem2
+ COLORS   = 2
+r
+
+ SFPARM   = tmpf<$basem3
+ COLORS   = 16
+r
+
+ SFPARM   = tmpf<$basem4
+ COLORS   = 17
+r
+
+ SFPARM   = tmpf<$basem5
+ COLORS   = 10
+r
+
+ SFPARM   = tmpf<$basem6
+ COLORS   = 20
+r
+
+ SFPARM   = tmpf<$basem7
+ COLORS   = 5
+r
+
+ SFPARM   = tmpf<$basem8
+ COLORS   = 21
+r
+
+ SFPARM   = tmpf<$basem9
+ COLORS   = 22
+r
+
+ SFPARM   = tmpf<$basem10
+ COLORS   = 23
+r
+
+ SFPARM   = tmpf<$basem11
+ COLORS   = 24
+r
+
+ SFPARM   = tmpf<$basem12
+ COLORS   = 27
+r
+
+ SFPARM   = tmpf<$basem13
+ COLORS   = 26
+r
+
+ SFPARM   = tmpf<$basem14
+ COLORS   = 25
+r
+
+ SFPARM   = tmpf<$basem15
+ COLORS   = 4
+r
+
+ SFPARM   = tmpf<$basem16
+ COLORS   = 28
+r
+
+ SFPARM   = tmpf<$basem17
+ COLORS   = 29
+r
+
+ SFPARM   = tmpf<$basem18
+ COLORS   = 30
+r
+
+ SFPARM   = tmpf<$basem19
+ COLORS   = 7
+r
+
+ SFPARM   = tmpf<$basem20
+ COLORS   = 12
+r
+
+ SFPARM   = tmpf<$basem21
+ COLORS   = 9
+r
+
+ SFPARM   = tmpf<$basem22
+ COLORS   = 11
+r
+
+ex
+EOF
+done
+gpend
+
+. /u/wx20mg/.Utils
+export w1=wd20mg
+export w2=$rzdm
+
+ftp -n -v << EOF > /meso/save/wx20mg/gempak.rap13/rzftp5t.out
+open rzdm
+user $w1 $w2
+binary
+cd /home/www/emc/htdocs/mmb/gmanikin/rap/cases/20110117
+mput *.gif
+bye
+EOF
+
+exit

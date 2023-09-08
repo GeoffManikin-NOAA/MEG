@@ -1,0 +1,65 @@
+#!/bin/ksh
+echo 'into'
+
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/meg
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/meg/gfsswem
+rm /gpfs/dell1/stmp/Geoffrey.Manikin/meg/gfsswem/*
+cd /gpfs/dell1/stmp/Geoffrey.Manikin/meg/gfsswem
+cp /gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/coltbl.xwp .
+
+ymdh=2022010212
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+hours="24"
+for fhr in $hours; do
+
+DAPATH=/gpfs/dell1/nco/ops/com/gfs/prod/gfs.${ymd}/${cyc}/atmos/gempak
+#DAPATH=/ptmpd2/Geoffrey.Manikin/com2/nawips/prod
+cp ${DAPATH}/gfs_0p25_${ymdh}f0${fhr} fmdl1
+cp ${DAPATH}/gfs_0p25_${ymdh}f000 fmdl1a
+cp ${DAPATH}/gfs_0p50_${ymdh}f0${fhr} fmdl2
+cp ${DAPATH}/gfs_0p50_${ymdh}f000 fmdl2a
+echo $fmdl1
+
+garea="wa+"
+proj="lcc/25.;-120.;25./2;2;1;1"
+
+    gdplot2 << EOF
+ GDFILE   = fmdl1a + fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = mul(sub(swem+2,swem^${ymd}/${cyc}f000),3.937)
+ CINT     = 5 
+ LINE     = 0 
+ DEVICE   = GIF|${ymd}${cyc}gfsswem_f${fhr}.gif | 800;850
+ PROJ     = $proj 
+ GAREA    = $garea 
+ TITLE    = 1// ${ymd} ${cyc}z GFS 0.25   ${fhr}-HR  ACC SNOW  10:1 
+ CLEAR    = y
+ SCALE    = 0
+ PANEL    = t 
+ HILO     = 0
+ HLSYM    = 0 
+ CLRBAR   = 1/V/UL/.02;0.8/1.6;.02/1
+ TEXT     = 0.9/11/2
+ FINT     = 0.1;1;2;3;4;6;8;10;12;16;20;24;28;32
+ FLINE    = 0;21;22;23;4;25;27;28;29;30;2;15;17;10;5
+ TYPE     = f 
+r
+
+ GDFILE   = fmdl2a + fmdl2
+ PANEL    = b 
+ CLEAR    = n
+ CLRBAR   = 0
+ TITLE    = 1//  ${ymd} ${cyc}z GFS 0.50   ${fhr}-HR ACC SNOW 10:1 
+r
+
+ex
+EOF
+done
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test7/.
+exit

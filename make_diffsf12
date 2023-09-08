@@ -1,0 +1,280 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+ymdh=$1
+ymd=`echo $ymdh | cut -c1-8`
+month=`echo $ymdh | cut -c5-6`
+day=`echo $ymdh | cut -c7-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+mkdir /stmpp1/Geoffrey.Manikin/gempak.rap13/launch11/diffs
+cd /stmpp1/Geoffrey.Manikin/gempak.rap13/launch11/diffs
+cp /meso/save/Geoffrey.Manikin/gempak.rap13/coltbl.xwp .
+
+times="12"
+for fhr in $times; do
+
+cp /com/nawips/prod/rap.${ymd}/rap13_${ymd}${cyc}f0${fhr} fmdl1
+/ptmpp1/Geoffrey.Manikin/com/nawips/para/rap.${ymd}/rap13_${ymd}${cyc}f0${fhr} fmdl2
+
+    gdcntr << EOF
+
+ GDFILE   = fmdl1+fmdl2
+ GDATTIM  = f12
+ GLEVEL   = 0 
+ GVCORD   = none
+ GFUNC    = sub(mmsl+2),mmsl) 
+ CINT     = 1 
+ LINE     = 0 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/1/ 12-HR   RUC2 - RAPX   SEA LEVEL PRESSURE DIFF
+ DEVICE   = GIF|comparediff12_${cyc}f0.gif|900;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-95.;25./1;1;1;1
+ GAREA    = 16.;-126.;55.;-57.
+ CLEAR    = y
+ PANEL    = t 
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/V/UL/.10;0.82/.55;.015/
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = -3;-2;-1;1;2;3 
+ FLINE    = 2;17;5;0;22;25;29 
+ CTYPE    = f 
+ LUTFIL   =
+ STNPLT   =
+r
+
+ TITLE    = 7/-1/ FCST MADE ${cyc}Z  ${month}/$day
+ TEXT     = 1.0/11/1/SW
+ CLEAR    = n
+r
+
+ GFUNC    = sub(relh+2,relh)
+ GVCORD   = pdly 
+ GLEV     = 30:0 
+ CINT     = 10
+ TEXT     = 1.1/11/2/SW
+ TITLE    = 1/1/ 12-HR   RUC2 - RAPX    BNDY LAYER  RH DIFF
+ PANEL    = b
+ FINT     = -30;-20;-10;10;20;30
+r
+
+ GFUNC    = sub(hght+2,hght)
+ GLEVEL   = 850
+ GVCORD   = pres
+ CINT     = 10
+ CLEAR    = y
+ PANEL    = t 
+ TEXT     = 1.1/11/2/SW
+ DEVICE   = GIF|comparediff12_${cyc}f1.gif|900;900
+ TITLE    = 1/1/ 12-HR   RUC2 - RAPX   850 HEIGHT DIFF
+ SCALE    = 0
+ FINT     = -25;-15;-5;5;15;25
+r
+
+ TITLE    = 7/-1/ FCST MADE ${cyc}Z  ${month}/$day
+ TEXT     = 1.0/11/1/SW
+ CLEAR    = n
+r
+
+ GFUNC    = knts(sub(sped+2,sped))
+ CINT     = 5
+ PANEL    = b
+ TEXT     = 1.1/11/2/SW
+ TITLE    = 1/1/ 12-HR   RUC2 - RAPX   850 WIND DIFF
+ FINT     = -15;-10;-5;5;10;15
+r
+
+ GFUNC    = sub(hght+2,hght)
+ GLEVEL   = 500
+ GVCORD   = pres
+ CINT     = 10
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1.1/11/2/SW
+ DEVICE   = GIF|comparediff12_${cyc}f2.gif|900;900
+ TITLE    = 1/1/ 12-HR   RUC2 - RAPX   500 HEIGHT DIFF 
+ SCALE    = 0
+ FINT     = -50;-30;-10;10;30;50 
+r
+
+ TITLE    = 7/-1/ FCST MADE ${cyc}Z  ${month}/$day
+ TEXT     = 1.0/11/1/SW
+ CLEAR    = n
+r
+
+ GFUNC    = knts(sub(sped+2,sped)) 
+ CINT     = 5
+ CLEAR    = n
+ PANEL    = b
+ TEXT     = 1.1/11/2/SW
+ TITLE    = 1/1/ 12-HR   RUC2 - RAPX   500 WIND DIFF
+ FINT     = -15;-10;-5;5;10;15
+r
+
+ GFUNC    = knts(sub(sped+2,sped)) 
+ GLEVEL   = 250
+ PANEL    = t
+ CLEAR    = y
+ DEVICE   = GIF|comparediff12_${cyc}f3.gif|900;900
+ TEXT     = 1.1/11/2/SW
+ TITLE    = 1/1/ 12-HR   RUC2 - RAPX   250 WIND DIFF        
+r
+
+ TITLE    = 7/-1/ FCST MADE ${cyc}Z  ${month}/$day
+ TEXT     = 1.0/11/1/SW
+ CLEAR    = n
+r
+
+ GLEVEL   = 350
+ PANEL    = b
+ CLEAR    = n
+ TEXT     = 1.1/11/2/SW
+ TITLE    = 1/1/ 12-HR   RUC2 - RAPX  350 WIND DIFF
+r
+
+ GFUNC    = sub(tmpf+2,tmpf)
+ GLEVEL   = 2
+ GVCORD   = hght
+ CINT     = 2 
+ PAN      = t
+ CLEAR    = y
+ DEVICE   = GIF|comparediff12_${cyc}f4.gif|900;900
+ TEXT     = 1.1/11/2/SW
+ TITLE    = 1/1/ 12-HR   RUC2 - RAPX   2 M TEMP DIFF          
+ FINT     = -10;-8;-6;-4;-2;2;4;6;8;10
+ FLINE    = 15;2;17;5;20;0;21;23;26;25;29
+r
+
+ TITLE    = 7/-1/ FCST MADE ${cyc}Z  ${month}/$day
+ CLEAR    = n
+ TEXT     = 1.0/11/1/SW
+r
+
+ GFUNC    = sub(dwpf+2,dwpf)
+ PAN      = b
+ TEXT     = 1.1/11/2/SW
+ TITLE    = 1/1/ 12-HR    RUC2 - RAPX   2 M DEW PT DIFF          
+r
+
+ GFUNC    = knts(sub(sped+2,sped)) 
+ GLEVEL   = 10 
+ CINT     = 5 
+ GAREA    = 23.;-94.;49.;-60.
+ CLEAR    = y
+ PANEL    = t
+ DEVICE   = GIF|comparediff12_${cyc}f5.gif|900;900
+ TEXT     = 1.1/11/2/SW
+ TITLE    = 1/1/ 12-HR    RUC2 - RAPX   10 M WIND DIFF
+ FINT     = -15;-10;-5;5;10;15
+ FLINE    = 2;17;5;0;22;25;29
+r
+
+ TITLE    = 7/-1/ FCST MADE ${cyc}Z  ${month}/$day
+ CLEAR    = n
+ TEXT     = 1.0/11/1/SW
+r
+
+ GAREA    = 23.;-130.;49;-92. 
+ TEXT     = 1.1/11/2/SW
+ TITLE    = 1/1/ 12-HR     RUC2 - RAPX   10 M WIND DIFF
+ PANEL    = b
+r
+
+ GFUNC    = sub(cape+2,cape)
+ GLEVEL   = 0
+ GVCORD   = none 
+ CINT     = 500 
+ GAREA    = 16.;-126.;55.;-57.
+ CLEAR    = y
+ PANEL    = t
+ DEVICE   = GIF|comparediff12_${cyc}f6.gif|900;900
+ TEXT     = 1.1/11/2/SW
+ TITLE    = 1/1/ 12-HR    RUC2 - RAPX    SFC CAPE DIFF
+ FINT     =  -2000;-1500;-1000;-500;500;1000;1500;2000
+ FLINE    = 2;17;10;5;0;21;23;25;29
+r
+
+ TITLE    = 7/-1/ FCST MADE ${cyc}Z  ${month}/$day
+ CLEAR    = n
+ TEXT     = 1.0/11/1/SW
+r
+
+ GFUNC    = knts(sub(cins+2,cins))
+ TEXT     = 1.1/11/2/SW
+ TITLE    = 1/1/ 12-HR     RUC2 - RAPX   SFC CIN DIFF
+ FINT    = -300;-200;-100;-50;50;100;200;300
+ PANEL    = b
+r
+
+ GFUNC    = mul(quo(sub(vsby+2,vsby),1000),0.62137)
+ CINT     = 2 
+ CLEAR    = y
+ PANEL    = t
+ DEVICE   = GIF|comparediff12_${cyc}f7.gif|900;900
+ TEXT     = 1.1/11/2/SW
+ TITLE    = 1/1/ 12-HR    RUC2 - RAPX    VISIBILITY DIFF
+ FINT     =  -8;-6;-4;-2;2;4;6;8
+ FLINE    = 2;17;10;5;0;21;23;25;29
+r
+
+ TITLE    = 7/-1/ FCST MADE ${cyc}Z  ${month}/$day
+ CLEAR    = n
+ TEXT     = 1.0/11/1/SW
+r
+
+ GFUNC    = sub(relh+2,relh)
+ GLEVEL   = 925 
+ GVCORD   = pres
+ TEXT     = 1.1/11/2/SW
+ TITLE    = 1/1/ 12-HR     RUC2 - RAPX   925 MB RH DIFF
+ FINT     = -40;-30;-20;-10;10;20;30;40
+ PANEL    = b
+r
+
+ GFUNC    = quo(sub(pwtr+2,pwtr),25.4)
+ CINT     = 0.25 
+ GVCORD   = none
+ GLEVEL   = 0
+ CLEAR    = y
+ PANEL    = t
+ DEVICE   = GIF|comparediff12_${cyc}f8.gif|900;900
+ TEXT     = 1.1/11/2/SW
+ TITLE    = 1/1/ 12-HR    RUC2 - RAPX    PWAT DIFF 
+ FINT     =  -1.;-.75;-.5;-.25;.25;.5;.75;1.
+ FLINE    = 2;17;10;5;0;21;23;25;29
+r
+
+ TITLE    = 7/-1/ FCST MADE ${cyc}Z  ${month}/$day
+ CLEAR    = n
+ TEXT     = 1.0/11/1/SW
+r
+
+ GFUNC    = sub(relh+2,relh)
+ GLEVEL   = 700
+ GVCORD   = pres
+ TEXT     = 1.1/11/2/SW
+ TITLE    = 1/1/ 12-HR     RUC2 - RAPX   700 MB RH DIFF
+ FINT     = -50;-40;-30;-20;-10;10;20;30;40;50
+ FLINE    = 15;2;17;10;5;0;21;23;25;4;29
+ PANEL    = b
+r
+
+ex
+EOF
+
+gpend
+done
+
+mv *gif ../../ftphold/.
+echo abouttoexitdiffs
+exit

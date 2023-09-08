@@ -1,0 +1,69 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/60pcpz
+rm /stmpp1/Geoffrey.Manikin/meg/60pcpz/*
+cd /stmpp1/Geoffrey.Manikin/meg/60pcpz
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=2016070100
+ymd=`echo $ymdh | cut -c1-8`
+dayoweek=hold6
+
+fmdl1=/meso/save/Geoffrey.Manikin/meg/gfspcp_${ymdh}
+fmdl2=/com2/nawips/prod/gfs.${ymd}/gfs_0p25_${ymdh}f060
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f60
+ GLEVEL   = 0
+ GVCORD   = none
+ GDPFUN   = c60i 
+ CINT     = 4
+ LINE     = 1
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   GFS 60-HR CNVCT PCP
+ DEVICE   = GIF|gfspcpht_${ymdh}.gif|750;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-108;25;/1;1;1;1
+ GAREA    = co+
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/V/UL/.01;0.9/0.8;.03/1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = .01;.1;.25;.5;.75;1;1.5;2;2.5;3;4;5;6;7
+ FLINE    = 0;21;22;23;4;25;27;28;29;30;2;15;17;10;5
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl2
+ GLEVEL   = 0
+ GVCCORD  = none
+ GDPFUN   = hght 
+ TITLE    = 1/-1/~   GFS SFC HEIGHT 
+ CLEAR    = n
+ PANEL    = b
+ FINT     = 1250;1500;1750;2000;2250;2500;2750;3000;3250;3500
+ FLINE    = 0;2;17;10;5;21;23;25;26;28;30
+r
+
+r
+
+ex
+EOF
+gpend
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

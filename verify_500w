@@ -1,0 +1,81 @@
+#!/bin/sh
+echo 'into'
+
+ymdh=2022072800
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+dayoweek=hold
+
+mkdir /lfs/h1/emc/stmp/geoffrey.manikin/meg
+mkdir /lfs/h1/emc/stmp/geoffrey.manikin/meg/500wv
+rm /lfs/h1/emc/stmp/geoffrey.manikin/meg/500wv/*
+cd /lfs/h1/emc/stmp/geoffrey.manikin/meg/500wv
+cp /lfs/h2/emc/vpppg/save/geoffrey.manikin/meg/coltbl.xwp .
+
+#fmdl1=/lfs/h1/nco/ops/com/gfs/prod/gfs.${ymd}/${cyc}/atmos/gempak/gfs_0p25_${ymdh}f000
+#fmdl2=/lfs/hps/nco/ops/com/rap/prod/rap.${ymd}/gempak/rap13_${ymdh}f000
+fmdl1=/lfs/h2/emc/vpppg/noscrub//geoffrey.manikin/floods22/gfs_0p25_${ymdh}f000
+fmdl2=/lfs/h1/ops/prod/rap/prod/rap.${ymd}/gempak/rap13_${ymdh}f000
+#fmdl2=/com2/nawips/prod/nam.${ymd}/nam12_${ymdh}f000
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f00
+ GLEVEL   = 500
+ GVCORD   = pres
+ GDPFUN   = knts(sped)
+ CINT     = 5 
+ LINE     = 0 
+ DEVICE   = GIF|500wverf_${ymdh}.gif | 800;850
+ PROJ     = lcc/25.;-85.;25./2;2;1;1
+ GAREA    = 20.;-124.;50.;-62. 
+ GAREA    = 26.;-98.5;34.;-87.5
+ GAREA    = ky- 
+ TITLE    = 1//~   GFS  500 MB  WIND (KT) 
+ CLEAR    = y
+ SCALE    = 0
+ PANEL    = 0
+ HILO     = 0
+ HLSYM    = 0 
+# CLRBAR   = 1/V/UL/.02;0.5/1.0;.03/2
+ CLRBAR   = 1/H/UL/.02;0.96/0.95;.03/2
+ TEXT     = 1.1/11/2
+ FINT     = 20;30;40;50;60;70;80;90;100
+ FLINE    = 0;29;26;4;23;21;5;17;2;15
+ TYPE     = f 
+r
+
+ CINT     = 
+ WIND     = BK1/0.7/2/122
+ GDPFUN   = kntv(wnd)
+ SKIP     = /7;7
+ TYPE     = b
+ TITLE    = 0
+ CLRBAR   = 0
+ CLEAR    = n
+r
+
+ PANEL    = b
+ GDFILE   = $fmdl2
+ TITLE    = 1//~   RAP  500 MB  WIND (KT)
+ TYPE     = f
+ GDPFUN   = knts(sped)
+r
+
+ CINT     = 
+ WIND     = BK1/0.8/2/122
+ GDPFUN   = kntv(wnd)
+ SKIP     = /5;5
+ TYPE     = b
+ TITLE    = 0
+ CLRBAR   = 0
+r
+
+ex
+EOF
+
+gpend
+#scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test8/.
+rm *gif
+exit

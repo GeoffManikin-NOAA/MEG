@@ -1,0 +1,74 @@
+#!/bin/sh
+echo 'into'
+
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/meg
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/meg/2mt
+rm /lfs/h2/emc/stmp/geoffrey.manikin/meg/2mt/*
+cd /lfs/h2/emc/stmp/geoffrey.manikin/meg/2mt
+cp /lfs/h2/emc/vpppg/save/geoffrey.manikin/meg/coltbl.xwp .
+
+ymdh=2023082200
+ymd=`echo $ymdh | cut -c1-8`
+day=`echo $ymdh | cut -c7-8`
+namver=v4.2
+hrrrver=v4.1
+
+times="00 03 06 09 12 15"
+times="00 03 06 09 12"
+times="18 21"
+for fhr in $times; do
+
+cp /lfs/h1/ops/prod/com/nam/${namver}/nam.${ymd}/gempak/nam_conusnest_${ymdh}f0${fhr} fmdl1
+cp /lfs/h1/ops/prod/com/hrrr/${hrrrver}/hrrr.${ymd}/conus/gempak/hrrr_${ymdh}f0${fhr}00 fmdl2
+
+    gdplot2 << EOF
+ GDFILE   = fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 2 
+ GVCORD   = hght 
+ GDPFUN   = tmpf 
+ CINT     = 4
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~ ${fhr}-HR  NAM NEST 2m TEMP 
+ DEVICE   = GIF|2mt_${ymdh}f0${fhr}.gif|900;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-75.;25./2;2;1;1
+ GAREA    = 22.;-123.;54.;-65. 
+ GAREA    = ny
+ CLEAR    = y
+ PANEL    = 0.;.51;1.;1.
+ TEXT     = 0.9/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/V/UL/.12;0.6/1.2;.03/-1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 20;25;30;35;40;45;50;55;60;65;70;75;80;85;90;95;100;105;110;115;120
+ FINT     = 35;38;41;44;47;50;53;56;59;62;65;68;71;74;77;80;83;86;89;92;95
+ FLINE    = 0;12;30;29;28;4;25;26;27;24;23;22;21;5;20;10;17;16;2;15;14;32
+
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = fmdl2 
+ TITLE    = 1/-1/~ ${fhr}-HR HRRR 2m TEMP 
+ PANEL    = b
+ CLEAR    = n 
+ CLRBAR   = 0
+r
+
+ex
+EOF
+gpend
+done
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test7/.
+rm *gif
+exit

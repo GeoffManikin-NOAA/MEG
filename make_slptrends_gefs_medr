@@ -1,0 +1,105 @@
+#!/bin/ksh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/slpgefstrmr
+rm /stmpp1/Geoffrey.Manikin/meg/slpgefstrmr/*
+cd /stmpp1/Geoffrey.Manikin/meg/slpgefstrmr
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd1=`echo $ymdh | cut -c1-8`
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+
+times="96 108 120 132 144 156 168 180"
+for fhr1 in $times; do
+
+typeset -Z3 fhr1 fhr2 fhr3 fhr4
+fhr2=`expr $fhr1 + 6`
+fhr3=`expr $fhr1 + 12`
+fhr4=`expr $fhr1 + 18`
+
+echo $ymd1
+ymdh2="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -6 -1`"
+ymdh3="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -12 -1`"
+ymdh4="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -18 -1`"
+
+ymd2=`echo $ymdh2 | cut -c1-8`
+ymd3=`echo $ymdh3 | cut -c1-8`
+ymd4=`echo $ymdh4 | cut -c1-8`
+cyc2=`echo $ymdh2 | cut -c9-10`
+cyc3=`echo $ymdh3 | cut -c9-10`
+cyc4=`echo $ymdh4 | cut -c9-10`
+
+fmdl1=/com2/nawips/prod/gefs.${ymd1}/geavg_${ymdh}f${fhr1}
+fmdl2=/com2/nawips/prod/gefs.${ymd2}/geavg_${ymdh2}f${fhr2}
+fmdl3=/com2/nawips/prod/gefs.${ymd3}/geavg_${ymdh3}f${fhr3}
+fmdl4=/com2/nawips/prod/gefs.${ymd4}/geavg_${ymdh4}f${fhr4}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f${fhr1} 
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = pmsl
+ CINT     = 4 
+ LINE     = 4/1/3/2 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1//  GEFS MEAN  SLP  $ymd1 ${cyc}z  F${fhr1}
+ DEVICE   = GIF|gefsslptr_${fhr1}.gif | 800;850
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-105;25;/1;1;1;1
+ GAREA    = 12.;-140.;70.;-46.
+ CLEAR    = y
+ PANEL    = ul
+ TEXT     = 0.8/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 23;23/S12#;S13#/1015-1060;920-1014/5/4;4/yes
+ HLSYM    = 1;1/3/21;21/1;1/HW
+ CLRBAR   = 0
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 0
+ FLINE    = 0 
+ TYPE     = c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ CLEAR    = n
+ GDFILE   = $fmdl2
+ GDATTIM  = f${fhr2}
+ TITLE    = 1//  GEFS MEAN  SLP  $ymd2 ${cyc2}z  F${fhr2}
+ PANEL    = ur 
+ CLEAR    = n
+r
+
+ GDFILE   = $fmdl3
+ GDATTIM  = f${fhr3}
+ TITLE    = 1//  GEFS MEAN  SLP  $ymd3 ${cyc3}z  F${fhr3}
+ PANEL    = ll 
+r
+
+ GDFILE   = $fmdl4
+ GDATTIM  = f${fhr4}
+ TITLE    = 1//  GEFS MEAN  SLP  $ymd4 ${cyc4}z  F${fhr4}
+ PANEL    = lr
+r
+
+ex
+EOF
+done
+gpend
+
+mv *gif /stmpp1/Geoffrey.Manikin/meg/holdmedr/.
+exit

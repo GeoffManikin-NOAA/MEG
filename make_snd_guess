@@ -1,0 +1,95 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+da00=`cut -c 7-14 /com/date/t${cyc}z`
+hr00=`cut -c 15-16 /com/date/t${cyc}z`
+month=`cut -c 11-12 /com/date/t${cyc}z`
+day=`cut -c 13-14 /com/date/t${cyc}z`
+stnm=727970
+
+mkdir /stmpp1/wx20mg/guess
+rm /stmpp1/wx20mg/guess/*
+cd /stmpp1/wx20mg/guess
+
+validtime="`/nfsuser/g01/emcsrc/wx20mg/board/advtime ${da00}${hr00} 0 -1 x`"
+hrback="`/nfsuser/g01/emcsrc/wx20mg/board/advtime ${da00}${hr00} -1 -1 x`"
+dattim=`echo $validtime | cut -c5-11`
+backday=`echo $hrback | cut -c1-8`
+backhr=`echo $hrback | cut -c10-11`
+
+fmdl=/ptmpp1/wx20mg/ruc2/ruc2a.${da00}/ruc2_${da00}${hr00}.snd
+fmdl2=/ptmpp1/wx20mg/ruc2/ruc2a.${backday}/ruc2_${backday}${backhr}.snd
+echo $fmdl
+echo $fmdl2
+
+/nwprod/util/ush/startxvfb.sh /bin/sh
+. ./STARTXVFB
+
+# negate the colors ahead of time except white and black
+gpcolor << EOFC
+COLORS=0=255:255:255?
+COLORS=101=255:255:255;1=0:0:0
+DEVICE   = GF
+r
+
+ex
+EOFC
+
+    snprof << EOF
+ SNFILE   = $fmdl
+ DATTIM   = $dattim
+ AREA     = @${stnm}
+ SNPARM   = tmpc;dwpc
+ LINE     = 2;4/1/5
+ PTYPE    = skewt
+ VCOORD   = PRES
+ STNDEX   = lift;cape;cins
+ STNCOL   = 24
+ WIND     = bk1
+ WINPOS   = 1
+ MARKER   = 0
+ BORDER   = 1//2
+ TITLE    = 1// $stnm   SOLID-ANL  DASHED-1hr guess
+ DEVICE   = gf|${stnm}guess_${cyc}z.gif|800;800
+ YAXIS    = 1050/500/100/1;1;1
+ XAXIS    = -25/25/10/;1
+ FILTER   = 0.6
+ CLEAR    = y
+ PANEL    = 0
+ TEXT     = 1.0
+ THTALN   = 8/3/1/250/500/5
+ THTELN   = 23/1/1/250/500/5
+ MIXRLN   = 17/10/2/0/40./1.
+r
+
+ SNFILE   = $fmdl2
+ LINE     = 2;4/10/4
+ CLEAR    = n
+ WINPOS   = 2
+ TITLE    = 0
+r 
+ 
+ex
+EOF
+
+gpend
+/nwprod/util/ush/stopxvfb.sh /bin/sh
+
+. /u/wx20mg/.Utils
+export w1=wd20mg
+export w2=$rzdm
+                                                                                
+ftp -n -v << EOF > /nfsuser/g01/emcsrc/wx20mg/gempak.ruc20/rzftp.out
+open rzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/ruc2/para/cases
+mput *gif 
+bye
+EOF
+
+exit

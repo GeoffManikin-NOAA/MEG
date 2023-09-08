@@ -1,0 +1,15 @@
+!
+! WMOGRIB129.TBL -- GRIB 1 parameter conversion table version 129 
+!
+!ID# NAME                             UNITS                GNAM         SCALE   MISSING
+!
+008 Geometrical height                m                    DIST             0  -9999.00
+081 Land-sea mask (1=land,0=sea)      1,0                  LAND             0  -9999.00
+185 Max Relative Humidity             %                    RHMX             0  -9999.00
+186 Min Relative Humidity             %                    RHMN             0  -9999.00
+225 Vegetation Type                   -                    VTYP             0  -9999.00
+241  Sim Bright T GOES11, Ch 2        K                    SB112            0  -9999.00
+242  Sim Bright T GOES11, Ch 3        K                    SB113            0  -9999.00
+243  Sim Bright T GOES11, Ch 4        K                    SB114            0  -9999.00
+244  Sim Bright T GOES11, Ch 5        K                    SB115            0  -9999.00
+245 Thunder Parameter                 1,0                  THUN             0  -9999.00

@@ -1,0 +1,112 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/lhfx
+rm /stmpp1/Geoffrey.Manikin/meg/lhfx/*
+cd /stmpp1/Geoffrey.Manikin/meg/lhfx
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=2019071912
+ymd=`echo $ymdh | cut -c1-8`
+dayoweek=hold10
+
+times="00 06 12 18 24 30 36 42 48 54 60 66 72 78 84"
+times="06 12 18 24 84"
+for fhr in $times; do
+
+fmdl1=/com2/nawips/prod/nam.${ymd}/nam32_${ymdh}f0${fhr}
+cp /gpfs/dell1/nco/ops/com/gfs/prod/gfs.${ymd}/${cyc}/gempak/gfs_0p25_${ymdh}f0${fhr} fmdl2
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = fxlh06 
+ CINT     = 4 
+ LINE     = 1 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   NAM AVG LATENT HT FLX 
+ DEVICE   = GIF|lhfxmodels_f0${fhr}.gif|850;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-91;25;/1;1;1;1
+ GAREA    = 33.;-103;49.;-81.
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/V/UL/.05;0.4/0.8;.03/1 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = -200;-100;100;200;300;400;500
+ FLINE    = 23;21;0;5;10;17;2;15
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = fmdl2
+ TITLE    = 1/-1/~  GFS  AVG LAT HT FLX
+ PANEL    = b
+ CLRBAR   = 0
+ CLEAR    = n
+r
+
+ex
+EOF
+
+    gdcntr << EOF
+ GDFILE   = fmdl2 + $fmdl1
+ GDATTIM  = f${fhr}
+ GLEVEL   = 0  
+ GVCORD   = none  
+ GFUNC    = sub(fxlh06+2,fxlh06)
+ CINT     = 2 
+ LINE     = 1
+ MAP      = 1
+ WIND     = bk1/0.7/2/122
+ TITLE    = 1//~ LAT HT FLX   NAM - GFS
+ DEVICE   = GIF|lhfxdiff_f0${fhr}.gif | 600;650
+ SATFIL   =
+ RADFIL   =
+ CLEAR    = y
+ PANEL    = 0
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/H/UL/.1;.97/.8;.02/-1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = -250;-200;-150;-100;-50;50;100;150;200;250 
+ FLINE    = 30;28;26;27;22;0;5;10;17;2;15
+ CTYPE    = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ex
+EOF
+done
+gpend
+
+for fhr in $times; do
+CONV=/usrx/local/ImageMagick/6.8.3-3/bin/
+$CONV/convert -crop 0x0 lhfxmodels_f0${fhr}.gif lhfx1.gif
+$CONV/convert -crop 0x0 lhfxdiff_f0${fhr}.gif lhfx2.gif
+$CONV/montage -geometry 800x850 lhfx1.gif lhfx2.gif ${cyc}lhfx${fhr}.gif
+done
+
+scp ${cyc}*gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

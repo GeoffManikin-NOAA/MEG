@@ -1,0 +1,97 @@
+#!/bin/sh
+echo 'into'
+
+ymdh=2021112314
+ymd=`echo $ymdh | cut -c1-8`
+month=`echo $ymdh | cut -c5-6`
+day=`echo $ymdh | cut -c7-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/winds
+cd /gpfs/dell1/stmp/Geoffrey.Manikin/winds
+cp /gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/coltbl.xwp .
+
+times="12 13 14 15 16"
+times="14 15"
+for fhr in $times; do
+
+fmdl1=/gpfs/dell1/ptmp/Geoffrey.Manikin/hrrr/hrrr_${ymd}${cyc}f0${fhr}00
+echo $fmdl
+echo $fmdl2
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 850 
+ GVCORD   = pres 
+ GDPFUN   = knts(sped) 
+ CINT     = 10
+ LINE     = 0 
+ MAP      = 1
+ WIND     = 0 
+ TITLE    = 1/1/ HRRR  ${fhr}-HR FCST 850 MB WIND (kt) 
+ DEVICE   = GIF|comparehrrrwind_${cyc}f${fhr}.gif|900;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-88.;25./2;2;1;1 
+ GAREA    = 41.;-89.2;43.6;-86. 
+ CLEAR    = y
+ PANEL    = ul 
+ TEXT     = 1.0/1/2
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 1;1/2/21;21/4;2/HW 
+ CLRBAR   = 1/V/UL/.05;0.5/.9;.02/-1
+ CONTUR   = 0
+ SKIP     = /6;6 
+ FINT     = 10;20;30;40;50;60;70 
+ FLINE    = 0;29;4;22;5;17;2;15 
+ TYPE     = f 
+ LUTFIL   =
+ STNPLT   =
+r
+
+ TITLE    = 23/-1/ FCST MADE ${cyc}Z  ${month}/$day
+ GDPFUN   = blurk
+ TEXT     = 1.1/11/1/SW
+ CLEAR    = n
+r
+
+ PANEL    = ll 
+ GLEVEL   = 10
+ GVCORD   = hght
+ GDPFUN   = knts(sped)
+ TITLE    = 1/1/ HRRR  ${fhr}-HR FCST 10-M WIND (kt) 
+ TEXT     = 1.0/1/2
+ CLRBAR   = 0
+r
+
+ WIND     = BK1/0.7/2/122
+ GDPFUN   = kntv(wnd)
+ TYPE     = b
+ TITLE    = 0
+r
+
+ PANEL    = ur
+ GLEVEL   = 925 
+ GVCORD   = pres 
+ GDPFUN   = knts(sped)
+ TYPE     = f
+ TITLE    = 1/1/ HRRR  ${fhr}-HR FCST 925 MB WIND (kt) 
+r
+
+ PANEL    = lr
+ GLEVEL   = 0
+ GVCORD   = none
+ GDPFUN   = knts(gust) 
+ TITLE    = 1/1/ HRRR  ${fhr}-HR FCST GUST (kt)
+r
+
+ex
+EOF
+
+gpend
+done
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test7/.
+exit

@@ -1,0 +1,98 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmp/wx20mg/meg
+mkdir /stmp/wx20mg/meg/visprob
+rm /stmp/wx20mg/meg/visprob/*
+cd /stmp/wx20mg/meg/visprob
+cp /meso/save/wx20mg/casework/coltbl.xwp .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`cut -c 7-14 /com/date/t${cyc}z`
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+
+ymdh=2012120206
+dayoweek=Sun
+ymdhs="`/meso/save/wx20mg/meteograms.nam/advtime ${ymdh} -3 -1`"
+ymds=`echo $ymdhs | cut -c1-8`
+cycs=`echo $ymdhs | cut -c9-10`
+
+hours="09 12"
+
+for fhrs in $hours; do
+
+#fmdl1=/com/nawips/prod/sref.${ymds}/sref212_${ymdhs}_prob
+fmdl1=/ptmp/wx20mg/test/sref212_${ymdhs}_prob
+
+    gdplot2 << EOF
+
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhrs
+ GLEVEL   = 0 
+ GVCORD   = hght 
+ GDPFUN   = CWRK0000PA 
+ CINT     = 10
+ LINE     = 21/1/3/5 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~    SREF PROB of LIGHT FOG 
+ DEVICE   = GIF|${cycs}srefprob1_cwork_f0${fhrs}.gif|750;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-75;25;/1;1;1;1
+# GAREA    = 24.;-105.;36.;-85. 
+ GAREA    = nj
+ CLEAR    = y
+ PANEL    = 0
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0 
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 0
+ CLRBAR  = 1/H/UL/.2;.98/0.6;.03/1
+ CONTUR   = 4/3 
+ SKIP     = 0
+ FINT     = 10;30;50;70;90 
+ FLINE    = 0;21;23;28;30;2 
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ex
+EOF
+
+gpend
+done
+
+. /u/wx20mg/.Utils
+export w1=wd20mg
+export w2=$rzdm
+
+ftp -n -v << EOF > /meso/save/wx20mg/casework/dwpfftp.out
+open emcrzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/today
+mput *.gif
+bye
+EOF
+
+ftp -n -v << EOF > /meso/save/wx20mg/casework/dwpfftp.out
+open emcrzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek
+mput *.gif
+bye
+EOF
+
+exit

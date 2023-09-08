@@ -1,0 +1,48 @@
+#!/bin/sh
+echo 'into'
+
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/plots
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/plots/sfc
+rm /gpfs/dell1/stmp/Geoffrey.Manikin/plots/sfc/*
+cd /gpfs/dell1/stmp/Geoffrey.Manikin/plots/sfc
+cp /gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/coltbl.xwp .
+
+ymdh=2022011703
+day=`echo $ymdh | cut -c7-8`
+hr=`echo $ymdh | cut -c9-10`
+ymd=`echo $ymdh | cut -c1-8`
+dayoweek=hold5
+area="42.;-82.;48.;-74."
+area="md"
+obsfile=${ymd}.sfc
+echo obsfile = $obsfile
+
+   sfmap << EOF
+ AREA      = $area 
+ GAREA     = $area 
+ SATFIL    =       
+ RADFIL    =         
+ SFPARM    = wsym 
+ DATTIM    = ${day}/${hr}
+ SFFILE    = /gpfs/dell2/emc/verification/noscrub/Geoffrey.Manikin/obs/hrly/${ymd}.hrly
+ DEVICE    = GIF|${ymd}${hr}_obstype.gif | 800;850
+ COLORS    = 1 
+ MAP       = 1
+ LATLON    = 0
+ TITLE     = 1/-1/~
+ CLEAR     = y 
+ PANEL     = 0 
+ PROJ      = MER/0;0;0/2;2;0;1
+ FILTER    = n 
+ TEXT      = 0.9/21/2/HW
+ LUTFIL    = 
+ STNPLT    =  
+ CLRBAR    =
+r
+
+ex
+EOF
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test5/.
+exit

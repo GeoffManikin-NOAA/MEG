@@ -1,0 +1,65 @@
+#!/bin/sh
+echo 'into'
+
+cyc=$1
+
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/meg
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/meg/veg
+rm /lfs/h2/emc/stmp/geoffrey.manikin/meg/veg/*
+cd /lfs/h2/emc/stmp/geoffrey.manikin/meg/veg
+cp /lfs/h2/emc/vpppg/save/geoffrey.manikin/casework/coltbl.xwp .
+
+ymdh=2023031500
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+times="00 06 12 15 18 21 24"
+times="06 12 15 18 21 24 30"
+times="00"
+for fhr in $times; do
+
+cp /lfs/h2/emc/vpppg/noscrub/geoffrey.manikin/dews/gfs_0p25_${ymdh}f0${fhr} fmdl1
+cp /lfs/h2/emc/vpppg/noscrub/geoffrey.manikin/dews/rapveg_${ymdh}f0${fhr} fmdl2
+
+    gdplot2 << EOF
+ GDFILE   = fmdl12 + fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = sub{veg+2,veg)
+ CINT     = 4 
+ LINE     = 1 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   GFS-RAP    VEG FRAC 
+ DEVICE   = GIF|vegdiff_${ymdh}f0${fhr}.gif|850;900
+ SATFIL   =
+ RADFIL   =
+# PROJ     = lcc/25;-78;25;/1;1;1;1
+ PROJ     = lcc/25;-98;25;/1;1;1;1 
+ GAREA    = 36.;-85.;45.;-71. 
+ GAREA    = 24.;-121.;50.;-67. 
+ CLEAR    = y
+ PANEL    = 0
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/H/UL/.05;0.96/0.9;.03/1 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = -30;-20;-10;10;20;30 
+ FLINE    = 14;10;5;0;21;26;28 
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ex
+EOF
+done
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test9/.
+exit

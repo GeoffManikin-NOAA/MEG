@@ -1,0 +1,318 @@
+#!/bin/sh
+. /nwprod/gempak/.gempak
+
+# The following inputs are needed:
+#    1 - The initial time in the form YYYYMMDDHH \
+#    2 - The forecast duration in hours entered as a range \
+#	(e.g., 0-12, 18-24) \
+#    3 - The station(s) at which to verify (If a list of \
+#		stations is required, enter the station numbers \
+#		separated by blanks; enclose the list in double \
+#		quotes.)  Stations may be entered as STNM=STID to \
+#		assure correct station location. 
+
+mkdir /stmpp1/Geoffrey.Manikin/verifysfc
+rm /stmpp1/Geoffrey.Manikin/verifysfc/*
+cd /stmpp1/Geoffrey.Manikin/verifysfc
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+tstrt=$1
+fhrs=$2
+stations=`echo $3`
+
+ymd=`echo $tstrt | cut -c1-8`
+cyc=`echo $tstrt | cut -c9-10`
+yyyy=`echo $tstrt | cut -c1-4`
+date
+date > holddate
+echo $holddate
+dayoweek=hold6
+echo $ymd
+echo $cyc
+echo $fhrs
+DAPATH=/com2/nawips/prod/hrrr.${ymd}
+#DAPATH=/ptmpp1/Geoffrey.Manikin/hold/
+
+tmpneedday1=`/meso/save/Geoffrey.Manikin/meg/advtime $tstrt 24 -1`
+needday1=`echo $tmpneedday1 | cut -c1-8`
+echo $needday1
+
+OBSDIR=/dcom/us007003/ldmdata/gempak/hrly/
+cp ${OBSDIR}/${ymd}.hrly .
+cp ${OBSDIR}/${needday1}.hrly .
+
+# ****** Process time range *******
+
+tfhrs1=`echo $fhrs | cut -d- -f1`
+tfhrs2=`echo $fhrs | cut -d- -f2`
+echo $tfhrs1 
+echo $tfhrs2
+if [ $tfhrs2 -gt 15 ]
+then
+ echo 'hrrr bufr file only goes to 15 hr - goodbye, loser'
+ exit
+fi
+
+#  Determine start time.
+t0=`/meso/save/Geoffrey.Manikin/meg/advtime $tstrt $tfhrs1 -1 gem`
+echo $t0
+
+#  Determine ending time.
+tf=`/meso/save/Geoffrey.Manikin/meg/advtime $tstrt $tfhrs2 -1 gem`
+echo $tf
+
+dattim="${t0}-${tf}"
+taxis="${t0}-${tf}-03"
+echo $taxis
+dhrs=`expr $tfhrs2 - $tfhrs1`
+echo $dhrs
+
+echo fini
+# ****** Finished time range ******
+
+ndays=`expr $dhrs / 24`
+rmndr=`expr $dhrs % 24`
+if [ $rmndr -ne 0 ]
+then
+ ndays=`expr $ndays + 1`
+fi
+if [ $ndays -eq 0 ]
+then
+ ndays=1
+fi
+echo $ndays
+dayf=`echo $tf | cut -c1-8`00
+days=`/meso/save/Geoffrey.Manikin/meg/advtime $dayf -24 $ndays`
+echo $days
+set fobs=
+for day in $days; do
+    ymd=`echo $day | cut -c1-8`
+    gemfile=${ymd}.hrly
+    echo $gemfile
+    if [ ! -s $gemfile ]
+      then
+      echo WARNING -- $gemfile does not exist.
+    else
+      fobs="$fobs $gemfile"
+    fi 
+done
+echo $fobs
+
+    cat << EOF > $$.pack 
+PMSL       900.       1090.       .1    .01
+P01M         0.        500.       .1    1.
+C01M         0.        500.       .1    1.
+UWND       -70.         70.      .1     1.
+VWND       -70.         70.      .1     1.
+EOF
+
+echo 'past block 1'
+    cat << EOF > $$.pack 
+T2MS      -100.         50.      .1     1.
+HLCY    -10000.       4000.      .1     1.
+CDBP         0.       1025.      .1     .01
+VSBK         0.        100.      .01    .001
+WSYM         0.     512000.      1.     1.
+TD2M      -100.         35.      .1     1.
+EOF
+
+echo 'past block 2'
+
+fmdl=${DAPATH}/hrrr_${tstrt}.sfc
+fmdl2=${DAPATH}/hrrr_${tstrt}.snd
+echo $fmdl
+
+for station in $stations; do
+  echo inside station loop
+  echo $station
+#   Find 6-digit obs station number in $GEMTBL.
+
+    echo 'before grep'
+    echo $station | grep = > /dev/null
+    echo $status 
+    if [ $status -eq 1 ]
+     then
+	stid=no
+        slst=[ `grep $station /meso/save/Geoffrey.Manikin/meg/sfstns.tbl` ] 
+	stnnum=$station
+        stnnm=$slst[2] 
+    else
+        stnnum=`echo $station | cut -d= -f1`
+	stnnm=`echo $station | cut -d= -f2`
+        stnnm=`echo $stnnm | tr '[a-z]' '[A-Z]'`
+	stid="yes"
+    fi 
+
+    echo $stid
+    echo 'setting stuff'
+    echo $stnnum
+
+    sfgram << EOF 
+SFFILE	= $fmdl
+DATTIM	= $dattim
+STATION	= @$stnnum
+TRACE1  = brbk/32
+TRACE2  = 
+TRACE3	= 
+TRACE4	= ;brbk:1:3/30/
+NTRACE	= 4
+TAXIS	= $taxis
+BORDER	= 1
+MARKER	= 0
+TITLE	= 10/0/ $stnnum  HRRR VS OBS -- MODEL DASHED/BOTTOM PANEL
+CLEAR	= YES
+DEVICE  = gif|hrrr${stnnum}.sfc_${tstrt}.gif|800;600
+PANEL	= 0
+TEXT	= 1/11/2
+r
+
+SFFILE  = ${fmdl}_aux
+CLEAR   = NO
+TRACE4  = ;;wsym:2:3/28/
+r
+
+ex
+EOF
+
+    sflist << EOF > /dev/null
+SFFILE	= $fmdl
+AREA	= @$stnnum
+DATTIM	= all
+SFPARM	= t2ms;pmsl
+OUTPUT	= f/$$.listmdl
+IDNTYP	= STNM
+r
+
+ex
+EOF
+
+    sflist << EOF > sflist2.out 
+SFFILE  = ${fmdl}_aux
+AREA    = @$stnnum
+DATTIM  = all
+SFPARM  = td2m
+OUTPUT  = f/$$.listmdl2
+IDNTYP  = STNM
+r
+
+ex
+EOF
+
+    cat $$.listmdl | sed s/PMSL/PMSM/g > $$.listmdl_x
+
+   cat << EOF > $$.pack
+PMSL       900.       1099.       .1
+PMSM       900.       1099.       .1
+TMPC      -100.         50.      .1
+DWPC      -100.         50.      .1
+UWND	   -50.         50.      .1
+VWND       -50.         50.      .1
+WSYM         0.        256.      1.
+T2MS      -100.         50.      .1
+TD2M      -100.         50.      .1
+EOF
+
+    sfcfil << EOF
+SFOUTF   = $$.sfc
+SFPRMF   = $$.pack
+STNFIL   = /meso/save/Geoffrey.Manikin/staids/sfstns.tbl
+SHIPFL   = NO
+TIMSTN   = 200/2
+r
+
+ex
+EOF
+
+    sfedit << EOF 
+SFEFIL   = $$.listmdl_x
+SFFILE   = $$.sfc
+r
+
+ex
+EOF
+
+sfedit << EOF 
+SFEFIL   = $$.listmdl2
+SFFILE   = $$.sfc
+r
+
+ex
+EOF
+
+echo past sfedit
+    icnt=0
+    echo 'about to to fobs loop'
+    echo $fobs
+    for obf in $fobs; do
+        echo $obf
+	icnt=`expr $icnt + 1`
+
+	if test "$stid" = "no"
+            then
+            echo stidno 
+	    stashun=$stnnum
+	else
+	    stashun=$stnnm
+        fi
+        if test "$stid" = "yes"
+          then
+          echo stidyes
+	  idntyp=stid
+	else
+	  idntyp=stnm
+        fi	
+
+	res='$'respond
+	sflist << EOF 
+SFFILE   = $obf
+AREA     = @$stashun
+DATTIM   = all
+SFPARM   = tmpc;dwpc;pmsl;uwnd;vwnd;wsym
+OUTPUT   = f/$$.listobs_x
+IDNTYP   = $idntyp
+r
+
+ex
+EOF
+	cat $$.listobs_x | sed s/" ${stashun} "/"${stnnum} "/g > $$.listobs
+	/bin/rm $$.listobs_x
+
+	sfedit << EOF
+SFEFIL   = $$.listobs
+SFFILE   = $$.sfc
+r
+
+ex
+EOF
+done
+
+   echo 'before sfgram with $$.sfc' 
+    sfgram << EOF
+SFFILE	= $$.sfc
+DATTIM	= $dattim
+STATION	= $stnnum
+TRACE1	= tmpc:1:4;t2ms:2:4/2;12/+6;+6;2/yes
+TRACE2  = dwpc:1:4;td2m:2:4/23;21/+6;+6;2/yes
+TRACE3	= ;brbk:1:3;wsym:2:3/26;24/
+TRACE4	= 
+NTRACE	= 4
+TAXIS	= $taxis
+BORDER	= 1
+MARKER	= 0
+TITLE	= 0
+CLEAR	= NO
+DEVICE  = gif|hrrr${stnnum}.sfc_${tstrt}.gif|800;600
+PANEL	= 0
+TEXT    = 1/11/2
+r
+
+ex
+EOF
+
+/bin/rm $$.sfc
+/bin/rm $$.listobs
+done
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

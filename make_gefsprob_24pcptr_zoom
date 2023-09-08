@@ -1,0 +1,258 @@
+#!/bin/ksh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/gefspcpprob
+rm /stmpp1/Geoffrey.Manikin/meg/gefspcpprob/*
+cd /stmpp1/Geoffrey.Manikin/meg/gefspcpprob
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=2016030112
+ymd1=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+dayoweek=hold3
+
+ymdh2="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -6 -1`"
+ymdh3="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -12 -1`"
+ymdh4="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -18 -1`"
+
+ymd2=`echo $ymdh2 | cut -c1-8`
+ymd3=`echo $ymdh3 | cut -c1-8`
+ymd4=`echo $ymdh4 | cut -c1-8`
+cyc2=`echo $ymdh2 | cut -c9-10`
+cyc3=`echo $ymdh3 | cut -c9-10`
+cyc4=`echo $ymdh4 | cut -c9-10`
+counter=1
+
+hours="30"
+for fhr in $hours; do
+
+fhr2=`expr $fhr + 6`
+fhr3=`expr $fhr + 12`
+fhr4=`expr $fhr + 18`
+
+verymdh="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} ${fhr} -1`"
+echo $verymdh
+
+#typeset -Z2 fhr2
+#typeset -Z3 fhr3 fhr4
+
+echo $fhr $fhr2 $fhr3 $fhr4
+cp /com2/gens/prod/gefs.${ymd1}/${cyc}/prcp/gepqpf.t${cyc}z.pgrb_24hf${fhr} gefs1.grd 
+cp /com2/gens/prod/gefs.${ymd2}/${cyc2}/prcp/gepqpf.t${cyc2}z.pgrb_24hf${fhr2} gefs2.grd
+cp /com2/gens/prod/gefs.${ymd3}/${cyc3}/prcp/gepqpf.t${cyc3}z.pgrb_24hf${fhr3} gefs3.grd
+cp /com2/gens/prod/gefs.${ymd4}/${cyc4}/prcp/gepqpf.t${cyc4}z.pgrb_24hf${fhr4} gefs4.grd
+
+   nagrib << EOF
+GBFILE  = gefs1.grd
+INDXFL  =
+GDOUTF  = gefspcp_${ymdh} 
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = 18.;-140.;70.;-50. 
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+PDSEXT  = yes
+r
+
+GBFILE  = gefs2.grd
+GDOUTF=gefspcp_${ymdh2}
+r
+
+GBFILE  = gefs3.grd
+GDOUTF=gefspcp_${ymdh3}
+r
+
+GBFILE  = gefs4.grd
+GDOUTF=gefspcp_${ymdh4}
+r
+
+exit
+EOF
+
+fmdl1=gefspcp_${ymdh}
+fmdl2=gefspcp_${ymdh2}
+fmdl3=gefspcp_${ymdh3}
+fmdl4=gefspcp_${ymdh4}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = P24M0012PA 
+ CINT     = 10
+ LINE     = 21/1/3/5 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/${ymd1} ${cyc}z  F${fhr}   GEFS PROB of 0.5"
+ DEVICE   = GIF|gefs24pcp2prob1_${ymd1}.gif|750;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-75;25;/1;1;1;1
+ GAREA    = nj 
+ CLEAR    = y
+ PANEL    = ul 
+ TEXT     = 0.9/11/2/SW
+ SCALE    = 0 
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/H/UL/.5;0.92/1.5;.02/1 
+ CONTUR   = 4/3 
+ SKIP     = 0
+ FINT     = 10;30;50;70;90 
+ FLINE    = 0;21;23;28;30;2 
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ TITLE    = 2/1/VERIFYING TIME   $verymdh
+ CLEAR    = n
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhr2
+ TITLE    = 1/-1/${ymd2} ${cyc2}z  F${fhr2}   GEFS PROB of 0.5"
+ PANEL    = ur 
+ CLRBAR   = 0
+r 
+
+ TITLE    = 15/1/     CYCLES RUN ON   $ymd1
+r
+
+ GDFILE   = $fmdl3
+ GDATTIM  = f$fhr3
+ TITLE    = 1/-1/${ymd3} ${cyc3}z  F${fhr3}   GEFS PROB of 0.5"
+ PANEL    = ll 
+r
+
+ GDFILE   = $fmdl4
+ GDATTIM  = f$fhr4
+ TITLE    = 1/-1/${ymd4} ${cyc4}z  F${fhr4}   GEFS PROB of 0.5"
+ PANEL    = lr 
+ CLRBAR   = 0 
+r
+
+ GDPFUN   = P24M0025PA 
+ CLEAR    = y
+ PANEL    = ul 
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ TITLE    = 1/-1/${ymd1} ${cyc}z  F${fhr}   GEFS PROB of 1.0"
+ CLRBAR   = 1/H/UL/.5;0.92/1.5;.02/1 
+ DEVICE   = GIF|gefs24pcp2prob2_${ymd1}.gif|750;900
+r
+
+ TITLE    = 2/1/VERIFYING TIME   $verymdh
+ CLEAR    = n
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhr2
+ TITLE    = 1/-1/${ymd2} ${cyc2}z  F${fhr2}   GEFS PROB of 1.0"
+ PANEL    = ur 
+ CLRBAR   = 0
+r
+
+ TITLE    = 15/1/     CYCLES RUN ON   $ymd1
+r
+
+ GDFILE   = $fmdl3
+ GDATTIM  = f$fhr3
+ TITLE    = 1/-1/${ymd3} ${cyc3}z  F${fhr3}   GEFS PROB of 1.0"
+ PANEL    = ll 
+r
+
+ GDFILE   = $fmdl4
+ GDATTIM  = f$fhr4
+ TITLE    = 1/-1/${ymd4} ${cyc4}z  F${fhr4}   GEFS PROB of 1.0"
+ PANEL    = lr 
+r
+
+ GDPFUN   = P24M0050PA
+ CLEAR    = y
+ PANEL    = ul
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ TITLE    = 1/-1/${ymd1} ${cyc}z  F${fhr}   GEFS PROB of 2.0"
+ CLRBAR   = 1/H/UL/.5;0.92/1.5;.02/1 
+ DEVICE   = GIF|gefs24pcp2prob3_${ymd1}.gif|750;900
+r
+
+ TITLE    = 2/1/VERIFYING TIME   $verymdh
+ CLEAR    = n
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhr2
+ TITLE    = 1/-1/${ymd2} ${cyc2}z  F${fhr2}   GEFS PROB of 2.0"
+ PANEL    = ur 
+ CLRBAR   = 0
+r
+
+ TITLE    = 15/1/     CYCLES RUN ON   $ymd1
+r
+
+ GDFILE   = $fmdl3
+ GDATTIM  = f$fhr3
+ TITLE    = 1/-1/${ymd3} ${cyc3}z  F${fhr3}   GEFS PROB of 2.0"
+ PANEL    = ll 
+r
+
+ GDFILE   = $fmdl4
+ GDATTIM  = f$fhr4
+ TITLE    = 1/-1/${ymd4} ${cyc4}z  F${fhr4}   GEFS PROB of 2.0"
+ PANEL    = lr 
+r
+
+ GDPFUN   = P24M0006PA
+ CLEAR    = y
+ PANEL    = ul 
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ TITLE    = 1/-1/${ymd1} ${cyc}z  F${fhr}   GEFS PROB of 0.25"
+ CLRBAR   = 1/H/UL/.5;0.92/1.5;.02/1
+ DEVICE   = GIF|gefs24pcp2prob4_${ymd1}.gif|750;900
+r
+
+ TITLE    = 2/1/VERIFYING TIME   $verymdh
+ CLEAR    = n
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhr2
+ TITLE    = 1/-1/${ymd2} ${cyc2}z  F${fhr2}   GEFS PROB of 0.25"
+ PANEL    = ur 
+ CLRBAR   = 0
+r
+
+ TITLE    = 15/1/     CYCLES RUN ON   $ymd1
+r
+
+ GDFILE   = $fmdl3
+ GDATTIM  = f$fhr3
+ TITLE    = 1/-1/${ymd3} ${cyc3}z  F${fhr3}   GEFS PROB of 0.25"
+ PANEL    = ll 
+r
+
+ GDFILE   = $fmdl4
+ GDATTIM  = f$fhr4
+ TITLE    = 1/-1/${ymd4} ${cyc4}z  F${fhr4}   GEFS PROB of 0.25"
+ PANEL    = lr 
+r
+
+ex
+EOF
+
+gpend
+done
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

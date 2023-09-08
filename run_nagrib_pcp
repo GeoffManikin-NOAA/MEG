@@ -1,0 +1,173 @@
+#/bin/ksh
+
+set -x
+
+cyc=$1
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+#ymdh=2014022500
+ymd=`echo $ymdh | cut -c1-8`
+
+DAPATH=/gpfs/dell1/nco/ops/com/nam/prod/nam.${ymd}
+#DAPATH=/ptmp/Geoffrey.Manikin/hold
+DAPATH2=/gpfs/dell1/nco/ops/com/nawips/prod/gfs.${ymd}/${cyc}/gempak
+
+export DAPATH DAPATH2
+. /nwprod/gempak/.gempak
+
+fhrs="12 24 36 48 60 72 84"
+for fhr in $fhrs
+do
+
+nagrib << EOF
+GBFILE  = ${DAPATH}/nam.t${cyc}z.awip3d${fhr}.tm00
+INDXFL  =
+GDOUTF  = dummy.grd 
+PROJ    =
+GRDAREA =
+KXKY    = 
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+exit
+EOF
+
+   gddelt << EOF
+ GDFILE   = dummy.grd 
+ GDATTIM  = f${fhr}
+ GLEVEL   = all 
+ GVCORD   = pres
+ GFUNC    = all
+r
+
+ GVCORD   = pdly
+r
+
+ GVCORD   = hght
+r
+
+ GVCORD   = dpth
+r
+
+ GVCORD   = mwsl
+r
+
+ GVCORD   = trop
+r
+
+ GVCORD   = sgma
+r
+ 
+ GVCORD   = frzl
+r
+
+ GVCORD   = topa
+r
+
+ GVCORD   = dtcl
+r
+ 
+ GVCORD   = dbcl
+r
+
+ GVCORD   = stcl
+r
+ 
+ GVCORD   = sbcl
+r
+
+ GFUNC    = hght
+ GVCORD   = all
+r
+
+ex
+EOF
+
+   gddelt << EOF
+ GFUNC    = p03m
+ GVCORD   = none
+ GLEVEL   = 0
+r
+
+ex
+EOF
+
+   gddelt << EOF
+ GFUNC    = c03m
+r
+
+ex
+EOF
+
+done
+mv dummy.grd nampcp_${ymdh}
+
+fhrs="06 12 18 24 30 36 42 48 54 60 66 72 78 84 90 96"
+for fhr in $fhrs
+do
+
+nagrib << EOF
+GBFILE  = ${DAPATH2}/gfs.t${cyc}z.pgrbf${fhr}
+INDXFL  =
+GDOUTF  = dummy.grd
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+exit
+EOF
+
+   gddelt << EOF
+ GDFILE   = dummy.grd
+ GDATTIM  = f${fhr}
+ GLEVEL   = all
+ GVCORD   = pres
+ GFUNC    = all
+r
+
+ GVCORD   = pdly
+r
+
+ GVCORD   = hght
+r
+
+ GVCORD   = dpth
+r
+
+ GVCORD   = mwsl
+r
+
+ GVCORD   = trop
+r
+
+ GVCORD   = sgma
+r
+
+ GVCORD   = frzl
+r
+
+ GVCORD   = topa
+r
+
+ GFUNC    = hght
+ GVCORD   = all
+r
+
+ex
+EOF
+done
+gpend
+mv dummy.grd gfspcp_${ymdh}
+exit

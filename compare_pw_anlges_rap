@@ -1,0 +1,72 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/pw
+rm /stmpp1/Geoffrey.Manikin/meg/pw/*
+cd /stmpp1/Geoffrey.Manikin/meg/pw
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=2016062000
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+dayoweek=hold4
+
+ymdh1="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -1 -1`"
+ymd1=`echo $ymdh1 | cut -c1-8`
+
+fmdl1=/com/nawips/prod/rap.${ymd}/rap13_${ymdh}f000
+fmdl2=/com/nawips/prod/rap.${ymd1}/rap13_${ymdh1}f001
+
+    gdplot2 << EOF
+
+ GDFILE   = $fmdl1
+ GDATTIM  = f00
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = quo(pwtr,25.4)
+ CINT     = 4 
+ LINE     = 1 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   RAP  PCP WATER  ANL
+ DEVICE   = GIF|rappw_${ymdh}anlges.gif|850;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-95;25;/1;1;1;1
+ GAREA    = 21.;-121.;51.;-65. 
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/V/UL/.01;0.4/0.8;.03/1 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = .25;.5;.75;1.;1.25;1.5;1.75;2.;2.25;2.5
+ FLINE    = 0;21;22;23;28;30;2;15;17;10;5
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f01
+ TITLE    = 1/-1/~  GFS  PCP WATER  GES
+ PANEL    = b
+ CLRBAR   = 0
+ CLEAR    = n
+r
+
+ex
+EOF
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

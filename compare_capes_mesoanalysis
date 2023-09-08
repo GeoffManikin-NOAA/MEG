@@ -1,0 +1,130 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/bmesocape
+rm /stmpp1/Geoffrey.Manikin/meg/bmesocape/*
+cd /stmpp1/Geoffrey.Manikin/meg/bmesocape
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=2018072821
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+ymdhmeso=`echo $ymdh | cut -c3-10`
+
+fmdl1=/ptmpp1/Geoffrey.Manikin/post/sfcoaruc_${ymdhmeso}
+echo $fmdl1
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = sbcp 
+ CINT     = 500 
+ LINE     = 1 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   MESOA SFC-BASED CAPE 
+ DEVICE   = GIF|mesocape1_f0${fhr}.gif|750;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-95;25;/1;1;1;1
+ GAREA    = 21.;-120.;51.;-66. 
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/V/UL/.01;0.4/0.8;.03/2 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 50;500;1000;1500;2000;2500;3000;3500;4000;4500;5000
+ FLINE    = 0;25;21;22;23;5;10;17;16;2;15;32
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDPFUN   = mucp
+ TITLE    = 1/-1/~  MESOA BEST CAPE 
+ PANEL    = b
+ CLRBAR   = 0
+ CLEAR    = n
+r
+
+ GDPFUN   = becp 
+ TITLE    = 1/-1/~  MESOA BEST CAPE 
+ PANEL    = t
+ CLRBAR   = 1/V/UL/.01;0.4/0.8;.03/2  
+ CLEAR    = y
+ CLRBAR   = 1/V/UL/.01;0.4/0.8;.03/2  
+ DEVICE   = GIF|mesocape2_f0${fhr}.gif|750;900
+r
+
+ GDPFUN   = ml3k 
+ TITLE    = 1/-1/~  MESOA  0-3 KM CAPE 
+ PANEL    = b
+ CLRBAR   = 0
+ CLEAR    = n
+r
+
+ GDPFUN   = m1cp
+ TITLE    = 1/-1/~  MESOA MIXED LAYER CAPE
+ PANEL    = t
+ CLEAR    = y
+ CLRBAR   = 1/V/UL/.01;0.9/0.8;.03/2
+ DEVICE   = GIF|mesocape3_f0${fhr}.gif|750;900
+r
+ 
+ GDPFUN   = dncp
+ TITLE    = 1/-1/~  MESOA DOWNDRAFT CAPE 
+ PANEL    = b
+ CLEAR    = n
+ CLRBAR   = 1/V/UL/.01;0.9/0.8;.03/2  
+ FINT     = 200;400;600;800;1000;1250;1500 
+r
+
+ GDPFUN   = cang
+ TITLE    = 1/-1/~  MESOA  CRITICAL ANGLE 
+ PANEL    = b
+ FINT     = 20;40;60;80;100;120;140
+ FLINE    = 0;29;4;22;2;22;4;29;0
+ CLEAR    = y
+ DEVICE   = GIF|mesocape4_f0${fhr}.gif|750;900
+r
+
+ GDPFUN   = desp
+ TITLE    = 1/-1/~   MESOA ENH STRETCH POTENTIAL
+ PANEL    = t
+ CLEAR    = n
+ CLRBAR   = 1/V/UL/.01;0.9/0.8;.03/2
+ FINT     = 1;2;3;4;5
+ FLINE    = 0;29;26;22;5;10;2
+r
+
+ GDPFUN   = srh3 
+ TITLE    = 1/-1/~  MESOA 0-3 KM SRH 
+ PANEL    = t
+ CLEAR    = y
+ CLRBAR   = 1/V/UL/.01;0.9/0.8;.03/2
+ FINT     = 50;100;150;200;300;400;500
+ DEVICE   = GIF|mesocape5_f0${fhr}.gif|750;900
+r
+
+ GDPFUN   = e3kh
+ TITLE    = 1/-1/~  MESOA  ERSH 
+ PANEL    = b
+ CLEAR    = n
+r
+
+ex
+EOF
+gpend
+
+scp meso*gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/hrrr/test/.
+exit

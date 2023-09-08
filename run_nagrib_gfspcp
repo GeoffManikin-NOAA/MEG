@@ -1,0 +1,62 @@
+#!/bin/ksh
+
+set -x
+
+cyc=$1
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymdh=2016121612
+ymd=`echo $ymdh | cut -c1-8`
+
+DAPATH=/com2/gfs/prod/gfs.${ymd}
+DAPATH=/gpfs/hps/nco/ops/com/gfs/prod/gfs.${ymd}
+mkdir /stmpp1/Geoffrey.Manikin/gfsnagrib
+rm /stmpp1/Geoffrey.Manikin/gfsnagrib/*
+cd /stmpp1/Geoffrey.Manikin/gfsnagrib/
+
+export DAPATH DAPATH2
+. /nwprod/gempak/.gempak
+
+cycles="00 06 12 18"
+cycles="00"
+fhrs="06 12 18 24 30 36 42 48 54 60 66 72 78 84 90 96 102 108 114 120 126 132 138 144"
+fhrs="06 12 18 24 30 36 42 48 54 60 66 72 78 84"
+fhrs="06 12 18 24 30 36 42 48 54 60"
+fhrs="06 12 18 24 30 36"
+#fhrs="06 12 18 24 30 36 42 48 54 60 66 72 78 84 90 96 102 108 114 120 126 132 138 144 150 156 162 168 174 180 186 192 198 204 210 216 222 228 234 240 246 252 258 264"
+for cyc in $cycles
+do
+for fhr in $fhrs
+do
+
+typeset -Z3 fhr
+/nwprod/util/exec/cnvgrib -g21 ${DAPATH}/gfs.t${cyc}z.pgrb2.0p25.f${fhr} gfs.t${cyc}z.pgrb.0p25.f${fhr}
+wgrib gfs.t${cyc}z.pgrb.0p25.f${fhr} | grep kpds5=61:kpds6=1 | wgrib gfs.t${cyc}z.pgrb.0p25.f${fhr} -i -grib -o new1.fil
+
+wgrib gfs.t${cyc}z.pgrb.0p25.f${fhr} | grep kpds5=63:kpds6=1 | wgrib gfs.t${cyc}z.pgrb.0p25.f${fhr} -i -grib -o new2.fil
+
+nagrib << EOF
+GBFILE  = new1.fil 
+INDXFL  =
+GDOUTF  = dummygfs.grd
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+GBFILE  = new2.fil
+r
+
+exit
+EOF
+done
+mv dummygfs.grd /meso/save/Geoffrey.Manikin/meg/gfspcp_${ymd}${cyc}
+done
+gpend
+exit

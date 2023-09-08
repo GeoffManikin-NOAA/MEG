@@ -1,0 +1,122 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmp/wx20mg/meg
+mkdir /stmp/wx20mg/meg/sfc
+rm /stmp/wx20mg/meg/sfc/*
+cd /stmp/wx20mg/meg/sfc
+cp /meso/save/wx20mg/casework/coltbl.xwp .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`cut -c 7-14 /com/date/t${cyc}z`
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+
+ymdh=2013041721
+ymd=20130417
+dayoweek=Wed
+
+times="00 06 12 18 24 30 36 42 48 54 60 66 72 78 84"
+times="12 15 18 21 24 27"
+times="00"
+for fhr in $times; do
+
+fmdl1=/com/nawips/prod/rap.${ymd}/rap13_${ymdh}f0${fhr}
+
+    gdplot2 << EOF
+
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr 
+ GLEVEL   = 2 
+ GVCORD   = hght 
+ GDPFUN   = dwpf 
+ CINT     = 4 
+ LINE     = 0 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~ NAM SLP/ 2M DEW POINT / 10M WIND
+ DEVICE   = GIF|sfc${cyc}.gif|850;950
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-95;25;/1;1;1;1
+ GAREA    = 25.;-105.;46.;-83.
+ CLEAR    = y
+ PANEL    = 0
+ TEXT     = 0.8/11/2/SW
+ SCALE    = 0 
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/H/UL/.05;0.94/.5;.02/2 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 50;54;58;62;66;70;74;78;82
+ FLINE    = 0;21;22;23;28;29;30;2;15;32
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GLEVEL   = 10
+ GVCORD   = HGHT
+ WIND     = ak1/0.6/2/122/0.7
+ GDPFUN   = wnd
+ TYPE     = a
+ HILO     = 0
+ HLSYM    = 0
+ CLEAR    = n
+ CLRBAR   = 0
+ SCALE    = 0
+ FINT     = 0
+ FLINE    = 0
+ TEXT     = 0
+r
+
+ GDPFUN   = mmsl 
+ GLEV     = 0
+ GVCORD   = none 
+ CINT     = 4 
+ LINE     = 4/1/2/3
+ TITLE    = 0
+ HILO     = 18;18/S12#;S13#/1015-1060;920-1014/5/5;5/yes
+ HLSYM    = 2;1/3/21;21/4;2/HW
+ TYPE     = c
+r
+
+ex
+EOF
+
+gpend
+/usrx/local/im_beta/bin/convert -crop 0x0 sfc${cyc}.gif rapsfc${cyc}.gif
+done
+
+. /u/wx20mg/.Utils
+export w1=wd20mg
+export w2=$rzdm
+
+ftp -n -v << EOF > /meso/save/wx20mg/casework/rzftp.out
+open emcrzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/today
+mput rap*gif
+bye
+EOF
+
+ftp -n -v << EOF > /meso/save/wx20mg/casework/rzftp.out
+open emcrzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/${dayoweek}
+mput rap*gif
+bye
+EOF
+
+rm *gif
+exit

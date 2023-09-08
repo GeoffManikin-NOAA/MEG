@@ -1,0 +1,102 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/gefspcpprob
+rm /stmpp1/Geoffrey.Manikin/meg/gefspcpprob/*
+cd /stmpp1/Geoffrey.Manikin/meg/gefspcpprob
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`cut -c 7-14 /com/date/t${cyc}z`
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+
+ymdh=2015112615
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+dayoweek=hold2
+
+if [ $cycs -eq 03 ]; then
+ hours="33 57 81"
+elif [ $cycs -eq 09 ]; then
+ hours="27 51 75"
+elif [ $cycs -eq 15 ]; then
+ hours="45 69"
+else
+ hours="45"
+fi
+
+for fhrs in $hours; do
+
+fmdl1=/ptmpd2/Geoffrey.Manikin/com2/nawips/prod/sref.${ymd}/srefprob_${ymdh}
+echo $fmdl1
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhrs
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = wxtr 
+ CINT     = 10
+ LINE     = 21/1/3/5 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~    SREF PROB of RAIN 
+ DEVICE   = GIF|${cycs}srefprob_ptype_f0${fhrs}.gif|750;900
+ SATFIL   =
+ RADFIL   =
+ PROOJ    = lcc/25;-95;25;/1;1;1;1
+ GAREA    = ks 
+ CLEAR    = y
+ PANEL    = ul 
+ TEXT     = 0.9/11/2/SW
+ SCALE    = 0 
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/H/UL/.2;.96/0.6;.03/1  
+ CONTUR   = 4/3 
+ SKIP     = 0
+ FINT     = 10;30;50;70;90 
+ FLINE    = 0;20;21;3;22;23 
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+
+ GDPFUN  = wxts 
+ PANEL   = ur 
+ TITLE   = 1/-1/~    SREF PROB of SNOW 
+ CLEAR   = n
+ FLINE   = 0;6;27;26;25;4
+r
+
+ GDPFUN  = wxtz 
+ PANEL   = ll 
+ TITLE   = 1/-1/~    SREF PROB of FRZ RAIN 
+ FLINE   = 0;11;12;16;13;15
+r
+
+ GDPFUN  = wxtp 
+ PANEL   = lr 
+ TITLE   = 1/-1/~    SREF PROB of SLEET
+ FLINE   = 0;7;28;29;30;14
+r
+
+ex
+EOF
+
+gpend
+done
+#mv ${cycs}*gif /stmpp1/Geoffrey.Manikin/meg/holdshort/.
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+
+exit

@@ -1,0 +1,188 @@
+#!/bin/ksh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/slptrgfsmr
+rm /stmpp1/Geoffrey.Manikin/meg/slptrgfsmr/*
+cd /stmpp1/Geoffrey.Manikin/meg/slptrgfsmr
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+mon=`cut -c 5-7 holddate`
+day=`cut -c 9-10 holddate`
+gtime=`cut -c 12-24 holddate`
+gdate=`cut -c 1-10 holddate`
+gcent=`cut -c 25-28 holddate`
+echo $dayoweek
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd1=`echo $ymdh | cut -c1-8`
+ymdh2="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -6 -1`"
+ymdh3="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -12 -1`"
+ymdh4="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -18 -1`"
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+
+ymd2=`echo $ymdh2 | cut -c1-8`
+ymd3=`echo $ymdh3 | cut -c1-8`
+ymd4=`echo $ymdh4 | cut -c1-8`
+cyc2=`echo $ymdh2 | cut -c9-10`
+cyc3=`echo $ymdh3 | cut -c9-10`
+cyc4=`echo $ymdh4 | cut -c9-10`
+
+times="96 108 120 132 144 156 168 180 192"
+for fhr1 in $times; do
+
+fhr2=`expr $fhr1 + 6`
+fhr3=`expr $fhr1 + 12`
+fhr4=`expr $fhr1 + 18`
+typeset -Z3 fhr1 fhr2 fhr3 fhr4
+
+fmdl1=/com2/nawips/prod/gfs.${ymd1}/gfs_${ymdh}f${fhr1}
+fmdl2=/com2/nawips/prod/gfs.${ymd2}/gfs_${ymdh2}f${fhr2}
+fmdl3=/com2/nawips/prod/gfs.${ymd3}/gfs_${ymdh3}f${fhr3}
+fmdl4=/com2/nawips/prod/gfs.${ymd4}/gfs_${ymdh4}f${fhr4}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f${fhr1} 
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = emsl 
+ CINT     = 4
+ LINE     = 4/1/3/3 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1//  GFS SLP  $ymd1 ${cyc}z  F${fhr1}
+ DEVICE   = GIF|gfsslptr${fhr1}.gif | 800;850
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-105;25;/1;1;1;1
+ GAREA    = 10.;-144.;72.;-36. 
+ CLEAR    = y
+ PANEL    = ul
+ TEXT     = 0.8/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 23;23/S12#;S13#/1015-1060;920-1014/5/3;4/yes
+ HLSYM    = 2;1/3/21;21/4;2/HW
+ CLRBAR   = 0
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 0 
+ FLINE    = 0
+ TYPE     = c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ CLEAR    = n
+ GDFILE   = $fmdl2
+ GDATTIM  = f${fhr2}
+ TITLE    = 1//  GFS SLP  $ymd2 ${cyc2}z  F${fhr2}
+ PANEL    = ur 
+ CLEAR    = n
+r
+
+ GDFILE   = $fmdl3
+ GDATTIM  = f${fhr3}
+ TITLE    = 1//  GFS SLP  $ymd3 ${cyc3}z  F${fhr3}
+ PANEL    = ll 
+r
+
+ GDFILE   = $fmdl4
+ GDATTIM  = f${fhr4}
+ TITLE    = 1//  GFS SLP  $ymd4 ${cyc4}z  F${fhr4}
+ PANEL    = lr
+r
+
+ex
+EOF
+gpend
+done
+
+
+cat > info.html <<EOFmet
+<HTML>
+<BODY bgcolor="FFCC99">
+<CENTER><H2><b><u>NCEP MEG MEDIUM RANGE FORECASTING PAGE</H2></CENTER></u></b>
+<p>
+<CENTER>
+The current forecast cycle is <b><font face="Times New Roman,Times"><font size=+1><font color="#CC0000">${cyc}Z ${day} ${mon} </font><font color="#FF6600"></font></font></font></b> with graphics finished at $gtime $gdate $gcent </CENTER>
+<p>
+
+<img src ="../../../www_images/graysquare_line.gif"> </a>
+<p>
+<H4><i>EMC DISCLAIMER : This web page is not "operational" and therefore not subject to 24-h monitoring by NCEP's Central Operations staff.</i></H4>
+<p>
+<img src ="../../../www_images/graysquare_line.gif"> </a>
+<p>
+<H2> Get the forecasts for the previous 7 days here (link opens a new window):</H2>
+<p>
+<TABLE BORDER>
+<THEAD>
+<TR>
+<TH>SUNDAY</TH>
+<TH>MONDAY</TH>
+<TH>TUESDAY</TH>
+<TH>WEDNESDAY</TH>
+<TH>THURSDAY</TH>
+<TH>FRIDAY</TH>
+<TH>SATURDAY</TH>
+</TR>
+<TBODY>
+<TR>
+<TH><A HREF="http://www.emc.ncep.noaa.gov/mmb/gmanikin/meg/medr/index_Sun.html"TARGET=_blank>X</A></TH>
+<TH><A HREF="http://www.emc.ncep.noaa.gov/mmb/gmanikin/meg/medr/index_Mon.html"TARGET=_blank>X</A></TH>
+<TH><A HREF="http://www.emc.ncep.noaa.gov/mmb/gmanikin/meg/medr/index_Tue.html"TARGET=_blank>X</A></TH>
+<TH><A HREF="http://www.emc.ncep.noaa.gov/mmb/gmanikin/meg/medr/index_Wed.html"TARGET=_blank>X</A></TH>
+<TH><A HREF="http://www.emc.ncep.noaa.gov/mmb/gmanikin/meg/medr/index_Thu.html"TARGET=_blank>X</A></TH>
+<TH><A HREF="http://www.emc.ncep.noaa.gov/mmb/gmanikin/meg/medr/index_Fri.html"TARGET=_blank>X</A></TH>
+<TH><A HREF="http://www.emc.ncep.noaa.gov/mmb/gmanikin/meg/medr/index_Sat.html"TARGET=_blank>X</A></TH>
+</TR>
+</BODY>
+</TABLE>
+<p>
+<p>
+<img src ="../../../www_images/graysquare_line.gif"> </a>
+<p>
+<b><font face="Times New Roman,Times"><font size=+1><font color="#993399">CHECK OUT THESE OTHER USEFUL WEB PAGES </font>
+<p>
+<H4><img src ="../../../www_images/eye_dot.gif"></a><TH><a href="http://www.hpc.ncep.noaa.gov/discussions/hpcdiscussions.php?disc=pmdepd"TARGET=_blank> HPC Extended Range Discussion</a></H4></TH>
+<H4><img src ="../../../www_images/eye_dot.gif"></a><TH><a href="http://www.spc.ncep.noaa.gov/products/exper/day4-8"TARGET=_blank> SPC Days 4-8 Cnvct Outlook</a></H4></TH
+<H4><img src ="../../../www_images/eye_dot.gif"></a><TH><a href="http://www.emc.ncep.noaa.gov/mmb/mmbpll/ncepmods"TARGET=_blank> Eric Rogers' NCEP Models Page</a></H4></TH>
+<H4><img src ="../../../www_images/eye_dot.gif"></a><TH><a href="http://www.emc.ncep.noaa.gov/GFS/perf.php"TARGET=_blank> GFS Performance Page </a></H4></TH>
+<H4><img src ="../../../www_images/eye_dot.gif"></a><TH><A HREF="http://www.emc.ncep.noaa.gov/mmb/ylin/pcpverif/daily"TARGET=_blank> Ying Lin's Daily Pcp Verification </a></H4></TH>
+<H4><img src ="../../../www_images/eye_dot.gif"></a><TH><A HREF="http://www.emc.ncep.noaa.gov/mmb/ylin/pcpverif/scores"TARGET=_blank> Ying Lin's Monthly Pcp Verification</a></H4></TH>
+<H4><img src ="../../../www_images/eye_dot.gif"></a><TH><A HREF="http://www.emc.ncep.noaa.gov/mmb/mmbpll/zverif_ops"TARGET=_blank> NAM/GFS 500 mb Verification</a></H4></TH>
+<H4><img src ="../../../www_images/eye_dot.gif"></a><TH><A HREF="http://www.emc.ncep.noaa.gov/mmb/mmbpll/mmbverif"TARGET=_blank> EMC Verification Stats</a></H4></TH> 
+<H4><img src ="../../../www_images/eye_dot.gif"></a><TH><A HREF="http://rtvs.noaa.gov/ncep_models/stats"TARGET=_blank> RTVS Model Verification</a></H4></TH>
+<p>
+</HTML>
+EOFmet
+
+cat > info_$dayoweek.html <<EOFmet
+<HTML>
+<BODY bgcolor="FFCC99">
+<CENTER><H2><b><u>NCEP MEG MEDIUM-RANGE FORECASTING PAGE</H2></CENTER></u></b>
+<p>
+<CENTER>
+These are graphics for <b><font face="Times New Roman,Times"><font size+1><font color="#CC0000"> ${day} ${mon} </font><font color="#FF6600"></font></font></font></b>
+</CENTER>
+<p>
+</BODY>
+</HTML>
+EOFmet
+
+mv *gif /stmpp1/Geoffrey.Manikin/meg/holdmedr/.
+mv *html /stmpp1/Geoffrey.Manikin/meg/holdmedr/.
+exit

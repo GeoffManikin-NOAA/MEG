@@ -1,0 +1,129 @@
+#!/bin/ksh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/2mt
+rm /stmpp1/Geoffrey.Manikin/meg/2mt/*
+cd /stmpp1/Geoffrey.Manikin/meg/2mt
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`cut -c 7-14 /com/date/t${cyc}z`
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+
+ymdh=2018053012
+ymd=`echo $ymdh | cut -c1-8`
+dayoweek=hold9
+
+times="00 03 06 09 12 15 18 21 24 27 30 33 36 39 42 45 48 51 54 57 60 63 66 69 72 75 78 81 84"
+times="27 30 33 36"
+times="00 03 06 09 12 15 18 21 24 27 30 33 36 39 42 45 48"
+times="177"
+for fhr in $times; do
+
+typeset -Z3 fhr
+
+fmdl1=/gpfs/hps/nco/ops/com/nawips/prod/gfs.${ymd}/gfs_0p25_${ymdh}f${fhr}
+fmdl2=/ptmpp1/Geoffrey.Manikin/hold/fv3_${ymdh}f${fhr}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 2 
+ GVCORD   = hght 
+ GDPFUN   = tmpf 
+ CINT     = 5 
+ LINE     = 1 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   GFS 2-M  TEMP 
+ DEVICE   = GIF|2mtfv3_${ymdh}f0${fhr}.gif|850;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-97;25;/1;1;1;1
+ GAREA    = 24.;-108.;40.;-88. 
+# GAREA    = 28.8;-96.6;31.;-93.
+# GAREA    = 33.0;-85.6;34.4;-83.2
+# GAREA    = 32.6;-113.5;34.;-111.
+# GAREA     = 28.5;-99.8;30.9;-96.8
+# GAREA    = ok- 
+# GAREA     = nj+
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/V/UL/.04;0.4/0.8;.03/2 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 35;40;45;50;55;60;65;70;75;80;85;90;95;100;105;110;115;120;125;130;135
+# FINT     = 30;33;36;39;42;45;48;51;54;57;60;63;66;69;72;75;78;81;84;87;90
+# FINT     = 6;9;12;15;18;21;24;27;30;33;36;39;42;45;48;51;54;57;60
+# FINT     = -34;-28;-22;-16;-10;-4;2;8;14;20;26;32;38;44;50;56;62;68;74;80;86
+ FLINE    = 0;12;30;29;28;4;25;26;27;24;23;22;21;5;20;10;17;16;2;15;14;32
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhr
+ TITLE    = 1/-1/~  FV3  2-M TEMP 
+ PANEL    = b
+ CLRBAR   = 0
+ CLEAR    = n
+ TYPE     = f
+ LINE     = 1
+ CINT     = 4
+r
+
+ GDFILE   = $fmdl1
+ GLEVEL   = 0
+ GVCORD   = none
+ PANEL    = t
+ TITLE    = 1/-1/~  GFS  SKIN TEMP
+ CLRBAR   = 1/V/UL/.04;0.4/0.8;.03/2
+ DEVICE   = GIF|skinfv3_${ymdh}f0${fhr}.gif|850;900
+r
+
+ GDFILE   = $fmdl2
+ PANEL    = b
+ CLEAR    = n
+ TITLE    = 1/-1/~  FV3 SKIN TEMP 
+ CLRBAR   = 0
+r
+
+ GDFILE   = $fmdl1
+ GLEVEL   = 850
+ GVCORD   = pres
+ GDPFUN   = tmpc 
+ PANEL    = t
+ CLRBAR   = 1/V/UL/.04;0.4/0.8;.03/2
+ DEVICE   = GIF|850tfv3_${ymdh}f0${fhr}.gif|850;900
+  FINT     = 25;30;35;40;45;50;55;60;65;70;75;80;85;90;95;100;105;110;115;120;125
+ FINT     = -12;-9;-6;-3;0;3;6;9;12;15;18;21;24;27;30;33;36;39
+ FLINE    = 0;12;30;29;28;4;25;26;27;24;23;22;21;5;20;10;17;16;2;15;14;32
+r
+
+ GDFILE   = $fmdl2
+ PANEL    = b
+ CLEAR    = n
+ CLRBAR   = 0
+r
+
+ex
+EOF
+done
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

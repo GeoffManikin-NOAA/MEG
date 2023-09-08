@@ -1,0 +1,133 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/850t
+rm /stmpp1/Geoffrey.Manikin/meg/850t/*
+cd /stmpp1/Geoffrey.Manikin/meg/850t
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=2015100212
+ymd=`echo $ymdh | cut -c1-8`
+dayoweek=hold3
+
+hours="00 06 12 18 24 30 36 42 48 54 60 66 72 78 84"
+hours="00 12 24 36 48 60 72"
+for fhr in $hours; do
+
+fmdl1=/com/nawips/prod/nam.${ymd}/nam32_${ymdh}f0${fhr}
+fmdl2=/com2/nawips/prod/gfs.${ymd}/gfs_0p25_${ymdh}f0${fhr}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 850 
+ GVCORD   = pres 
+ GDPFUN   = tmpc 
+ CINT     = 4 
+ LINE     = 1 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   NAM 850 MB  TEMP 
+ DEVICE   = GIF|850tmodels_f0${fhr}.gif|750;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-73;25;/1;1;1;1
+ GAREA    = 18.;-84.;38.;-62. 
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/V/UL/.01;0.4/0.8;.03/2 
+ CONTUR   = 0
+ SKIP     = 0
+# FINT     = -32;-28;-24;-20;-16;-12;-8;-4;0;4;8;12;16;20;24;28;32
+# FINT     = -24;-21;-18;-15;-12;-9;-6;-3;0;3;6;9;12;15;18;21;24
+ FINT     = -12;-9;-6;-3;0;3;6;9;12;15;18;21;24;27;30;33;36
+ FINT     = 10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26 
+ FLINE    = 0;12;30;29;28;4;25;27;24;23;21;5;20;10;17;16;2;15;32
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ CINT     = 0/0/0
+ LINE     = 1/1/4/1
+ CLEAR    = n
+ TYPE     = c
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhr
+ CINT     = 0
+ TITLE    = 1/-1/~  GFS 850 MB TEMP 
+ LINE     = 0
+ PANEL    = b
+ CLRBAR   = 0
+ TYPE     = f
+r
+
+ CINT     = 0/0/0
+ LINE     = 1/1/4/1
+ CLEAR    = n
+ TYPE     = c
+r
+
+ex
+EOF
+
+    gdcntr << EOF
+
+ GDFILE   = $fmdl2 + $fmdl1
+ GDATTIM  = f${fhr}
+ GLEVEL   = 850  
+ GVCORD   = pres 
+ GFUNC    = sub(tmpc+2,tmpc)
+ CINT     = 2 
+ LINE     = 1
+ MAP      = 1
+ WIND     = bk1/0.7/2/122
+ TITLE    = 1//~ 850 MB TEMP (C)   NAM - GFS
+ DEVICE   = GIF|850tdiff_f0${fhr}.gif | 600;650
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-95.;25./2;2;1;1
+ GAREA    = grid 
+ CLEAR    = y
+ PANEL    = 0
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/H/UL/.1;.9/.8;.02/-1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = -15;-12;-9;-6;-3;3;6;9;12;15
+ FLINE    = 30;28;26;27;22;0;5;10;17;2;15
+ CTYPE    = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ex
+EOF
+done
+gpend
+
+for fhr in $times;do
+
+CONV=/usrx/local/ImageMagick/6.8.3-3/bin
+$CONV/convert -crop 0x0 850tmodels_f0${fhr}.gif 850t1.gif
+$CONV/convert -crop 0x0 850tdiff_f0${fhr}.gif 850t2.gif
+$CONV/montage -geometry 700x750 850t1.gif 850t2.gif ${cyc}850t${fhr}.gif
+done
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

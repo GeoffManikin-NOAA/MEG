@@ -1,0 +1,169 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+ymdh=2016012100
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+dayoweek=hold3
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/4pan
+rm /stmpp1/Geoffrey.Manikin/meg/4pan/*
+cd /stmpp1/Geoffrey.Manikin/meg/4pan
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+times="00 06 12 18 24 30 36 42 48 54 60 66 72 78 84"
+times="24 30 36 42 48 54 60 66"
+times="72"
+for fhr in $times; do
+
+fmdl1=/com/nawips/prod/nam.${ymd}/nam40_${ymdh}f0${fhr}
+fmdl1=/ptmpd2/Geoffrey.Manikin/com2/nawips/prod/gfs.${ymd}/gfs_0p25_${ymdh}f00${fhr}
+fmdl2=/ptmpd2/Geoffrey.Manikin/com2/nawips/prod/gfs.${ymd}/gfspcp_${ymdh}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 300
+ GVCORD   = pres
+ GDPFUN   = knts(sped)
+ CINT     = 10 
+ LINE     = 0 
+ DEVICE   = GIF|4panelgfs_${ymdh}f0${fhr}.gif | 800;850
+ PROJ     = lcc/25.;-76.;25./2;2;1;1
+ GAREA    = 22.;-95.;49.;-58. 
+ TITLE    = 1//~  GFS  300 MB  WIND (KT) 
+ CLEAR    = y
+ SCALE    = 0
+ PANEL    = ul 
+ HILO     = 0
+ HLSYM    = 0 
+ CLRBAR   = 1/H/UL/.05;0.99/0.85;.03/-2
+ TEXT     = 0.8/11/2
+ FINT     = 40;50;60;70;80;90;100;110;120;130;140;150
+# FLINE    = 0;30;28;27;25;23;21;5;10;17;11;2;15
+ FINT     = 70;90;110;130;150
+ FLINE    = 0;27;26;25;24;30
+ TYPE     = f 
+r
+
+ CINT     = 
+ WIND     = BK1/0.8/2/122
+ GDPFUN   = kntv(wnd)
+ SKIP     = /8;8
+ TYPE     = b
+ TITLE    = 0
+ CLRBAR   = 0
+ CLEAR    = n
+r
+
+ GLEVEL   = 850
+ GVCORD   = pres
+ GDPFUN   = knts(sped)
+ CINT     = 5
+ LINE     = 0
+ TITLE    = 1//~  GFS 850 MB WIND (KT) TEMPS
+ CLEAR    = n
+ PANEL    = ur 
+ SCALE    = 0
+ HILO     = 0
+ HLSYM    = 0 
+ CLRBAR   = 1/H/UL/.05;0.99/0.85;.03/-2
+# FINT     = 30;40;50;60;70;80
+ FINT     = 40;50;60;70;80
+# FLINE    = 0;22;5;10;17;2;15
+ FLINE    = 0;5;10;17;2;15
+ TEXT     = 0.8/11/2
+ TYPE     = f
+r
+
+ WIND     = BK1/0.8/2/122
+ GDPFUN   = kntv(wnd)
+ TYPE     = b
+ TITLE    = 0
+ CLRBAR   = 0
+ CLEAR    = n
+r
+
+ GDPFUN   = tmpc
+ CINT     = 1/0/0
+ LINE     = 1/1/3/1
+ TYPE     = c
+r
+
+ CINT     = 1/-5/-5
+ LINE     = 4/1/3/1
+r
+
+ CINT     = 1/-10/-10
+r
+
+ CINT     = 1/5/5
+ LINE     = 2/1/3/1
+r
+
+ CINT     = 1/10/10
+r
+ 
+ GLEVEL   = 700
+ GDPFUN   = relh
+ PANEL    = ll
+ TITLE    = 1//~  GFS  700 MB RH RISING MOTION
+ CINT     = 10
+ FINT     = 50;60;70;80;90
+ FLINE    = 0;5;20;21;22;23
+ CLRBAR   = 1/H/UL/.05;0.99/0.85;.03/-2
+ WIND     = 0
+ TYPE     = f
+r
+
+ CLEAR    = n
+ GDPFUN   = mul(omeg,1000)
+ CINT     = 2/-50/-1
+ LINE     = 2/1/1/0
+ FINT     = 0
+ FLINE    = 0
+ TYPE     = c
+r
+
+ GDFILE   = $fmdl2
+ GLEVEL   = 0
+ GVCORD   = none
+ GDPFUN   = p06i
+ PANEL    = lr
+ CLRBAR   = 1/H/UL/.01;0.99/0.98;.03/-2
+ TITLE    = 1//~  GFS  6-HR PCP   SLP   850 0C
+ FINT     = .01;.1;.25;.5;.75;1;1.25;1.5;2;2.5;3;4;5
+ FLINE    = 0;21;22;23;4;25;27;28;29;30;2;15;17;10;5
+ TYPE     = f
+r
+
+ GDFILE   = $fmdl1
+ GDPFUN   = pmsl
+ GVCORD   = none
+ CINT     = 4
+ LINE     = 1/1/1/3
+ HILO     = 1;1/S12#;S13#/1015-1060;920-1014/5/1;1/yes
+ HLSYM    = 2;1/3/11;11/4;2/HW
+ TYPE     = c
+r 
+
+ GLEVEL   = 850
+ GVCORD   = pres
+ GDPFUN   = tmpc
+ LINE     = 24/1/4/1 
+ CINT     = 1/0/0 
+r
+
+ex
+EOF
+
+done
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

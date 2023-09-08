@@ -1,0 +1,114 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/48pcpsrefxmem
+rm /stmpp1/Geoffrey.Manikin/meg/48pcpsrefxmem/*
+cd /stmpp1/Geoffrey.Manikin/meg/48pcpsrefxmem
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`echo $ymdh | cut -c1-8`
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+
+ymdh=2014031409
+ymd=`echo $ymdh | cut -c1-8`
+dayoweek=Fri
+
+hours="87"
+models="em nmm nmb"
+members="ctl p1 p2 p3 n1 n2 n3"
+
+for fhr in $hours; do
+for mdl in $models; do
+ 
+fmdl1=/com/nawips/para/sref.${ymd}/sref212_${ymdh}_${mdl}_ctl
+fmdl2=/com/nawips/para/sref.${ymd}/sref212_${ymdh}_${mdl}_p1
+fmdl3=/com/nawips/para/sref.${ymd}/sref212_${ymdh}_${mdl}_p2
+fmdl4=/com/nawips/para/sref.${ymd}/sref212_${ymdh}_${mdl}_p3
+fmdl5=/com/nawips/para/sref.${ymd}/sref212_${ymdh}_${mdl}_n1
+fmdl6=/com/nawips/para/sref.${ymd}/sref212_${ymdh}_${mdl}_n2
+fmdl7=/com/nawips/para/sref.${ymd}/sref212_${ymdh}_${mdl}_n3
+
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f${fhr} 
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = p48i 
+ CINT     = 0.25 
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1//  $mdl CTL PARA 48-HR PCP  $ymd ${cyc}z  F${fhr}
+ DEVICE   = GIF|srefx${mdl}48pcp_${ymdh}f${fhr}.gif | 800;850
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-75;25;/1;1;1;1
+ GAREA    = de- 
+ CLEAR    = y
+ PANEL    = m1 
+ TEXT     = 0.7/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 0
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = .01;.1;.25;.5;.75;1;1.5;2;2.5;3;3.5;4;5
+ FLINE    = 0;21;22;23;4;25;27;28;29;30;2;15;10;5
+ TYPE     = f/c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ CLEAR    = n
+ GDFILE   = $fmdl2
+ TITLE    = 1// $mdl P1 PARA 48-HR PCP  $ymd ${cyc}z  F${fhr} 
+ PANEL    = m2 
+r
+
+ GDFILE   = $fmdl3
+ TITLE    = 1// $mdl P2 PARA 48-HR PCP  $ymd ${cyc}z  F${fhr}  
+ PANEL    = m3 
+r
+
+ GDFILE   = $fmdl4
+ TITLE    = 1// $mdl P3 PARA 48-HR PCP  $ymd ${cyc}z  F${fhr}  
+ PANEL    = m4
+r
+
+ GDFILE   = $fmdl5
+ TITLE    = 1// $mdl N1 PARA 48-HR PCP  $ymd ${cyc}z  F${fhr}  
+ PANEL    = m5
+r
+
+ GDFILE   = $fmdl6
+ TITLE    = 1// $mdl N2 PARA 48-HR PCP  $ymd ${cyc}z  F${fhr}  
+ PANEL    = m6
+ CLRBAR   = 0
+r
+
+ GDFILE   = $fmdl7
+ TITLE    = 1// $mdl N3 PARA 48-HR PCP  $ymd ${cyc}z  F${fhr}  
+ PANEL    = m7
+ CLRBAR   = 1/H/UL/.99;.6/1.6;.06/2
+r
+
+ex
+EOF
+done
+done
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

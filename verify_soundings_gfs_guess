@@ -1,0 +1,147 @@
+#!/bin/sh
+echo 'into'
+
+dayoweek=hold8
+mdlymdh=2019101800
+mdlymd=`echo $mdlymdh | cut -c1-8`
+mdlym=`echo $mdlymdh | cut -c1-6`
+mdlcyc=`echo $mdlymdh | cut -c9-10`
+stations="744550 726320 722150"
+stations="723570 723400 724560 726590"
+stations="723270 724400 723400"
+stations="725620 722080 726450 722300 722150 722350"
+stations="724560 726590 725580"
+stations="724030"
+
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/gempak.sound
+rm /gpfs/dell1/stmp/Geoffrey.Manikin/gempak.sound/*
+cd /gpfs/dell1/stmp/Geoffrey.Manikin/gempak.sound
+cp /gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/coltbl.xwp .
+
+DAPATH1=/gpfs/dell2/emc/verification/noscrub/Geoffrey.Manikin/gfsv16/${mdlym}/gfs
+DAPATH2=/gpfs/dell2/emc/verification/noscrub/Geoffrey.Manikin/gfsv16/${mdlym}/gfsx
+cp ${DAPATH1}/gfs_${mdlymdh}.snd fmdl1
+cp ${DAPATH2}/gfsx_${mdlymdh}.snd fmdl2
+
+guesscyc="`/gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/advtime ${mdlymdh} -06 -1`"
+guessymdh=`echo $guesscyc | cut -c1-10`
+guessymd=`echo $guesscyc | cut -c1-8`
+guessym=`echo $guesscyc | cut -c1-6`
+
+DAPATH1g=/gpfs/dell2/emc/verification/noscrub/Geoffrey.Manikin/gfsv16/${guessym}/gfs
+DAPATH2g=/gpfs/dell2/emc/verification/noscrub/Geoffrey.Manikin/gfsv16/${guessym}/gfsx
+
+cp ${DAPATH1g}/gfs_${guessymdh}.snd fmdl1g
+cp ${DAPATH2g}/gfsx_${guessymdh}.snd fmdl2g
+
+times="00"
+for time in $times; do
+for stnm in $stations; do
+
+fobs=/gpfs/dell2/emc/verification/noscrub/Geoffrey.Manikin/uair/${mdlymd}.snd
+echo $fobs
+
+stn=`echo $stnm | cut -c1-5`
+if [ $time -lt 10 ]
+then
+fhr=0${time}
+else
+fhr=$time
+fi
+
+    snprof << EOF
+ SNFILE   = fmdl1
+ DATTIM   = $mdlymd/$mdlcyc
+ AREA     = @${stnm}
+ SNPARM   = tmpc;dwpc
+ LINE     = 22/2/6
+ PTYPE    = skewt
+ VCOORD   = PRES
+ STNDEX   = lift;cape;cins
+ STNCOL   = 24
+ WIND     = bk1
+ WINPOS   = 2
+ MARKER   = 0
+ BORDER   = 1//2
+ TITLE    = 1//  GFSv15 RED  GFSv15GUESS GREEN  OBS SOLID/LEFT WINDS
+ DEVICE   = gif|pblgfs${stnm}g_${mdlymdh}f$fhr.gif|1000;1000
+ YAXIS    = 1050/500/50/1;1;1
+ XAXIS    = -20/35/5/;1
+ FILTER   = 0.7
+ CLEAR    = y
+ PANEL    = 0
+! TEXT     = 1.0/11/2/SW
+ TEXT     = 1.1/23/SW
+ THTALN   = 8/3/1/250/500/5
+ THTELN   = 23/1/1/250/500/5
+ MIXRLN   = 17/10/2/0/40./1.
+r
+
+ SNFILE   = fmdl1g
+ CLEAR    = n
+ WINPOS   = 3
+ LINE     = 2/2/6 
+r
+
+ SNFILE   = $fobs
+ WINPOS   = 1
+ LINE     = 1/1/6
+ AREA     = @${stn}
+r
+
+ex
+EOF
+
+done
+done
+
+for time in $times; do
+for stnm in $stations; do
+
+    snprof << EOF
+ SNFILE   = fmdl2
+ DATTIM   = $mdlymd/$mdlcyc
+ AREA     = @${stnm}
+ SNPARM   = tmpc;dwpc
+ LINE     = 22/2/6
+ PTYPE    = skewt
+ VCOORD   = PRES
+ STNDEX   = lift;cape;cins
+ STNCOL   = 24
+ WIND     = bk1
+ WINPOS   = 2
+ MARKER   = 0
+ BORDER   = 1//2
+ TITLE    = 1//  GFSv16 RED  GFSv16GUESS GREEN   OBS SOLID/LEFT WINDS
+ DEVICE   = gif|pblgfsx${stnm}g_${mdlymdh}f$fhr.gif|1000;1000
+ YAXIS    = 1050/500/50/1;1;1
+ XAXIS    = -20/35/5/;1
+ FILTER   = 0.7
+ CLEAR    = y
+ PANEL    = 0
+! TEXT     = 1.0/11/2/SW
+ TEXT     = 1.1/23/SW
+ THTALN   = 8/3/1/250/500/5
+ THTELN   = 23/1/1/250/500/5
+ MIXRLN   = 17/10/2/0/40./1.
+r
+
+ SNFILE   = fmdl2g
+ CLEAR    = n
+ WINPOS   = 3
+ LINE     = 2/2/6
+r
+
+ SNFILE   = $fobs
+ WINPOS   = 1
+ LINE     = 1/1/6
+ AREA     = @${stn}
+r
+
+ex
+EOF
+done
+done
+gpend
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

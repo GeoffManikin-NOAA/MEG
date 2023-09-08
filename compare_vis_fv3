@@ -1,0 +1,93 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/vis
+rm /stmpp1/Geoffrey.Manikin/meg/vis/*
+cd /stmpp1/Geoffrey.Manikin/meg/vis
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=2018052906
+ymd=`echo $ymdh | cut -c1-8`
+day=`echo $ymdh | cut -c7-8`
+dayoweek=hold7
+
+times="00 03 06 09 12 15"
+times="00 03 06 09 12"
+times="03 06"
+for fhr in $times; do
+
+fmdl1=/com2/nawips/prod/nam.${ymd}/nam32_${ymdh}f0${fhr}
+fmdl2=/com2/nawips/prod/rap.${ymd}/rap13_${ymdh}f0${fhr}
+fmdl3=/gpfs/hps/nco/ops/com/nawips/prod/gfs.${ymd}/gfs_0p25_${ymdh}f0${fhr}
+fmdl4=/ptmpp1/Geoffrey.Manikin/hold/fv3_${ymdh}f0${fhr}
+
+echo $fmdl1
+echo $fmdl2
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = mul(quo(vsby,1000),0.62137) 
+ CINT     = 1;2;3;4;5;10 
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/ ${fhr}-HR  NAM VISIBILITY (miles) 
+ DEVICE   = GIF|vis1_${ymdh}f0${fhr}.gif|900;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-95.;25./2;2;1;1
+ GAREA    = 22.;-123.;54.;-65. 
+ CLEAR    = y
+ PANEL    = 0.;.51;1.;1.
+ TEXT     = 1.2/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/V/UL/.15;0.4/.8;.03/-1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 1;2;3;4;5;10 
+ FLINE    = 2;17;5;21;26;28;0 
+ TYPE     = f/c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl2 
+ TITLE    = 1/-1/ ${fhr}-HR RAP  VISIBILITY (miles)
+ PANEL    = b
+ CLEAR    = n 
+ CLRBAR   = 0
+r
+
+ GDFILE   = $fmdl3
+ CLEAR    = y
+ PANEL    = t
+ DEVICE   = GIF|vis2_${ymdh}f0${fhr}.gif|900;900
+ TITLE    = 1/-1/ ${fhr}-HR  GFS VISIBILITY (miles)
+ CLRBAR   = 1/V/UL/.15;0.5/.8;.03/-1
+r
+
+ GDFILE   = $fmdl4 
+ TITLE    = 1/-1/ ${fhr}-HR  FV3 VISIBILITY (miles)
+ PANEL    = b
+ CLEAR    = n
+ CLRBAR   = 0
+r
+
+ex
+EOF
+
+gpend
+done
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+rm *gif
+exit

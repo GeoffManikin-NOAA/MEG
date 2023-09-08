@@ -1,0 +1,88 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /stmpp1/wx20mg/gempak.ruc20/test
+rm /stmpp1/wx20mg/gempak.ruc20/test/*
+cd /stmpp1/wx20mg/gempak.ruc20/test
+
+/nwprod/util/ush/startxvfb.sh /bin/sh
+. ./STARTXVFB
+
+fmdl1=/meso/save/wx20mg/gempak/nagribx/ruc2_2005021717
+fmdl2=/meso/save/wx20mg/gempak/nagribx/ruc2_2005021800
+fmdl3=/meso/save/wx20mg/gempak/nagribx/ruc2x_2005021717
+fmdl4=/meso/save/wx20mg/gempak/nagribx/ruc2x_2005021800
+
+# negate the colors ahead of time except white and black
+gpcolor << EOFC
+COLORS=0=255:255:255?
+COLORS=101=255:255:255;1=0:0:0
+DEVICE   = GF
+r
+
+ex
+EOFC
+
+    gdcntr << EOF
+
+ GDFILE   = $fmdl1 + $fmdl2
+ GDATTIM  = f00 
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GFUNC    = sub(msav+2^18/00f00,msav^17/17f00)  
+ CINT     = 0.01 
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1// 7-HR RUC MSAV CHANGE 
+ DEVICE   = GF|msav_evolve.gif
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-95.;25./2;2;1;1
+ GAREA    = 20.;-124.;54.;-64. 
+ CLEAR    = y
+ PANEL    = 0.;.51;1.;1.
+ TEXT     = 1.2/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/V/UL/.15;0.4/.8;.03/-2
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = -.13;-.1;-.07;-.04;-.01;.01;.04;.07 ;.1
+ FLINE    = 8;10;9;17;19;0;21;23;4;26 
+ CTYPE    = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl3 + $fmdl4
+ CLEAR    = n
+ PANEL    = 0;0;1;.49
+ CLRBAR   = 0
+ TITLE    = 1// 7-HR RUCX MSAV CHANGE  
+r
+
+ex
+EOF
+
+gpend
+/nwprod/util/ush/stopxvfb.sh /bin/sh
+
+. /u/wx20mg/.Utils
+export w1=wd20mg
+export w2=$rzdm
+                                                                                      
+ftp -n -v << EOF > /nfsuser/g01/emcsrc/wx20mg/gempak.ruc20/rzftp.out
+open rzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/ructest
+mput *gif
+bye
+EOF
+
+exit

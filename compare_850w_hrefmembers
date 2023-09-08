@@ -1,0 +1,149 @@
+#!/bin/sh
+echo 'into'
+
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/meg
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/meg/850w
+rm /lfs/h2/emc/stmp/geoffrey.manikin/meg/850w/*
+cd /lfs/h2/emc/stmp/geoffrey.manikin/meg/850w
+cp /lfs/h2/emc/vpppg/save/geoffrey.manikin/meg/coltbl.xwp .
+
+ymdh=2022072712
+ymd=`echo $ymdh | cut -c1-8`
+
+hours="00 01 02 03 04 05 06 07 08 09 10 11 12"
+hours="24 25 26 27 28 29 30"
+hours="12 15 18"
+for fhr in $hours; do
+
+fmdl1=/lfs/h2/emc/vpppg/noscrub/geoffrey.manikin/floods22/nam_conusnest_${ymdh}f0${fhr}
+fmdl2=/lfs/h2/emc/vpppg/noscrub/geoffrey.manikin/floods22/hrrr_${ymdh}f0${fhr}00
+fmdl3=/lfs/h2/emc/vpppg/noscrub/geoffrey.manikin/floods22/arw_${ymdh}f0${fhr}
+fmdl4=/lfs/h2/emc/vpppg/noscrub/geoffrey.manikin/floods22/arw2_${ymdh}f0${fhr}
+fmdl5=/lfs/h2/emc/vpppg/noscrub/geoffrey.manikin/floods22/fv3_${ymdh}f0${fhr}
+fmdl6=/lfs/h2/emc/vpppg/noscrub/geoffrey.manikin/floods22/gfs_0p25_${ymdh}f0${fhr}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 850
+ GVCORD   = pres
+ GDPFUN   = knts(sped)
+ CINT     = 5 
+ LINE     = 0 
+ DEVICE   = GIF|href850w1_${ymdh}f0${fhr}.gif | 800;850
+ PROJ     = lcc/25.;-85.;25./2;2;1;1
+# GAREA    = 34.;-92.;46.;-70. 
+ GAREA    = ky 
+ TITLE    = 1//~  NAM CONUS NEST 850 MB  WIND (KT) 
+ CLEAR    = y
+ SCALE    = 0
+ PANEL    = t
+ HILO     = 0
+ HLSYM    = 0 
+ CLRBAR   = 1/V/UL/.05;0.5/1.0;.03/1
+ TEXT     = 1.1/11/2
+ FINT     = 20;30;40;50;60;70;80;90;100
+ FLINE    = 0;29;26;4;22;5;10;17;2;15
+ TYPE     = f 
+r
+
+ CINT     = 
+ WIND     = BK1/0.7/2/122
+ GDPFUN   = kntv(wnd)
+ SKIP     = /8;8
+ TYPE     = b
+ TITLE    = 0
+ CLRBAR   = 0
+ CLEAR    = n
+r
+
+ GDFILE   = $fmdl2
+ GDPFUN   = knts(sped)
+ PANEL    = b
+ TYPE     = f
+ TITLE    = 1//~  HRRR 850 MB  WIND (KT)
+r
+
+ WIND     = BK1/0.7/2/122
+ GDPFUN   = kntv(wnd)
+ SKIP     = /8;8
+ TYPE     = b
+ TITLE    = 0
+r
+
+ GDFILE   = $fmdl3
+ GDPFUN   = knts(sped)
+ PANEL    = t
+ CLEAR    = y
+ DEVICE   = GIF|href850w2_${ymdh}f0${fhr}.gif | 800;850
+ TYPE     = f
+ TITLE    = 1//~  ARW 850 MB  WIND (KT)
+ CLRBAR   = 1/V/UL/.05;0.5/1.0;.03/1
+r
+
+  WIND     = BK1/0.7/2/122
+  GDPFUN   = kntv(wnd)
+  SKIP     = /8;8
+  CLEAR    = n
+  TYPE     = b 
+  TITLE    = 0
+  CLRBAR   = 0
+r
+
+  GDFILE   = $fmdl4
+  GDPFUN   = knts(sped)
+  PANEL    = b
+  TYPE     = f
+  TITLE    = 1//~  ARW2 850 MB  WIND (KT)
+ r
+
+   WIND     = BK1/0.7/2/122
+   GDPFUN   = kntv(wnd)
+   SKIP     = /8;8
+   TYPE     = b
+   TITLE    = 0
+r
+
+ GDFILE   = $fmdl5
+ GDPFUN   = knts(sped)
+ PANEL    = t
+ CLEAR    = y
+ DEVICE   = GIF|href850w3_${ymdh}f0${fhr}.gif | 800;850
+ TYPE     = f
+ TITLE    = 1//~  FV3 850 MB  WIND (KT)
+ CLRBAR   = 1/V/UL/.05;0.5/1.0;.03/1
+r
+
+ WIND     = BK1/0.7/2/122
+ GDPFUN   = kntv(wnd)
+ SKIP     = /8;8
+ CLEAR    = n
+ TYPE     = b
+ TITLE    = 0
+ CLRBAR   = 0
+ r
+
+  GDFILE   = $fmdl6
+  GDPFUN   = knts(sped)
+  PANEL    = b
+  TYPE     = f
+  TITLE    = 1//~  GFS 850 MB  WIND (KT)
+r
+
+   WIND     = BK1/0.7/2/122
+   GDPFUN   = kntv(wnd)
+   SKIP     = 
+   TYPE     = b
+   TITLE    = 0
+r
+
+ex
+EOF
+
+done
+gpend
+
+#scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test8/.
+
+exit

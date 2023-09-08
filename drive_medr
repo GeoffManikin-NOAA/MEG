@@ -1,0 +1,19 @@
+#!/bin/ksh
+
+set -x
+
+cyc=$1
+cd /meso/save/Geoffrey.Manikin/meg/
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`cut -c 7-14 /com/date/t${cyc}z`
+ymdhold="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -30 -1`"
+ymdold=`echo $ymdhold | cut -c1-8`
+rm /meso/save/Geoffrey.Manikin/meg/gfsmr*${ymdold}*
+
+./run_nagrib_pcp_medr $cyc
+./run_nagrib_gfsx $cyc
+
+cp /com/date/t${cyc}z /meso/save/Geoffrey.Manikin/meg/NMCDATEMR
+bsub < run_gempak_poe_medr
+exit

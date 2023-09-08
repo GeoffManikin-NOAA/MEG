@@ -1,0 +1,138 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+ymdh=$1
+ymd=`echo $ymdh | cut -c1-8`
+month=`echo $ymdh | cut -c5-6`
+day=`echo $ymdh | cut -c7-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+mkdir /stmpp1/Geoffrey.Manikin/gempak.rap13/launch17/500f
+cd /stmpp1/Geoffrey.Manikin/gempak.rap13/launch17/500f
+cp /meso/save/Geoffrey.Manikin/gempak.rap13/coltbl.xwp .
+
+times="00 01 02 03 06 09 12 15 18"
+counter=0
+for fhr in $times; do
+
+fmdl=/com/nawips/prod/rap.${ymd}/rap32_${ymd}${cyc}f0${fhr}
+fmdl2=/ptmpp1/Geoffrey.Manikin/com/nawips/para/rap.${ymd}/rap32_${ymd}${cyc}f0${fhr}
+echo $fmdl
+echo $fmdl2
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl
+ GDATTIM  = f$fhr
+ GLEVEL   = 500 
+ GVCORD   = pres 
+ GDPFUN   = avor(wnd) 
+ CINT     = 2/10/46 
+ LINE     = 0 
+ MAP      = 1
+ WIND     = 0 
+ TITLE    = 0 
+ DEVICE   = GIF|compare500f_${cyc}f${counter}.gif|900;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/50.;-107.;50./2;2;1;1
+ GAREA    = grid
+ CLEAR    = y
+ PANEL    = 0.;.51;1.;1.
+ TEXT     = 1.0/1/1
+ SCALE    = 5
+ LATLON   = 0
+ HILO     = 2/x#;/14-46;/5//yes
+ HLSYM    = 1//21;//HW
+ CLRBAR   = 0
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 16;20;24;28;32;36
+ FLINE    = 0;23;21;5;19;17;16
+ TYPE     = f/c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDPFUN   = quo(hght,10)
+ CINT     = 6
+ LINE     = 4/1/3/3
+ TITLE    = 0
+ CLEAR    = n
+ SCALE    = 0
+ HILO     = 0
+ HLSYM    = 2;2//2/4/SW
+ TEXT     = 1.4/11/2
+ FINT     = 0
+ FLINE    = 0
+ TYPE     = c
+r
+
+
+ TITLE    = 1/1/ ${fhr}-HR RAP FCST 500 HT/VORT
+ LINE     = 0
+ TEXT     = 1.2/11/2
+r
+
+ TITLE    = 7/-1/ FCST MADE ${cyc}Z  ${month}/$day
+ TEXT     = 1.1/11/1/SW
+r
+
+ TITLE    = 1/1/ ${fhr}-HR RAPX  FCST 500 HT/VORT
+ TEXT     = 1.2/11/2
+ PANEL    = 0;0;1;.49
+ GAREA    = grid 
+ CINT     = -2000/-2000/-2000
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhr
+ GLEVEL   = 500
+ GVCORD   = pres
+ GDPFUN   = avor(wnd)
+ CINT     = 2/10/46
+ LINE     = 0
+ MAP      = 1
+ TITLE    = 0
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/50.;-107.;50./2;2;1;1
+ TEXT     = 1.0/1/1
+ SCALE    = 5
+ LATLON   = 0
+ HILO     = 2/x#;/14-46;/5//yes
+ HLSYM    = 1//21;//HW
+ CLRBAR   = 0
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 16;20;24;28;32;36
+ FLINE    = 0;23;21;5;19;17;16
+ TYPE     = f/c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDPFUN   = quo(hght,10)
+ CINT     = 6
+ LINE     = 4/1/3/3
+ TITLE    = 0
+ SCALE    = 0
+ HILO     = 0
+ HLSYM    = 2;2//2/4/SW
+ FINT     = 0
+ FLINE    = 0
+ TEXT     = 1.4/11/2
+ TYPE     = c
+r
+
+exit
+EOF
+
+counter=`expr $counter + 1`
+gpend
+done
+
+mv *gif ../../ftphold/.
+echo abouttoexit500f
+exit

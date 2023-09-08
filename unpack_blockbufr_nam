@@ -1,0 +1,25 @@
+#!/bin/sh
+echo 'into'
+. /nwprod/gempak/.gempak
+
+stations="725180 725280 725200 724030 725150 725140 725115"
+for stn in $stations; do
+ymdh=2016061112
+
+/nwprod/ush/cwordsh unblk bufr.${stn}.${ymdh} bufr.${stn}.${ymdh}_unblk
+/nwprod/ush/cwordsh block bufr.${stn}.${ymdh}_unblk bufr.${stn}.${ymdh}_blk
+
+       namsnd << EOF
+SNBUFR   = bufr.${stn}.${ymdh}_blk
+SNOUTF   = nam_conusnest_${stn}_${ymdh}.snd
+SFOUTF   = nam_conusnest_${stn}_${ymdh}.sfc
+SNPRMF   = snnam.prm
+SFPRMF   = sfnam.prm
+TIMSTN   = 85/1
+r
+
+ex
+EOF
+done
+gpend
+exit

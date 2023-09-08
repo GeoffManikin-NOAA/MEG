@@ -1,0 +1,137 @@
+#!/bin/ksh
+
+set -x
+
+# @ step_name = nagrib
+# @ output = /nfsuser/g01/wx20mg/gempak/nagrib_preciponly/nagrib215.out
+# @ error = /nfsuser/g01/wx20mg/gempak/nagrib_preciponly/nagrib215.out
+# @ class = dev
+# @ queue
+
+. /nwprod/gempak/.gempak
+
+export cyc=$1
+export PS4='PRDGEN${fhr}_T$SECONDS + '
+export XLFRTEOPTS="unit_vars=yes"
+
+
+da00=`cut -c 7-14 /com/date/t${cyc}z`
+cyc=`cut -c 15-16 /com/date/t${cyc}z`
+
+#da00=20040223
+#cyc=09
+
+echo $da00
+echo $cyc
+
+if [ -s /nfsuser/g01/wx20mg/gempak/nagrib_preciponly/dummy.grd ]
+then
+ exit
+fi
+
+cd /nfsuser/g01/wx20mg/gempak/nagrib_preciponly/
+
+models="ras sas"
+for model in $models
+do
+ 
+fhrs="00 03 06 09 12 15 18 21 24 27 30 33 36 39 42 45 48 51 54 57 60 63"
+
+for hh in $fhrs
+do
+
+nagrib << EOF
+ GBFILE   = /emc2/wx20jd/RSM/dataout/ens.${da00}${cyc}/${model}_pgrb212.ctl.f${hh}
+ INDXFL   =  
+ GDOUTF   = dummy.grd 
+ PROJ     = MER
+ GRDAREA  =  
+ KXKY     = 10;10
+ MAXGRD   = 3000 
+ CPYFIL   = gds 
+ GAREA    = grid 
+ OUTPUT   = T
+ GBTBLS   =  
+ GBDIAG   =  
+
+r
+exit
+EOF
+
+done
+
+gpend
+chmod 777 dum*
+mv dummy.grd /nfsuser/g01/emcsrc/wx20mg/sref_graphics/rsm${model}ctl_${da00}${cyc} 
+done
+
+model="sas"
+perts="p1 n1"
+
+for run in $perts
+do
+
+fhrs="00 03 06 09 12 15 18 21 24 27 30 33 36 39 42 45 48 51 54 57 60 63"
+
+for hh in $fhrs
+do
+
+nagrib << EOF
+ GBFILE   = /emc2/wx20jd/RSM/dataout/ens.${da00}${cyc}/${model}_pgrb212.$run.f${hh}
+ INDXFL   =
+ GDOUTF   = dummy.grd
+ PROJ     = MER
+ GRDAREA  =
+ KXKY     = 10;10
+ MAXGRD   = 3000
+ CPYFIL   = gds
+ GAREA    = grid
+ OUTPUT   = T
+ GBTBLS   =
+ GBDIAG   =
+
+r
+exit
+EOF
+
+done
+gpend
+chmod 777 dum*
+mv dummy.grd /nfsuser/g01/emcsrc/wx20mg/sref_graphics/rsm${model}${run}_${da00}${cyc}
+done
+
+model="ras"
+perts="p2 n2"
+
+for run in $perts
+do
+
+fhrs="00 03 06 09 12 15 18 21 24 27 30 33 36 39 42 45 48 51 54 57 60 63"
+
+for hh in $fhrs
+do
+
+nagrib << EOF
+ GBFILE   = /emc2/wx20jd/RSM/dataout/ens.${da00}${cyc}/${model}_pgrb212.$run.f${hh}
+ INDXFL   =
+ GDOUTF   = dummy.grd
+ PROJ     = MER
+ GRDAREA  =
+ KXKY     = 10;10
+ MAXGRD   = 3000
+ CPYFIL   = gds
+ GAREA    = grid
+ OUTPUT   = T
+ GBTBLS   =
+ GBDIAG   =
+
+r
+exit
+EOF
+
+done
+gpend
+chmod 777 dum*
+mv dummy.grd /nfsuser/g01/emcsrc/wx20mg/sref_graphics/rsm${model}${run}_${da00}${cyc}
+done
+exit

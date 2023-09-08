@@ -1,0 +1,59 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+ymdh=2015070700
+ymd=`echo $ymdh | cut -c1-8`
+month=`echo $ymdh | cut -c5-6`
+day=`echo $ymdh | cut -c7-8`
+cyc=`echo $ymdh | cut -c9-10`
+dayoweek=hold4
+
+mkdir /stmpp1/Geoffrey.Manikin/gempak.rap13/
+cd /stmpp1/Geoffrey.Manikin/gempak.rap13/
+cp /meso/save/Geoffrey.Manikin/gempak.rap13/coltbl.xwp .
+
+#fmdl=/com/nawips/prod/rap.${ymd}/rap13_${ymd}${cyc}f000
+fmdl=/ptmpp2/Geoffrey.Manikin/hold2/rap13_${ymd}${cyc}f000
+echo $fmdl
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl
+ GDATTIM  = f00
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = cape 
+ CINT     = 100;500;1000;1500;2000;2500;3000;3500;4000;4500;5000;5500 
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 0
+ DEVICE   = GIF|rapsfccapeanl_${ymdh}f00.gif|900;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-95.;25./2;2;1;1
+ GAREA    = ks 
+ CLEAR    = y
+ PANEL    = 0
+ TEXT     = 1.2/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/H/UL/.1;0.95/.8;.03/-2
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 500;1000;1500;2000;2500;3000;3500;4000;4500;5000;5500 
+ FLINE    = 0;25;21;22;23;5;10;17;16;2;15;32 
+ TYPE     = f
+ LUTFIL   = 
+ STNPLT   =
+r
+
+ex
+EOF
+
+gpend
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

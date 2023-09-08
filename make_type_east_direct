@@ -1,0 +1,145 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+da00=`cut -c 7-14 /com/date/t${cyc}z`
+hr00=`cut -c 15-16 /com/date/t${cyc}z`
+month=`cut -c 11-12 /com/date/t${cyc}z`
+day=`cut -c 13-14 /com/date/t${cyc}z`
+
+#da00=`cut -c 7-14 t${cyc}z`
+#hr00=`cut -c 15-16 t${cyc}z`
+
+da00=20110118
+hr00=00
+
+mkdir /stmpp1/wx20mg/gempak.rap13/direct
+rm /stmpp1/wx20mg/gempak.rap13/direct/*
+cd /stmpp1/wx20mg/gempak.rap13/direct
+cp /meso/save/wx20mg/casework/coltbl.xwp .
+
+times="00 01 02 03 06 09 12 15 18"
+
+counter=0
+for fhr in $times; do
+
+#fmdl1=/meso/save/wx20mg/gempak/nagribx/ruc2_${da00}${cyc}
+#fmdl2=/meso/save/wx20mg/gempak/nagribx/rap13x_${da00}${cyc}
+fmdl1=/ptmpp1/wx20mg/rap/ruc2_${da00}${cyc}
+fmdl2=/ptmpp1/wx20mg/rap/rap13x_${da00}${cyc}
+echo $fmdl1
+echo $fmdl2
+
+    gdplot2 << EOF
+
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = wxtr 
+ CINT     = .11;10 
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 0
+ DEVICE   = GIF|compareeasttype_${cyc}f${counter}.gif|900;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-75.;25./2;2;1;1
+ GAREA    = 34.;-90.;52.;-60.
+ CLEAR    = y
+ PANEL    = 0.;.51;1.;1.
+ TEXT     = 1.2/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 0 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = .11;10 
+ FLINE    = 0;3 
+ TYPE     = f/c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDPFUN   = wxts
+ CLEAR    = n
+ FLINE    = 0;26
+ r
+
+ GDPFUN   = wxtp
+ FLINE    = 0;29
+ r
+
+ GDPFUN   = wxtz
+ FLINE    = 0;2
+ r
+
+
+ TITLE    = 1/1/ ${fhr}-HR RUC2 PRECIPITATION TYPE
+ TEXT     = 1.2/11/2
+ CLEAR    = n
+ GDPFUN     = blurk
+ CINT     = -2000/-2000/-2000
+ CLRBAR   = 0
+r
+
+ TITLE    = 17/-1/ FCST MADE ${cyc}Z  ${month}/$day  R(green) S(blue) ZR(red) IP(purple
+ TEXT     = 1.1/11/1/SW
+r
+
+ TITLE    = 1/1/ ${fhr}-HR RAPX  PRECIPITATION TYPE 
+ GDFILE   = $fmdl2 
+ PANEL    = 0;0;1;.49
+r
+
+ GDFILE   = $fmdl2 
+ GDPFUN   = wxtr 
+ TITLE    = 0
+ CINT     = .11;10
+ FLINE    = 0;3
+ TITLE    = 0
+r
+
+ GDPFUN   = wxts
+ CLEAR    = n
+ FLINE    = 0;26
+ r
+
+ GDPFUN   = wxtp
+ FLINE    = 0;29
+ r
+
+ GDPFUN   = wxtz
+ FLINE    = 0;2
+ r
+
+ex
+EOF
+
+counter=`expr $counter + 1`
+gpend
+done
+
+. /u/wx20mg/.Utils
+export w1=wd20mg
+export w2=$rzdm
+export w3=emcmmb
+export w4=$web
+
+ftp -n -v << EOF > /meso/save/wx20mg/gempak.rap13/rzftp.out
+open rzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/rap/cases/20110117
+prompt
+mput *.gif
+bye
+EOF
+
+exit

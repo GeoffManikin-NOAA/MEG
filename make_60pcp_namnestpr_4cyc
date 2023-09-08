@@ -1,0 +1,100 @@
+#!/bin/ksh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/namprpcp
+rm /stmpp1/Geoffrey.Manikin/meg/namprpcp/*
+cd /stmpp1/Geoffrey.Manikin/meg/namprpcp
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+
+ymdh1=2017091918
+ymd1=`echo $ymdh1 | cut -c1-8`
+cyc1=`echo $ymdh1 | cut -c9-10`
+dayoweek=hold3
+
+ymdh2="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh1} -6 -1`"
+ymdh3="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh1} -12 -1`"
+ymdh4="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh1} -18 -1`"
+ymd2=`echo $ymdh2 | cut -c1-8`
+ymd3=`echo $ymdh3 | cut -c1-8`
+ymd4=`echo $ymdh4 | cut -c1-8`
+cyc2=`echo $ymdh2 | cut -c9-10`
+cyc3=`echo $ymdh3 | cut -c9-10`
+cyc4=`echo $ymdh4 | cut -c9-10`
+
+DAPATH=/meso/save/Geoffrey.Manikin/meg/maria
+#DAPATH=/ptmpd2/Geoffrey.Manikin/com2/nawips/prod
+fmdl1=${DAPATH}/namnestpcp_${ymdh1}
+fmdl2=${DAPATH}/namnestpcp_${ymdh2}
+fmdl3=${DAPATH}/namnestpcp_${ymdh3}
+fmdl4=${DAPATH}/namnestpcp_${ymdh4}
+
+#garea="24.;-102.;34.;-88."
+garea="27.;-98.;34.;-88."
+garea="17.8;-67.;18.8;-65.4"
+proj=""
+#proj="lcc/25.;-95.;25./2;2;1;1"
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f60 
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = p60i
+ CINT     = 5 
+ LINE     = 0 
+ DEVICE   = GIF|${ymd1}namnestfullpcp2.gif | 800;850
+ PROJ     = $proj 
+ GAREA    = $garea 
+ MAP      = 1/1/2 + 1/1/1
+# \$MAPFIL = 0
+ \$MAPFIL = states + county
+ TITLE    = 1// ${ymd1} ${cyc1}z NAM NEST   60-HR TOT PCP
+ CLEAR    = y
+ SCALE    = 0
+ PANEL    = ul 
+ HILO     = 0
+ HLSYM    = 0 
+ CLRBAR   = 0
+ TEXT     = 0.9/11/2
+ FINT     = 0.1;.5;1;2;4;6;8;10;15;20;25;30;35;40;50;60
+ FINT     = 0.1;.5;1;2;4;6;8;10;12.5;15.;20;25.;30;35;40;45;50
+ FLINE    = 0;21;22;23;4;25;27;28;29;30;2;15;16;17;10;5;20;1
+ TYPE     = f 
+r
+
+# TITLE    = 15/1/     CYCLES RUN ON   $ymd1
+ CLEAR    = n
+r
+
+ GDFILE   = $fmdl2
+ PANEL    = ur 
+ CLEAR    = n
+ TITLE    = 1//  ${ymd2} ${cyc2}z NAM NEST   60-HR TOT PCP 
+r
+
+ GDFILE   = $fmdl3
+ PANEL    = ll 
+ TITLE    = 1//  ${ymd3} ${cyc3}z NAM NEST   60-HR TOT PCP 
+ CLRBAR   = 1/H/UL/.02;0.97/1.9;.03/1
+r
+
+ GDFILE   = $fmdl4
+ PANEL    = lr
+ TITLE    = 1//  ${ymd4} ${cyc4}z NAM NEST   60-HR TOT PCP 
+ CLRBAR   = 0
+r
+
+ex
+EOF
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

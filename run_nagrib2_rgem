@@ -1,0 +1,42 @@
+#!/bin/ksh
+
+set -x
+
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/nagrib2
+rm /gpfs/dell1/stmp/Geoffrey.Manikin/nagrib2/*
+cd /gpfs/dell1/stmp/Geoffrey.Manikin/nagrib2
+cp /gpfs/dell2/emc/verification/save/Geoffrey.Manikin/gempak/nagrib2/*tbl .
+
+ymdh=2022011912
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+DAPATH=/gpfs/dell1/nco/ops/dcom/prod/${ymd}/wgrbbul/cmc_rdps_10km
+export DAPATH
+
+fhrs="00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15"
+fhrs="12 15 18 21 22 23 24 25 26 27"
+for fhr in $fhrs
+do
+
+   nagrib2 << EOF
+GBFILE  = ${DAPATH}/CMC_reg_ps10km_${ymdh}_P0${fhr}_NCEP.grib2 
+INDXFL  =
+GDOUTF  = rgem_${ymdh}f0${fhr}
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+exit
+EOF
+done
+
+mv nam* /gpfs/dell2/emc/verification/noscrub/Geoffrey.Manikin/jan22snowbust/. 
+exit

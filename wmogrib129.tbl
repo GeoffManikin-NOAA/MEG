@@ -1,0 +1,14 @@
+!
+!ID# NAME                             UNITS                GNAM         SCALE   MISSING
+!
+130  Chance of Wetting Rain           %                    C--W             0  -9999.00
+141  Pressure of Lifted Parcel        Pa                   PLPL            -2  -9999.00
+142  Height of Lifted Parcel         gpm                   HLFT             0  -9999.00
+164  Int column part matter (fine)   log10                 ICPM             0  -9999.00
+210  Observed Radar Reflectivity     dbZ                   REFO             0  -9999.00
+211  Derived Radar Reflectivity      dbZ                   REFD             0  -9999.00
+212  Composite Reflectivity          dbZ                   REFC             0  -9999.00
+213  Sim Bright T GOES12, Ch 2        K                    SB122            0  -9999.00
+214  Sim Bright T GOES12, Ch 3        K                    SB123            0  -9999.00
+215  Sim Bright T GOES12, Ch 4        K                    SB124            0  -9999.00
+216  Sim Bright T GOES12, Ch 6        K                    SB126            0  -9999.00

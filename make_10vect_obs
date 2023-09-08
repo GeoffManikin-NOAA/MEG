@@ -1,0 +1,104 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+ymdh=2012110718
+dayoweek=Wed
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+mkdir /stmp/wx20mg/meg
+mkdir /stmp/wx20mg/meg/10vobs
+rm /stmp/wx20mg/meg/10vobs/*
+cd /stmp/wx20mg/meg/10vobs
+cp /meso/save/wx20mg/casework/coltbl.xwp .
+
+garea="39.6;-77;42.2;-71.8"
+proj="lcc/25.;-75.;25./2;2;1;1"
+
+     sfmap << EOF
+ AREA     = $garea
+ GAREA    = $garea
+ SATFIL   =
+ RADFIL   =
+ SFPARM   = arrk:0.8:2 
+ DATTIM   = ${day}/${cyc}
+ SFFILE   = /ptmp/hpcops/obs/${da00}.hrly 
+ COLORS   = 1 
+ MAP      = 1
+ LATLON   = 0
+ TITLE    = 1/-1/~   SFC WIND OBSERVATIONS 
+ CLEAR    = no 
+ PANEL    = 0 
+ DEVICE   = GIF|${ymdh}_10vobs.gif|800;800 
+ PROJ     = $proj 
+ FILTER   = none 
+ TEXT     = 0.6/11/1/SW
+ LUTFIL   =
+ STNPLT   =
+ CLRBAR   =
+r
+
+ SFFILE   = /ptmp/hpcops/obs/${da00}${cyc}.ship
+ SFPARM   = arrk:0.8:2
+ TEXT     = 0.6/11/1/SW
+r
+
+ex
+EOF
+
+count="1 2 3 4 6"
+for counter in $count; do
+             
+     sfmap << EOF
+ AREA     = $garea
+ GAREA    = $garea
+ SATFIL   =
+ RADFIL   =
+ SFPARM   = arrk:0.8:2 
+ DATTIM   = last 
+ SFFILE   = /ptmp/wx20mg/mesonet2/msonet${cyc}.gem.00${counter}
+ COLORS   = 1
+ MAP      = 1
+ LATLON   = 0
+ TITLE    = 0
+ CLEAR    = no
+ PANEL    = 0
+ PROJ     = $proj
+ FILTER   = none
+ TEXT     = 0.6/11/1/SW
+ LUTFIL   =
+ STNPLT   =
+ CLRBAR   =
+r
+
+ex
+EOF
+done
+
+gpend
+
+. /u/wx20mg/.Utils
+export w1=wd20mg
+export w2=$rzdm
+
+ftp -n -v << EOF > /meso/save/wx20mg/casework/rzftp.out
+open emcrzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/today
+mput *gif
+bye
+EOF
+
+ftp -n -v << EOF > /meso/save/wx20mg/casework/rzftp.out
+open emcrzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/${dayoweek}
+mput *gif
+bye
+EOF
+
+exit

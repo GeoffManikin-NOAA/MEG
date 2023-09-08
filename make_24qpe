@@ -1,0 +1,59 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /stmp/Geoffrey.Manikin/meg
+mkdir /stmp/Geoffrey.Manikin/meg/qpe
+rm /stmp/Geoffrey.Manikin/meg/qpe/*
+cd /stmp/Geoffrey.Manikin/meg/qpe
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=2013091112
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+dayoweek=Fri
+
+#fmdl1=/meso/save/Geoffrey.Manikin/meg/qpe_${ymdh}
+fmdl1=/ptmp/Geoffrey.Manikin/pcp/qpe2_${ymdh}.grd
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f24
+ GLEVEL   = 0
+ GVCORD   = none
+ GDPFUN   = p24i
+ CINT     = 4
+ LINE     = 1
+ MAP      = 1/1/2;1
+ \$MAPFIL = county
+ WIND     = 0
+ TITLE    = 1/-1/~   QPE 24-HR TOTAL PCP
+ DEVICE   = GIF|${ymdh}pcp24qpe2.gif|750;900
+ SATFIL   =
+ RADFIL   =
+ PROJ    = lcc/25;-105;25;/1;1;1;1
+ GAREA    = 33.9;-111.4;42.9;-98.
+ CLEAR    = y
+ PANEL    = 0 
+ TEXT     = 0.8/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/H/UL/.1;0.95/0.8;.03/1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = .01;.1;.25;.5;.75;1;1.5;2;3;4;5
+ FLINE    = 0;21;22;23;25;27;28;30;2;15;10;5
+# FLINE    = 0;21;22;23;4;25;27;28;29;30;15;2
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ex
+EOF
+gpend
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/cases/coflood/$dayoweek/.
+exit

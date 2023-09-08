@@ -1,0 +1,20 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+length=$2
+
+da00=`cut -c 7-14 /com/date/t${cyc}z`
+hr00=`cut -c 15-16 /com/date/t${cyc}z`
+month=`cut -c 11-12 /com/date/t${cyc}z`
+day=`cut -c 13-14 /com/date/t${cyc}z`
+
+mkdir /stmpp1/wx20mg/gempak.ruc20/${cyc}
+cd /stmpp1/wx20mg/gempak.ruc20/${cyc}
+
+hostname
+
+echo abouttoexit${cyc}
+exit

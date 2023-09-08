@@ -1,0 +1,67 @@
+#!/bin/ksh
+echo 'into'
+
+ymdh=2022070118
+ymd=`echo $ymdh | cut -c1-8`
+
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/meg/snd
+rm /lfs/h2/emc/stmp/geoffrey.manikin/meg/snd/*
+cd /lfs/h2/emc/stmp/geoffrey.manikin/meg/snd
+cp /lfs/h2/emc/vpppg/save/geoffrey.manikin/meg/coltbl.xwp .
+
+times="240"
+station="34.02;-99.1"
+station="42.8;-97.38"
+
+for fhr in $times; do
+validtime="`/lfs/h2/emc/vpppg/save/geoffrey.manikin/meg/advtime ${ymd}${cyc} $fhr -1 x`"
+dattim=`echo $validtime | cut -c5-11`
+
+typeset -Z3 fhr
+#fmdl1=/gpfs/hps/nco/ops/com/nawips/prod/gfs.${ymd}/gfs_0p25_${ymdh}f${fhr}
+fmdl1=/lfs/h2/emc/ptmp/geoffrey.manikin/gfs/gfs_0p25_${ymdh}f${fhr}
+echo $fmdl1
+
+    gdprof << EOF
+ GPOINT   = $station
+ GDATTIM  = f${fhr}
+ GVCORD   = pres 
+ GFUNC    = tmpc 
+ GVECT    = none 
+ GDFILE   = $fmdl1
+ LINE     = 2/1/6
+ MARKER   = 0
+ BORDER   = 1
+ PTYPE    = skewt 
+ SCALE    = 0
+ YAXIS    = 1050/200/50/1;1;1
+ XAXIS    = -15/55/5/;1
+ WIND     = bk1/0.7/2/122
+ REFVEC   =  
+ WINPOS   = 0
+ FILTER   = YES
+ TITLE    = 1/-1/~   GFS 
+ PANEL    = 0
+ CLEAR    = y
+ TEXT     = 1.0/21/1/SW
+ DEVICE   = GIF|gfsgridsnd_${ymdh}f0${fhr}.gif | 750;900
+ OUTPUT   = t
+ THTALN   = 8/3/1/250/550/5
+ THTELN   = 23/1/1/250/550/5
+ MIXRLN   = 17/10/2/0/45./1.
+r
+
+ CLEAR    = n
+ GFUNC    = dwpc
+ LINE     = 4/1/6
+r
+
+ex
+EOF
+
+gpend
+done
+
+gpend
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test8/.
+exit

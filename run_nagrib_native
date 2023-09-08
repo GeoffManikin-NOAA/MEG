@@ -1,0 +1,57 @@
+#!/bin/ksh
+# @ step_name = nagrib
+# @ output = /meso/save/wx20mg/gempak/nagrib/nagrib.out
+# @ error = /meso/save/wx20mg/gempak/nagrib/nagrib.out
+# @ class = dev
+# @ queue
+
+. /nwprod/gempak/.gempak
+
+export cyc=$1
+export PS4='PRDGEN${fhr}_T$SECONDS + '
+export XLFRTEOPTS="unit_vars=yes"
+
+set -x
+ymd=`cut -c 7-14 /com/date/t${cyc}z`
+hr=`cut -c 15-16 /com/date/t${cyc}z`
+
+#ymd=20010611
+#hr=12
+
+mkdir /ptmp/wx20mg/native
+rm /ptmp/wx20mg/native/*
+cd /ptmp/wx20mg/native
+rm etaret*
+
+fhrs="00 06 12 18 24 30 36 42 48 54 60"
+
+for hh in $fhrs
+do
+
+   /meso/noscrub/wx20py/bgrid_gempak/nagrib/nagrib_nc << EOF > /dev/null
+ GBFILE   = /com/nam/para/nam.${ymd}/AWIP3D${hh}.tm00
+ INDXFL   =
+ GDOUTF   = dummy.grd
+ PROJ     = MER
+ GRDAREA  =
+ KXKY     = 10;10
+ MAXGRD   = 4000
+ CPYFIL   = gds 
+ GAREA    = grid
+ OUTPUT   = T
+ GBTBLS   =
+ GBDIAG   =
+
+r
+exit
+EOF
+
+done
+
+gpend
+chmod 777 dum*
+mv dummy.grd etareturn_${ymd}${hr}.grd 
+cp /com/date/t${cyc}z .
+
+chmod 777 etaret*
+exit

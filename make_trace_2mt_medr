@@ -1,0 +1,56 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc1=$1
+stnm=723340
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/meteograms
+rm /stmpp1/Geoffrey.Manikin/meg/meteograms/*
+cd /stmpp1/Geoffrey.Manikin/meg/meteograms
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh1=`cut -c 7-16 /com/date/t${cyc1}z`
+#ymdh1=2012090912
+ymd1=`echo $ymdh1 | cut -c1-8`
+day1=`echo $ymdh1 | cut -c7-8`
+
+ymdhend="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh1} 360 -1`"
+dayend=`echo $ymdhend | cut -c7-8`
+cycend=`echo $ymdhend | cut -c9-10`
+
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+dayoweek=hold2
+
+fmdl1=/com/nawips/prod/gfs.${ymd1}/gfs_${ymdh1}.sfc
+
+sfgram << EOF > /dev/null
+SFFILE	= $fmdl1 
+DATTIM	= ${day1}/${cyc1}-${dayend}/${cycend} 
+STATION = @$stnm
+TRACE1  = t2ms:1:4/2/-30;20;5
+TRACE2  = sktc:1:4/23/-30;20;5
+NTRACE	= 2
+TAXIS	= ${day1}/${cyc1}-${dayend}/${cycend}
+BORDER	= 1//2
+MARKER	= 0
+TITLE   = 1/+3/ $stnm   2-M TEMPERATURE  GFS-red 
+CLEAR	= yes
+DEVICE  = GIF|meteogram.gif | 900;800
+PANEL	= 0
+TEXT	= medium/22/2////HW 
+r
+
+ex
+EOF
+gpend
+
+CONV=/usrx/local/ImageMagick/6.8.3-3/bin
+$CONV/convert -crop 0x0 meteogram.gif ${ymdh1}_${stnm}.meteogram.gif
+scp ${ymdh1}*gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/
+exit

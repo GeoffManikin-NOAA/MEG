@@ -1,0 +1,107 @@
+#!/bin/ksh
+
+set -x
+
+# @ step_name = nagrib
+# @ output = /nfsuser/g01/wx20mg/gempak/nagrib.out
+# @ error = /nfsuser/g01/wx20mg/gempak/nagrib.out
+# @ class = dev
+# @ queue
+
+. /nwprod/gempak/.gempak
+
+export cyc=$1
+export PS4='PRDGEN${fhr}_T$SECONDS + '
+export XLFRTEOPTS="unit_vars=yes"
+
+
+da00=`cut -c 7-14 /com/date/t${cyc}z`
+hr00=`cut -c 15-16 /com/date/t${cyc}z`
+
+#da00=`cut -c 7-14 t${cyc}z`
+#hr00=`cut -c 15-16 t${cyc}z`
+
+#da00=20010225
+#hr00=12
+
+echo $da00
+echo $hr00
+echo $cyc
+
+if [ -s /nfsuser/g01/wx20mg/gempak/ruc2_${da00}${hr00} ]
+then
+ exit
+fi
+
+if [ -s /nfsuser/g01/wx20mg/gempak/dummy.grd ]
+then
+ exit
+fi
+
+cd /nfsuser/g01/wx20mg/gempak/nagrib
+rm ruc2_*
+rm t*z 
+
+nagrib << EOF
+ GBFILE   = /com/ruc/prod/ruc2a.${da00}/ruc2.t${cyc}z.pgrbanl
+ INDXFL   =
+ GDOUTF   = dummy.grd
+ PROJ     = MER
+ GRDAREA  =
+ KXKY     = 10;10
+ MAXGRD   = 3000
+ CPYFIL   = gds 
+ GAREA    = grid
+ OUTPUT   = T
+ GBTBLS   =
+ GBDIAG   =
+
+r
+exit
+EOF
+
+fhrs="01 02 03"
+
+for hh in $fhrs
+do
+
+nagrib << EOF
+ GBFILE   = /com/ruc/prod/ruc2a.${da00}/ruc2.t${cyc}z.pgrbf${hh} 
+ INDXFL   =  
+ GDOUTF   = dummy.grd 
+ PROJ     = MER
+ GRDAREA  =  
+ KXKY     = 10;10
+ MAXGRD   = 3000 
+ CPYFIL   = gds 
+ GAREA    = grid 
+ OUTPUT   = T
+ GBTBLS   =  
+ GBDIAG   =  
+
+r
+exit
+EOF
+
+done
+
+gpend
+chmod 777 dum*
+mv dummy.grd ruc2_${da00}${hr00} 
+cp /com/date/t${cyc}z .
+
+chmod 777 ruc2_*
+chmod 777 t*z
+echo 'about to ftp'
+
+ftp -n hp60 << EOF
+user wd20mg dimmitt
+binary
+cd /export-1/sgi100/data/wd2001/model/ruc 
+pwd
+put ruc2_* 
+put t${cyc}z
+bye 
+EOF
+
+exit

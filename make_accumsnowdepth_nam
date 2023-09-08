@@ -1,0 +1,63 @@
+#!/bin/sh
+echo 'into'
+
+ymdh=2020090800
+ymd=`echo $ymdh | cut -c1-8`
+month=`echo $ymdh | cut -c5-6`
+day=`echo $ymdh | cut -c7-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/sndm
+cd /gpfs/dell1/stmp/Geoffrey.Manikin/sndm
+cp /gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/coltbl.xwp .
+
+times="00 01 02 03 06 09 12 15 18"
+times="24 36 48 60 84"
+for fhr in $times; do
+
+fmdl1=/gpfs/dell1/ptmp/Geoffrey.Manikin/data/nam32_${ymd}${cyc}f000
+fmdl2=/gpfs/dell1/ptmp/Geoffrey.Manikin/data/nam32_${ymd}${cyc}f0${fhr}
+echo $fmdl1
+echo $fmdl2
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1 + $fmdl2
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = mul(sub(sndm+2,sndm^${ymd1}/${cyc1}f000),39.37)
+ CINT     = 2 
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1//~  NAM ACCUM SNOW DEPTH
+ DEVICE   = GIF|comparesndm_${ymdh}f${fhr}.gif|900;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-107.;25./2;2;1;1
+ GAREA    = 35.8;-116.;46.;-98. 
+ CLEAR    = y
+ PANEL    = 0 
+ TEXT     = 1.2/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/H/UL/.1;0.95/.85;.03/-1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 0.1;1;5;10;15;20;25;50;75;100;125
+ FINT     = 0.1;1;2;3;4;5;7.5;10;12.5;15;20
+ FLINE    = 0;28;26;4;21;23;20;5;10;17;2;15;32
+ TYPE     = f/c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ex
+EOF
+
+gpend
+done
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test7/.
+exit

@@ -1,0 +1,101 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+ymdh=2015100818
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+stn=dca
+stnm=724050
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/snd
+rm /stmpp1/Geoffrey.Manikin/meg/snd/*
+cd /stmpp1/Geoffrey.Manikin/meg/snd
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+#ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+#ymd=`cut -c 7-14 /com/date/t${cyc}z`
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+dayoweek=hold4
+
+times="26"
+for fhr in $times; do
+
+fmdl1=/com/nawips/prod/nam.${ymd}/nam_${ymdh}f0${fhr}
+fmdl2=/ptmpd2/Geoffrey.Manikin/com2/nawips/prod/nam.${ymd}/nam_conusnest_${ymdh}f0${fhr}
+#fmdl2=/com/nawips/prod/nam.${ymd}/nam_conusnest_${ymdh}f0${fhr}
+fmdl3=/ptmpd2/Geoffrey.Manikin/com2/nawips/prod/nam.${ymd}/namfirewxnest_${ymdh}f0${fhr}
+echo $fmdl3
+#fmdl3=/com/nawips/prod/nam.${ymd}/nam_firewxnest_${ymdh}f0${fhr}
+
+validtime="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} $fhr -1 x`"
+echo validtime = $validtime
+dattim=`echo $validtime | cut -c5-11`
+echo dattim = $dattim
+
+    gdprof << EOF
+ GPOINT   = $stn 
+ GDATTIM  = LAST
+ GVCORD   = pres
+ GFUNC    = tmpc 
+ GVECT    = WND
+ GDFILE   = $fmdl1 
+ LINE     = 2/1/7 
+ MARKER   = 0
+ BORDER   = 1//2
+ PTYPE    = skewt
+ SCALE    = 0
+ YAXIS    = 1050/400/50/1;1;1
+ XAXIS    = -10/35/10/;1
+ WIND     = 0 
+ REFVEC   =
+ WINPOS   = 1
+ FILTER   = YES
+ TITLE    = 1// parent-red  4km-green  firewx-blue
+ PANEL    = 0
+ CLEAR    = YES
+ TEXT     = 1
+ DEVICE   = gif|gdprof.gif | 800;850
+ OUTPUT   = t
+ THTALN   = 8/3/1/250/500/5
+ THTELN   = 23/1/1/250/500/5
+ MIXRLN   = 17/10/2/0/40./1.
+r
+
+ GDFILE   = $fmdl2
+ CLEAR    = n
+ LINE     = 3/1/7
+ TITLE    = 0
+r
+
+ GDFILE   = $fmdl3
+ LINE     = 4/1/7
+r
+
+ GFUNC    = DWPC
+ LINE     = 4/2/7
+r
+
+ GDFILE   = $fmdl2
+ LINE     = 3/2/7
+r
+
+ GDFILE   = $fmdl1
+ LINE     = 2/2/7
+r
+
+ex
+EOF
+
+done
+gpend
+mv gdprof.gif firewxnestsnd_${ymdh}f0${fhr}.gif
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

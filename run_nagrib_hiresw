@@ -1,0 +1,78 @@
+#!/bin/ksh
+
+set -x
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/hiresw2
+rm /stmpp1/Geoffrey.Manikin/hiresw2/*
+cd /stmpp1/Geoffrey.Manikin/hiresw/2
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymdh=2017061500
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+#DAPATH=/com2/hiresw/prod/hiresw.${ymd}
+DAPATH=/gpfs/hps/nco/ops/com/hiresw/prod/hiresw.${ymd}
+#DAPATH=/ptmpp1/Geoffrey.Manikin/hold/
+OUT=/ptmpd2/Geoffrey.Manikin/com2/nawips/prod/hiresw.${ymd}
+
+export DAPATH
+. /nwprod/gempak/.gempak
+
+cp /meso/save/Geoffrey.Manikin/gempak/nagrib2/*tbl .
+fhrs="03 06 09 12 15 18 21 24 27 30 33 36 39 42 45 48"
+fhrs="09 12 15 18 21 24"
+fhrs="01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30"
+fhrs="01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18"
+fhrs="15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30"
+for fhr in $fhrs
+do
+
+   nagrib2 << EOF
+GBFILE  = ${DAPATH}/hiresw.t${cyc}z.nmmb_5km.f${fhr}.conus.grib2 
+INDXFL  =
+GDOUTF  = dummyhires1.grd 
+PROJ    =
+GRDAREA =
+KXKY    = 
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+ex
+EOF
+mv dummyhires1.grd $OUT/hiresw_nmmb_${ymdh}f0${fhr}
+done
+gpend
+
+for fhr in $fhrs
+do
+
+   nagrib2 << EOF
+GBFILE  = ${DAPATH}/hiresw.t${cyc}z.arw_5km.f${fhr}.conus.grib2
+INDXFL  =
+GDOUTF  = dummyhires2.grd
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+ex
+EOF
+mv dummyhires2.grd $OUT/hiresw_arw_${ymdh}f0${fhr}
+done
+gpend
+
+exit

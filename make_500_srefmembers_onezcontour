@@ -1,0 +1,193 @@
+#!/bin/ksh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/500srefmem
+rm /stmpp1/Geoffrey.Manikin/meg/500srefmem/*
+cd /stmpp1/Geoffrey.Manikin/meg/500srefmem
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`echo $ymdh | cut -c1-8`
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+
+ymdh=2015121415
+ymd=`echo $ymdh | cut -c1-8`
+dayoweek=hold4
+
+hours="15"
+for fhr in $hours; do
+                      
+fmdl1=/com2/nawips/prod/sref.${ymd}/sref132_${ymdh}_arw_ctl
+fmdl2=/com2/nawips/prod/sref.${ymd}/sref132_${ymdh}_arw_p1 
+fmdl3=/com2/nawips/prod/sref.${ymd}/sref132_${ymdh}_arw_p2 
+fmdl4=/com2/nawips/prod/sref.${ymd}/sref132_${ymdh}_arw_p3 
+fmdl5=/com2/nawips/prod/sref.${ymd}/sref132_${ymdh}_arw_p4 
+fmdl6=/com2/nawips/prod/sref.${ymd}/sref132_${ymdh}_arw_p5 
+fmdl7=/com2/nawips/prod/sref.${ymd}/sref132_${ymdh}_arw_p6
+fmdl8=/com2/nawips/prod/sref.${ymd}/sref132_${ymdh}_arw_n1
+fmdl9=/com2/nawips/prod/sref.${ymd}/sref132_${ymdh}_arw_n2
+fmdl10=/com2/nawips/prod/sref.${ymd}/sref132_${ymdh}_arw_n3
+fmdl11=/com2/nawips/prod/sref.${ymd}/sref132_${ymdh}_arw_n4
+fmdl12=/com2/nawips/prod/sref.${ymd}/sref132_${ymdh}_arw_n5
+fmdl13=/com2/nawips/prod/sref.${ymd}/sref132_${ymdh}_arw_n6
+fmdl14=/com2/nawips/prod/sref.${ymd}/sref132_${ymdh}_nmb_ctl
+fmdl15=/com2/nawips/prod/sref.${ymd}/sref132_${ymdh}_nmb_p1
+fmdl16=/com2/nawips/prod/sref.${ymd}/sref132_${ymdh}_nmb_p2
+fmdl17=/com2/nawips/prod/sref.${ymd}/sref132_${ymdh}_nmb_p3
+fmdl18=/com2/nawips/prod/sref.${ymd}/sref132_${ymdh}_nmb_p4
+fmdl19=/com2/nawips/prod/sref.${ymd}/sref132_${ymdh}_nmb_p5
+fmdl20=/com2/nawips/prod/sref.${ymd}/sref132_${ymdh}_nmb_p6
+fmdl21=/com2/nawips/prod/sref.${ymd}/sref132_${ymdh}_nmb_n1
+fmdl22=/com2/nawips/prod/sref.${ymd}/sref132_${ymdh}_nmb_n2
+fmdl23=/com2/nawips/prod/sref.${ymd}/sref132_${ymdh}_nmb_n3
+fmdl24=/com2/nawips/prod/sref.${ymd}/sref132_${ymdh}_nmb_n4
+fmdl25=/com2/nawips/prod/sref.${ymd}/sref132_${ymdh}_nmb_n5
+fmdl26=/com2/nawips/prod/sref.${ymd}/sref132_${ymdh}_nmb_n6
+
+fhr3=`expr $fhr - 3`
+typeset -Z3 fhr3
+validtime="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} 3 -1`"
+ymdh3=`echo $validtime | cut -c1-10`
+
+echo $ymdh3
+fmdl27=/com/nawips/prod/nam.${ymd}/nam32_${ymdh3}f${fhr3}
+fmdl28=/com/nawips/prod/gfs.${ymd}/gfs_0p25_${ymdh3}f${fhr3}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f${fhr} 
+ GLEVEL   = 500 
+ GVCORD   = pres 
+ GDPFUN   = quo(hght,10) 
+ CINT     = 1/558/558
+ LINE     = 2/1/3/0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1//  $mdl CTL 500 Z  $ymd ${cyc}z  F${fhr}
+ DEVICE   = GIF|sref${mdl}5001_${ymdh}f${fhr}.gif | 800;850
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-92;25;/1;1;1;1
+ GAREA   = 24.;-122.;56.;-74. 
+ CLEAR    = y
+ PANEL    = 0 
+ TEXT     = 0.7/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 0
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 0 
+ FLINE    = 0
+ TYPE     = c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ CLEAR    = n
+ GDFILE   = $fmdl2
+ LINE     = 2/2/3/0
+r
+
+ GDFILE   = $fmdl3
+r
+
+ GDFILE   = $fmdl4
+r
+
+ GDFILE   = $fmdl5
+r
+
+ GDFILE   = $fmdl6
+r
+
+ GDFILE   = $fmdl7
+r
+
+ GDFILE   = $fmdl8
+r
+
+ GDFILE   = $fmdl9
+r
+
+ GDFILE   = $fmdl10
+r
+
+ GDFILE   = $fmdl11
+r
+
+ GDFILE   = $fmdl12
+r
+
+ GDFILE   = $fmdl13
+r
+
+ GDFILE   = $fmdl14
+ LINE     = 25/1/3/0
+
+ GDFILE   = $fmdl15
+ LINE     = 25/2/3/0
+r
+
+ GDFILE   = $fmdl16
+r
+
+ GDFILE   = $fmdl17
+r
+
+ GDFILE   = $fmdl18
+r
+
+ GDFILE   = $fmdl19
+r
+
+ GDFILE   = $fmdl20
+r
+
+ GDFILE   = $fmdl21
+r
+
+ GDFILE   = $fmdl22
+r
+
+ GDFILE   = $fmdl23
+r
+
+ GDFILE   = $fmdl24
+r
+
+ GDFILE   = $fmdl25
+r
+
+ GDFILE   = $fmdl26
+r
+
+ GDFILE   = $fmdl27
+ GDATTIM  = last 
+ LINE     = 4/1/4/0
+r
+
+ GDFILE   = $fmdl28
+ LINE     = 15/1/3/0
+r
+
+
+ex
+EOF
+done
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

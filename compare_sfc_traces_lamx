@@ -1,0 +1,131 @@
+#!/bin/sh
+
+# The following inputs are needed:
+#    1 - The initial time in the form YYYYMMDDHH \
+#    2 - The forecast duration in hours entered as a range \
+#	(e.g., 0-12, 18-24) \
+#    3 - The station(s) at which to verify (If a list of \
+#		stations is required, enter the station numbers \
+#		separated by blanks; enclose the list in double \
+#		quotes.)  Stations may be entered as STNM=STID to \
+#		assure correct station location. 
+
+mkdir /gpfs/dell1/ptmp/Geoffrey.Manikin/bufr2
+rm /gpfs/dell1/ptmp/Geoffrey.Manikin/bufr2/*
+cd /gpfs/dell1/ptmp/Geoffrey.Manikin/bufr2
+cp /gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/coltbl.xwp .
+
+tstrt=2021030312
+fhrs="0-60"
+stations=`echo $1`
+
+ymd=`echo $tstrt | cut -c1-8`
+cyc=`echo $tstrt | cut -c9-10`
+yyyy=`echo $tstrt | cut -c1-4`
+date
+date > holddate
+echo $holddate
+dayoweek=hold6
+echo $ymd
+echo $cyc
+echo $fhrs
+#DAPATH=/com2/nawips/prod/hold/gfs.${ymd}
+DAPATH=/gpfs/dell1/ptmp/Geoffrey.Manikin/hold/
+
+tmpneedday1=`/gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/advtime $tstrt 24 -1`
+needday1=`echo $tmpneedday1 | cut -c1-8`
+echo $needday1
+
+tmpneedday2=`/gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/advtime $tstrt 48 -1`
+needday2=`echo $tmpneedday2 | cut -c1-8`
+echo $needday2
+
+tmpneedday3=`/gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/advtime $tstrt 72 -1`
+needday3=`echo $tmpneedday3 | cut -c1-8`
+echo $needday3
+
+OBSDIR=/gpfs/dell1/nco/ops/dcom/prod/ldmdata/gempak/hrly
+cp ${OBSDIR}/${ymd}.hrly .
+cp ${OBSDIR}/${needday1}.hrly .
+cp ${OBSDIR}/${needday2}.hrly .
+cp ${OBSDIR}/${needday3}.hrly .
+
+# ****** Process time range *******
+
+tfhrs1=`echo $fhrs | cut -d- -f1`
+tfhrs2=`echo $fhrs | cut -d- -f2`
+echo $tfhrs1 
+echo $tfhrs2
+if [ $tfhrs2 -gt 60 ]
+then
+ echo 'lamx bufr file only goes to 120 hr - goodbye, loser'
+ exit
+fi
+
+#  Determine start time.
+t0=`/gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/advtime $tstrt $tfhrs1 -1 gem`
+echo $t0
+
+#  Determine ending time.
+tf=`/gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/advtime $tstrt $tfhrs2 -1 gem`
+echo $tf
+
+dattim="${t0}-${tf}"
+taxis="${t0}-${tf}-03"
+echo $taxis
+dhrs=`expr $tfhrs2 - $tfhrs1`
+echo $dhrs
+
+echo fini
+# ****** Finished time range ******
+
+ndays=`expr $dhrs / 24`
+rmndr=`expr $dhrs % 24`
+if [ $rmndr -ne 0 ]
+then
+ ndays=`expr $ndays + 1`
+fi
+if [ $ndays -eq 0 ]
+then
+ ndays=1
+fi
+echo $ndays
+dayf=`echo $tf | cut -c1-8`00
+days=`/gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/advtime $dayf -24 $ndays`
+echo $days
+
+fmdl=${DAPATH}/lamx_${ymd}${cyc}.sfc
+fmdl2=${DAPATH}/lamx_${ymd}${cyc}.snd
+echo $fmdl
+
+for station in $stations; do
+  echo inside station loop
+  echo $station
+
+    sfgram << EOF 
+SFFILE	= $fmdl
+DATTIM	= $dattim
+STATION	= @$station
+TRACE1  = sktc:2:4 
+TRACE2  = fxlh 
+TRACE3	= tmpc
+TRACE4  = fxsh:2:6
+NTRACE	= 4
+TAXIS	= $taxis
+BORDER	= 1
+MARKER	= 0
+TITLE	= 10/0/ $station  LAMX VS OBS -- MODEL DASHED/BOTTOM PANEL
+CLEAR	= YES
+DEVICE  = gif|lamx_${station}.traces_${tstrt}.gif|800;600
+PANEL	= 0
+TEXT	= 1/11/2
+r
+
+ex
+EOF
+
+done
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test5/.
+exit

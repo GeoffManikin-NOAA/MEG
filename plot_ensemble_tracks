@@ -1,0 +1,235 @@
+begin
+  ;plotting domain
+  minlat=32.0
+  maxlat=49.0
+  minlon=-85.0
+  maxlon=-60.0
+  
+  ;cycle YYYYMMDDHH
+  scriptyyyymmddhh="2017031112"
+
+  ;time to start tracking low
+  fscriptyyyymmddhh="2017031400"
+
+  ;just getting dates into proper format
+  fscriptyear=toint(str_get_cols(fscriptyyyymmddhh,0,3))
+  fscriptmonth=toint(str_get_cols(fscriptyyyymmddhh,4,5))
+  fscriptday=toint(str_get_cols(fscriptyyyymmddhh,6,7))
+  fscripthour=toint(str_get_cols(fscriptyyyymmddhh,8,9))
+  scriptyear=toint(str_get_cols(scriptyyyymmddhh,0,3))
+  scriptmonth=toint(str_get_cols(scriptyyyymmddhh,4,5))
+  scriptday=toint(str_get_cols(scriptyyyymmddhh,6,7))
+  scripthour=toint(str_get_cols(scriptyyyymmddhh,8,9))
+  timeunits="hours since 1800-01-01 00:00"
+  datemodel=ut_inv_calendar(scriptyear,scriptmonth,scriptday,scripthour,0,0,timeunits,0)
+  datef=ut_inv_calendar(fscriptyear,fscriptmonth,fscriptday,fscripthour,0,0,timeunits,0)
+  datemodel@units=timeunits
+  datef@units=timeunits
+  modelints=ut_calendar(datemodel,0)
+
+  ;the 48 tells the script to stop tracking lows 48 hours after you start
+  ;and the 6 is every 6 hours
+  fhours=ispan(toint(datef)-toint(datemodel),toint(datef)-toint(datemodel)+48,6)
+
+  ;print(fhours)
+
+
+  ;for SREF, you have to add a new file for every member and forecast hour
+  ;the EC data I downloaded throws everything into one file
+  a=addfile("ec11.grib2","r")
+
+  ;these lines get and print the names of every field in the file 
+  ;including lat and lon
+  vnames:=getfilevarnames(a)
+  print(vnames)
+
+  ;get lat and lon arrays from file
+  lats=a->lat_0
+  lons=a->lon_0
+
+  ;this reverses the order of the latitude array because it must be increasing
+  ;and the EC data had it 90 to -90
+  lats=lats(::-1)
+
+  ;again the latitude is reversed. Also, this array had 5 dimensions, the SREF
+  ;slp array should only have 2 (lat and lon)
+  slp=a->msl_P1_L101_GLL0(:,{datemodel},:,::-1,:)
+  ;printVarSummary(slp)
+
+  cycles=a->initial_time0_hours
+  fhours1=a->forecast_time0
+  mems=a->ensemble0
+
+  ;arrays that will hold latitudes, longitudes, and colors for plotting
+  latplot=new((/dimsizes(mems),dimsizes(fhours)/),float)
+  lonplot=new((/dimsizes(mems),dimsizes(fhours)/),float)
+  colors=new((/dimsizes(mems),dimsizes(fhours)/),float)
+
+  ;printVarSummary(fhours1)
+  
+  ;printVarSummary(cycles)
+  ;printVarSummary(fhours)
+
+  ;looping through members and forecast hours for each member
+  do i=0,dimsizes(mems)-1
+    do j=0,dimsizes(fhours)-1
+      print((/fhours(j)/))
+      find=ind(fhours1.eq.fhours(j))
+      if (j.eq.0) then
+        ;for initial time, find the minimum pressure in a designated lat and lon box
+        ;it should be in the vicinity of the Carolinas at 00Z 14 March
+        thisslp:=slp({mems(i)},find,{30:40},{280:300})
+        thislat:=lats({30:40})
+        thislon:=lons({280:300})
+      else
+        ;search a box extending 2.5 degrees on either side of the last location
+        thisslp:=slp({mems(i)},find,{latin-2.5:latin+2.5},{lonin-2.5:lonin+2.5})
+        thislat:=lats({latin-2.5:latin+2.5})
+        thislon:=lons({lonin-2.5:lonin+2.5})
+      end if
+
+      ;arrays must be one dimensional for finding minimum values
+      thisslp1:=ndtooned(thisslp)
+      dsizes_slp=dimsizes(thisslp)
+      
+      thislat1:=ndtooned(thislat)
+      thislon1:=ndtooned(thislon)
+      slpind=minind(thisslp1)
+      indices=ind_resolve(slpind,dsizes_slp)
+       
+      slpplot=((/thisslp(indices(0,0),indices(0,1))/))/100.0
+      print((/thislat1(indices(0,0))/))
+      print((/thislon1(indices(0,1))/))
+      latin=thislat1(indices(0,0))
+      lonin=thislon1(indices(0,1))
+      latplot(i,j)=latin
+      lonplot(i,j)=lonin
+
+      ;I think this will make the colors plotted correspond to the colorbar, but
+      ;haven't examined too closely. If anything it's one off
+      colors(i,j)=toint(((toint(5*(slpplot/5))-955.0)/(60))*128)-1
+   
+
+    end do
+  end do
+
+;plotting
+
+  wks_type="png"
+  wks_type@wkWidth=1000
+  wks_type@wkHeight=1000
+  wks  = gsn_open_wks("ps","test")
+  gsn_define_colormap(wks,"MPL_RdYlBu") 
+  
+  res  = True
+  res@cnConstFLabelOn=False
+  ;res@lbLabelBarOn=False
+
+  res@mpMinLatF                = minlat
+  res@mpMaxLatF                =  maxlat
+  res@mpMinLonF                = minlon
+  res@mpMaxLonF                = maxlon
+  res@mpOutlineBoundarySets="AllBoundaries"
+  res@mpDataBaseVersion="MediumRes"
+  ;res@gsnMaximize=True
+  res@tmXBLabelFontHeightF=.008
+  res@tmYLLabelFontHeightF=.008
+  res@gsnRightString=""
+  res@gsnAddCyclic=False
+  ;res@gsnLeftString="Stage IV valid "+hour+"Z "+day+ " "+months(monthind)+ " " +year+ " ("+sprinti("%0.1i",fhours(h))+"-hour accumulation)"
+  res@gsnLeftString="ECMWF low tracks and pressures 12Z 11 March initialization through 00Z 16"
+  res@mpOutlineDrawOrder="PostDraw"
+  res@mpFillColor="grey75"
+  ;res@cnFillColors=(/"transparent","lawngreen","green3","green4","blue1","dodgerblue1","cyan1","mediumpurple3","darkorchid3","darkorchid4","red4","red3","darkorange2","darksalmon","yellow1","sienna4","magenta2","lightpink2","mistyrose","oldlace","black"/)
+  ;res@cnFillColors=(/"transparent","lawngreen","green3","green4","blue1","dodgerblue1","cyan1","mediumpurple3","darkorchid3","darkorchid4","red3","red4"/)
+  res@cnInfoLabelOn=False
+  res@mpFillDrawOrder="PreDraw"
+  res@cnLabelMasking=True
+  res@mpGeophysicalLineColor="black"
+  res@mpGeophysicalLineThicknessF=2.0
+  res@mpNationalLineThicknessF=2.0
+  res@mpUSStateLineThicknessF=1.5
+  res@mpCountyLineThicknessF=.33
+  res@mpNationalLineColor="black"
+  res@mpUSStateLineColor="black"
+  res@cnLineLabelsOn=False
+  res@pmLabelBarHeightF=.05
+  res@lbLabelFontHeightF=.008
+  res@gsnLeftStringFontHeightF=.012
+  res@cnFillOn=True
+  res@mpFillOn=True
+  res@cnFillMode="AreaFill"
+  res@cnLevelSelectionMode="ExplicitLevels"
+  ;res@cnLevels=(/.01,.1,.25,.5,.75,1.0,1.5,2.0,2.5,3.0,4.0,5.0,6.0,8.0,10.0,12.0,14.0,16.0,18.0,20.0/)
+  res@cnLevels=ispan(955,1015,5)
+  ;res@cnLevels=(/.01,.1,.25,.5,.75,1.0,1.5,2.0,2.5,3.0,3.5/)
+  ;res@lbLabelStrings=(/"0.01","0.1","0.25","0.5","0.75","1.0","1.5","2.0","2.5","3.0","4.0","5.0","6.0","8.0","10.0","12.0","14.0","16.0","18.0","20.0"/)
+  ;res@lbLabelStrings=(/"0.01","0.1","0.25","0.5","0.75","1.0","1.5","2.0","2.5","3.0","3.5"/)
+  res@lbLabelStride=1
+  res@cnLinesOn=False
+  res@lbLabelAutoStride=False
+  res@mpLimitMode="LatLon"
+  res@gsnDraw=False
+  ;res@vpWidthF=.5
+  res@mpProjection="Mercator"
+  res@gsnFrame=False
+
+
+  res@cnLineLabelInterval=1
+  res@cnLineLabelDensityF=1.5
+  plot = gsn_csm_contour_map(wks,thisslp*0,res) 
+
+
+
+;adding SLP lines
+dum3=new(dimsizes(latplot),graphic)
+dum4=new(dimsizes(latplot),graphic)
+
+  do i=0,dimsizes(mems)-1
+    do j=0,dimsizes(fhours)-2
+    plres=True
+    plres@gsLineColor="black"
+    plres@gsLineThicknessF=4.5
+    ply=(/latplot(i,j),latplot(i,j+1)/)
+    plx=(/lonplot(i,j),lonplot(i,j+1)/)
+    dum3(i,j)=gsn_add_polyline(wks,plot,plx,ply,plres) 
+    end do
+    do j=0,dimsizes(fhours)-2
+    plres=True
+    plres@gsLineColor=colors(i,j+1)
+    plres@gsLineThicknessF=4.0
+    ply=(/latplot(i,j),latplot(i,j+1)/)
+    plx=(/lonplot(i,j),lonplot(i,j+1)/)
+    dum4(i,j)=gsn_add_polyline(wks,plot,plx,ply,plres) 
+    end do
+  end do
+
+
+;  do i=0,dimsizes(mems)-1
+;    do j=0,dimsizes(fhours)-2
+;    plres=True
+;    plres@gsLineColor=colors(i,j+1)
+;    plres@gsLineThicknessF=4.0
+;    ply=(/latplot(i,j),latplot(i,j+1)/)
+;    plx=(/lonplot(i,j),lonplot(i,j+1)/)
+;    dum4(i,j)=gsn_add_polyline(wks,plot,plx,ply,plres) 
+;    end do
+;  end do
+;  do i=0,numin-1
+;    plres=True
+;    ply=(/lowlats(i),lowlats(i+1)/)
+;    plx=(/lowlons(i),lowlons(i+1)/)
+;    plres@gsLineColor=colors(i+1)
+;    plres@gsLineThicknessF=18.0
+;    dum4(i)=gsn_add_polyline(wks,plot,plx,ply,plres)
+;  end do
+
+draw(plot)
+frame(wks)
+destroy(wks)
+
+system("convert -density 400 -trim +repage test.ps -density 400 -resize 1000 -trim +repage ec"+scriptyyyymmddhh+".gif")
+
+
+
+end

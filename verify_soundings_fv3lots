@@ -1,0 +1,173 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+dayoweek=hold7
+mdlymdh=2020021912
+mdlymd=`echo $mdlymdh | cut -c1-8`
+mdlcyc=`echo $mdlymdh | cut -c9-10`
+stations="744550 726320 722150"
+stations="723570 723400 724560 726590"
+stations="723270 724400 723400"
+stations="725620 722080 726450 722300 722150 722350"
+stations="724560 744550 725580 724400"
+stations="725580 724560 744550 745600 726490"
+stations="725580 724560 723630"
+#stations="726940 724890 727680 727750"
+stations="723570 726490"
+stations="725620 724510 727470 726450 726320"
+stations="724030 722080 722150 723170 723180"
+stations="727970 746470 723546 723550"
+
+mkdir /stmpp1/Geoffrey.Manikin/gempak.sound
+rm /stmpp1/Geoffrey.Manikin/gempak.sound/*
+cd /stmpp1/Geoffrey.Manikin/gempak.sound
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+fmdl1=/gpfs/dell1/nco/ops/com/nam/prod/nam.${mdlymd}/nam_${mdlymdh}.snd.tm00
+cp /gpfs/dell1/nco/ops/com/gfs/prod/gfs.${mdlymd}/${mdlcyc}/gempak/gfs_${mdlymdh}.snd fmdl3
+cp /gpfs/hps/nco/ops/com/hrrr/prod/hrrr.${mdlymd}/conus/nawips/hrrr_${mdlymdh}.snd fmdl4
+cp /gpfs/dell1/nco/ops/com/nam/prod/nam.${mdlymd}/nam_conusnest_${mdlymdh}.snd.tm00 fmdl5
+
+DAPATH=/meso/noscrub/Geoffrey.Manikin/feb20ncstorm
+fmdl1=${DAPATH}/nam_${mdlymdh}.snd.tm00
+cp ${DAPATH}/gfs_${mdlymdh}.snd fmdl3
+cp ${DAPATH}/hrrr_${mdlymdh}.snd fmdl4
+cp ${DAPATH}/nam_conusnest_${mdlymdh}.snd.tm00 fmdl5
+
+times="00 12 24 27"
+times="36"
+for fhr in $times; do
+for stnm in $stations; do
+
+dattim="`/meso/save/Geoffrey.Manikin/meg/advtime ${mdlymdh} $fhr -1 x`"
+validtime=`echo $dattim | cut -c1-11`
+ymd=`echo $validtime | cut -c1-8`
+cyc=`echo $validtime | cut -c10-11`
+fobs=/dcom/us007003/ldmdata/gempak/uair/$ymd.snd
+
+fhr3=`expr $fhr1 + 3`
+rapcyc="`/meso/save/Geoffrey.Manikin/meg/advtime ${mdlymdh} -3 -1`"
+rapymd=`echo $rapcyc | cut -c1-8`
+rapymdh=`echo $rapcyc | cut -c1-10`
+fmdl2=/gpfs/hps/nco/ops/com/rap/prod/rap.${rapymd}/nawips/rap_${rapymdh}.snd
+echo $rapymdh
+echo $fmdl1
+
+stn=`echo $stnm | cut -c1-5`
+if [ $fhr -lt 10 ]
+then
+fhr=0${fhr}
+else
+fhr=$fhr
+fi
+
+    snprof << EOF
+ SNFILE   = $fmdl1
+ DATTIM   = $ymd/$cyc
+ AREA     = @${stnm}
+ SNPARM   = tmpc;dwpc
+ LINE     = 2;4/2/6
+ PTYPE    = skewt
+ VCOORD   = PRES
+ STNDEX   = capv;cinv;lclp
+ STNCOL   = 24
+ WIND     = bk1
+ WINPOS   = 2
+ MARKER   = 0
+ BORDER   = 1//2
+ TITLE    = 1//  OPS NAM DASHED   OBS SOLID/LEFT WINDS
+ DEVICE   = gif|namgfs${stnm}_${mdlymdh}f$fhr.gif|1000;1000
+ YAXIS    = 1050/700/50/1;1;1
+ XAXIS    = -20/30/10/;1
+ FILTER   = 0.7
+ CLEAR    = y
+ PANEL    = t
+! TEXT     = 1.0/11/2/SW
+ TEXT     = 1.1/23/SW
+ THTALN   = 8/3/1/250/500/5
+ THTELN   = 23/1/1/250/500/5
+ MIXRLN   = 17/10/2/0/40./1.
+r
+
+ SNFILE   = $fobs
+ CLEAR    = n
+ WINPOS   = 1
+ LINE     = 2;4/1/6 
+ AREA     = @${stn}
+r
+
+ SNFILE   = fmdl3
+ TITLE    = 1//  OPS GFS DASHED   OBS SOLID/LEFT WINDS
+ WINPOS   = 2
+ PANEL    = b
+ LINE     = 2;4/2/6
+ AREA     = @${stnm}
+r
+
+ SNFILE   = $fobs
+ WINPOS   = 1
+ LINE     = 2;4/1/6
+ CLEAR    = n
+ AREA     = @${stn}
+r
+
+ SNFILE   = $fmdl2
+ CLEAR    = y
+ TITLE    = 1//  OPS RAP DASHED   OBS SOLID/LEFT WINDS
+ DEVICE   = gif|raphrrr${stnm}_${mdlymdh}f$fhr.gif|1000;1000
+ LINE     = 2;4/2/6
+ PANEL    = t
+ WINPOS   = 2
+ AREA     = @${stnm}
+r
+
+ SNFILE   = $fobs
+ WINPOS   = 1
+ LINE     = 2;4/1/6
+ CLEAR    = n
+ AREA     = @${stn}
+r
+
+ SNFILE   = fmdl4
+ TITLE    = 1//  HRRR DASHED   OBS SOLID/LEFT WINDS
+ LINE     = 2;4/2/6
+ PANEL    = b
+ WINPOS   = 2
+ AREA     = @${stnm}
+r
+
+ SNFILE   = $fobs
+ WINPOS   = 1
+ LINE     = 2;4/1/6
+ CLEAR    = n
+ AREA     = @${stn}
+r
+
+ SNFILE   = fmdl5
+ CLEAR    = y
+ TITLE    = 1//  OPS NAM3 DASHED   OBS SOLID/LEFT WINDS
+ DEVICE   = gif|nest${stnm}_${mdlymdh}f$fhr.gif|1000;1000
+ PANEL    = t
+ LINE     = 2;4/2/6
+ WINPOS   = 2
+ AREA     = @${stnm}
+r
+
+ SNFILE   = $fobs
+ WINPOS   = 1
+ LINE     = 2;4/1/6
+ CLEAR    = n
+ AREA     = @${stn}
+r
+
+ex
+EOF
+
+done
+done
+gpend
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

@@ -1,0 +1,83 @@
+#!/bin/sh
+echo 'into'
+
+cyc=$1
+
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/meg
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/meg/veg
+rm /lfs/h2/emc/stmp/geoffrey.manikin/meg/veg/*
+cd /lfs/h2/emc/stmp/geoffrey.manikin/meg/veg
+cp /lfs/h2/emc/vpppg/save/geoffrey.manikin/casework/coltbl.xwp .
+
+ymdh=2023031600
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+times="00 06 12 15 18 21 24"
+times="06 12 15 18 21 24 30"
+times="21"
+for fhr in $times; do
+
+int=03
+cp /lfs/h2/emc/vpppg/noscrub/geoffrey.manikin/dews/gfs_0p25_${ymdh}f0${fhr} fmdl1
+cp /lfs/h2/emc/vpppg/noscrub/geoffrey.manikin/dews/nam32_${ymdh}f0${fhr} fmdl2
+fmdl3=/lfs/h2/emc/vpppg/noscrub/geoffrey.manikin/dews/rapveg_${ymdh}f0${fhr} 
+
+    gdplot2 << EOF
+ GDFILE   = fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = fxlh${int}
+ CINT     = 4 
+ LINE     = 1 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   GFS   ${int}h AVG LAT HT FLX 
+ DEVICE   = GIF|fxlh_${ymdh}f0${fhr}.gif|850;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-78;25;/1;1;1;1
+ GAREA    = 36.;-85.;45.;-71. 
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/V/UL/.05;0.5/1.0;.03/1 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 50;100;150;200;250;300;350;500 
+ FLINE    = 0;17;10;5;21;22;23;24;26 
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = fmdl2
+ CLEAR    = n
+ PANEL    = b
+ TITLE    = 1/-1/~   NAM   ${int}h AVG LAT HT FLX 
+ CLRBAR   = 0
+r
+
+ GDFILE   = fmdl2 + fmdl1
+ GDPFUN   = sub(fxlh${int}+2,fxlh${int})
+ TITLE    = 1/-1/~   GFS-NAM   ${int}h AVG LAT HT FLX
+ DEVICE   = GIF|fxlhdiff_${ymdh}f0${fhr}.gif|850;900
+ PANEL    = 0
+ CLEAR    = y
+ FINT     = -125;-100;-75;-50;50;75;100;125
+ FLINE    = 2;17;20;5;0;21;23;25;29
+ CLRBAR   = 1/H/UL/.05;0.96/0.9;.03/1
+r
+
+ex
+EOF
+done
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test9/.
+exit

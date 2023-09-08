@@ -1,0 +1,123 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/gefspcpprob
+rm /stmpp1/Geoffrey.Manikin/meg/gefspcpprob/*
+cd /stmpp1/Geoffrey.Manikin/meg/gefspcpprob
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`cut -c 7-14 /com/date/t${cyc}z`
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+
+#ymdh=2013061812
+#ymd=20130618
+#dayoweek=Tue
+
+if [ $cyc -eq 00 ]; then
+ hours="36 60 84 108 132 156 180 204"
+else
+ hours="24 48 72 96 120 144 168 192"
+fi
+
+for fhr in $hours; do
+
+cp /com2/gens/prod/gefs.${ymd}/${cyc}/prcp/gepqpf.t${cyc}z.pgrb_24hf${fhr} gefs.grd 
+
+   nagrib << EOF
+GBFILE  = gefs.grd
+INDXFL  =
+GDOUTF  = gefspcp_${ymdh} 
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = 18.;-140.;70.;-50. 
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+PDSEXT  = yes
+r
+
+exit
+EOF
+done
+
+for fhr in $hours; do
+fmdl1=gefspcp_${ymdh}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = P24M0012PA 
+ CINT     = 10
+ LINE     = 21/1/3/5 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~    GEFS PROB of 0.5"
+ DEVICE   = GIF|${cyc}gefsprob1_24pcp_f0${fhr}.gif|750;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-95;25;/1;1;1;1
+ GAREA    = 19.;-128.;51.;-56.
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0 
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 0
+ CONTUR   = 4/3 
+ SKIP     = 0
+ FINT     = 10;30;50;70;90 
+ FLINE    = 0;21;23;28;30;2 
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+
+ GDPFUN  = P24M0025PA 
+ PANEL   = b
+ TITLE   = 1/-1/~    GEFS PROB of 1"
+ CLEAR   = n
+ CLRBAR  = 1/H/UL/.2;.99/0.6;.03/1 
+r
+
+ GDPFUN  = P24M0050PA
+ PANEL   = t
+ TITLE   = 1/-1/~    GEFS PROB of 2"
+ DEVICE  = GIF|${cyc}gefsprob2_24pcp_f0${fhr}.gif|750;900
+ CLEAR   = y
+ CLRBAR  = 0 
+r
+
+ GDPFUN  = P24M0101PA
+ PANEL   = b
+ TITLE   = 1/-1/~    GEFS PROB of 4"
+ CLEAR   = n
+ CLRBAR  = 1/H/UL/.2;.99/0.6;.03/1
+r
+
+
+ex
+EOF
+
+gpend
+done
+mv ${cyc}*gif /stmpp1/Geoffrey.Manikin/meg/holdmedr/.
+#scp ${cyc}*gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/medr/images_medr/$dayoweek/.
+#scp ${cyc}*gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/medr/images_medr/today/.
+exit

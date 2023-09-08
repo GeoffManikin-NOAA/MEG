@@ -1,0 +1,70 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmp/wx20mg/meg
+mkdir /stmp/wx20mg/meg/2dewnest
+rm /stmp/wx20mg/meg/2dewnest/*
+cd /stmp/wx20mg/meg/2dewnest
+cp /meso/save/wx20mg/casework/coltbl.xwp .
+
+ymdh=2013031718
+ymd=`echo $ymdh | cut -c1-8`
+dayoweek=Sun
+counter=0
+
+hours="18"
+for fhr in $hours; do
+
+fmdl1=/com/nawips/prod/nam.${ymd}/nam_conusnest_${ymdh}f0${fhr}
+
+    gdplot2 << EOF
+
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 2
+ GVCORD   = hght 
+ GDPFUN   = dwpf 
+ CINT     = 5 
+ LINE     = 0 
+ DEVICE   = GIF|conusnest2dewnest_${ymdh}f${fhr}.gif | 800;850
+ PROJ     = lcc/25.;-75.;25./2;2;1;1
+ GAREA    = 32.;-95.;46.;-69. 
+ GAREA    = md
+ TITLE    = 1//~  NAM CONUS NEST 2-M DWPF 
+ CLEAR    = y
+ SCALE    = 0
+ PANEL    = 0
+ HILO     = 0
+ HLSYM    = 0 
+ CLRBAR   = 1/H/UL/.06;0.94/0.8;.03/1
+ TEXT     = 1.1/11/2
+ FINT     = -12;-8;-4;0;4;8;12;16;20;24;28;32;36;40;44;48;52;56;60;64;68;72;76;80
+ FLINE    = 0;11;9;12;7;30;29;28;4;25;26;27;24;23;22;21;5;20;10;17;16;2;15;14;32
+ TYPE     = f 
+r
+
+ex
+EOF
+
+done
+gpend
+
+. /u/wx20mg/.Utils
+export w1=wd20mg
+export w2=$rzdm
+
+ftp -n -v << EOF > /meso/save/wx20mg/casework/rzftp.out
+open emcrzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek
+mput *gif 
+bye
+EOF
+
+rm *gif
+exit

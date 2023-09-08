@@ -1,0 +1,70 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+validtime=2012052612
+dayoweek=Sat
+ymd=`echo $validtime | cut -c1-8`
+cyc=`echo $validtime | cut -c9-10`
+stnm=72426
+stn=`echo $stnm | cut -c1-5`
+
+mkdir /stmpp1/Geoffrey.Manikin/gempak.sound
+rm /stmpp1/Geoffrey.Manikin/gempak.sound/*
+cd /stmpp1/Geoffrey.Manikin/gempak.sound
+cp /meso/save/Geoffrey.Manikin/casework/*xwp .
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+fmdl=/ptmpp1/hpcops/obs/$ymd.snd
+echo $fmdl
+
+
+    snprof << EOF
+ SNFILE   = $fmdl
+ DATTIM   = $ymd/$cyc
+ AREA     = @${stnm}
+ SNPARM   = tmpc;dwpc
+ LINE     = 2;4/1/6
+ PTYPE    = skewt
+ VCOORD   = PRES
+# STNDEX   = lift;cape;cins
+ STNDEX   = cape
+ STNCOL   = 24
+ WIND     = bk1
+ WINPOS   = 2
+ MARKER   = 0
+ BORDER   = 1//2
+ TITLE    = 1//  OBSERVED SOUNDING
+ DEVICE   = gif|obs${stnm}_${ymdh}.gif|1000;1000
+ YAXIS    = 1050/200/50/1;1;1
+ XAXIS    = -30/40/10/;1
+ FILTER   = 0.7
+ CLEAR    = y
+ PANEL    = 0
+! TEXT     = 1.0/11/2/SW
+ TEXT     = 1.1/23/SW
+ THTALN   = 8/3/1/250/500/5
+ THTELN   = 23/1/1/250/500/5
+ MIXRLN   = 17/10/2/0/40./1.
+r
+
+ex
+EOF
+
+gpend
+
+. /u/Geoffrey.Manikin/.Utils
+export w1=wd20mg
+export w2=$rzdm
+
+ftp -n -v << EOF > /meso/save/Geoffrey.Manikin/casework/rzftp.out
+open rzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek
+mput *gif
+bye
+EOF
+
+exit

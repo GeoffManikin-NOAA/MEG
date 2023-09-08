@@ -1,0 +1,64 @@
+#!/bin/ksh
+echo 'into'
+
+ver=v16.3
+ymdh=2023072000
+ymd=`echo $ymdh | cut -c1-8`
+month=`echo $ymdh | cut -c5-6`
+day=`echo $ymdh | cut -c7-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/2mtz
+cd /lfs/h2/emc/stmp/geoffrey.manikin/2mtz
+cp /lfs/h2/emc/vpppg/save/geoffrey.manikin/meg/coltbl.xwp .
+
+times="162 165"
+for fhr in $times; do
+
+typeset -Z3 fhr
+fmdl=/lfs/h1/ops/prod/com/gfs/${ver}/gfs.${ymd}/${cyc}/atmos/gempak/gfs_0p25_${ymd}${cyc}f${fhr}
+echo $fmdl
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl
+ GDATTIM  = f$fhr
+ GLEVEL   = 2
+ GVCORD   = hght
+ GDPFUN   = tmpf
+ CINT     = 5 
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   GFS 2m TEMP 
+ DEVICE   = GIF|gfs2mt_${ymdh}f${fhr}.gif|900;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-94.;25./2;2;1;1
+ GAREA    = 24.;-122.;52.;-86. 
+ GAREA    = ia 
+ CLEAR    = y
+ PANEL    = 0 
+ TEXT     = 1.2/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/H/UL/.05;0.97/.9;.03/-1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 25;30;35;40;45;50;55;60;65;70;75;80;85;90;95;100;105;110;115;120
+# FINT     = 0;5;10;15;20;25;30;35;40;45;50;55;60;65;70;75;80;85;90;95;100
+ FLINE    = 12;30;29;28;4;25;26;27;24;23;22;21;5;20;10;17;16;2;15;14;0
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ex
+EOF
+gpend
+done
+
+echo abouttoexit2mt
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test2/.
+exit

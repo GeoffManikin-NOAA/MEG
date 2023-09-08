@@ -1,0 +1,18 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+cd /stmpp1/Geoffrey.Manikin/meg/
+
+/meso/save/Geoffrey.Manikin/meg/make_slptrends_nam ${cyc} &
+/meso/save/Geoffrey.Manikin/meg/make_slptrends_gfs ${cyc} &
+/meso/save/Geoffrey.Manikin/meg/make_slptrends_diff ${cyc} &
+wait
+
+echo beforeexit9
+exit
+
+

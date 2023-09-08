@@ -1,0 +1,78 @@
+#!/bin/sh
+echo 'into'
+
+cyc=$1
+
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/meg
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/meg/2dewz
+rm /lfs/h2/emc/stmp/geoffrey.manikin/meg/2dewz/*
+cd /lfs/h2/emc/stmp/geoffrey.manikin/meg/2dewz
+cp /lfs/h2/emc/vpppg/save/geoffrey.manikin/casework/coltbl.xwp .
+
+ymdh=2023031600
+ymd=`echo $ymdh | cut -c1-8`
+dayoweek=hold
+
+times="00 03 06 09 12"
+times="00 06 12 18 24"
+times="00 06 12 15 18 21 24"
+times="12 15 18 21 24 27"
+times="21"
+for fhr in $times; do
+
+cp /lfs/h2/emc/vpppg/noscrub/geoffrey.manikin/dews/gfs_0p25_${ymdh}f0${fhr} fmdl2
+fmdl1=/lfs/h2/emc/vpppg/noscrub/geoffrey.manikin/dews/nam32_${ymdh}f0${fhr}
+echo $fmdl1
+
+cp /lfs/h2/emc/vpppg/noscrub/geoffrey.manikin/dews/nam_conusnest_${ymdh}f0${fhr} fmdl3
+fmdl4=/lfs/h2/emc/vpppg/noscrub/geoffrey.manikin/dews/hrrr_${ymdh}f0${fhr}00
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1 + fmdl2
+ GDATTIM  = f$fhr
+ GLEVEL   = 2 
+ GVCORD   = hght 
+ GDPFUN   = sub(dwpf+2,dwpf) 
+ CINT     = 4 
+ LINE     = 1 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   GFS - NAM 2-M  DEW PT 
+ DEVICE   = GIF|2dewznamgfsdiff_${ymdh}f0${fhr}.gif|850;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-78;25;/1;1;1;1
+ GAREA    = 36.;-85.;45.;-71. 
+ CLEAR    = y
+ PANEL    = 0
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/H/UL/.05;0.95/0.9;.03/1 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = -15;-12;-9;-6;-3;3;6;9;12;15
+ FLINE    = 15;2;17;10;5;0;21;23;26;4;29
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ex
+EOF
+
+      gdplot2 << EOF
+ GDFILE   = fmdl3 + $fmdl4
+ TITLE    = 1/-1/~   HRRR - NAM3   2-M  DEW PT
+ DEVICE   = GIF|2dewzhnesthrrrdiff_${ymdh}f0${fhr}.gif|850;900
+
+r
+ex
+EOF
+done
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test9/.
+exit

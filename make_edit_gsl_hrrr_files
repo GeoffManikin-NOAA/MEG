@@ -1,0 +1,22 @@
+#!/bin/ksh
+
+cycles="00 06 12"
+times="00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30"
+
+for XX in $cycles; do
+for HH in $times; do 
+echo 'here'
+mv 20223${XX}00${HH}00 hrrrx.t${XX}z.wrfsfcf${HH}.grib2
+done
+done
+
+cycles="01 02 03 04 05 07 08 09 10 11 13"
+times="00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18"
+
+for XX in $cycles; do
+for HH in $times; do 
+echo 'here'
+mv 20223${XX}00${HH}00 hrrrx.t${XX}z.wrfsfcf${HH}.grib2
+done
+done
+exit

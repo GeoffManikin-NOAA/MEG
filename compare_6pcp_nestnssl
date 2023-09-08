@@ -1,0 +1,75 @@
+#!/bin/ksh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/nestpcp
+rm /stmpp1/Geoffrey.Manikin/meg/nestpcp/*
+cd /stmpp1/Geoffrey.Manikin/meg/nestpcp
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=2015103100
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+dayoweek=hold2
+
+hours="12"
+for fhr1 in $hours; do
+
+fhr3=`expr $fhr1 - 3`
+typeset -Z2 fhr3
+
+cp /com/nawips/prod/nam.${ymd}/nam_conusnest_${ymdh}f0${fhr1} fmdl1
+cp /com/nawips/prod/nam.${ymd}/nam_conusnest_${ymdh}f0${fhr3} fmdl1b
+fmdl2=/meso/save/Geoffrey.Manikin/meg/nsslwrfpcp_${ymdh}
+
+    gdplot2 << EOF
+ GDFILE   = fmdl1 + fmdl1b
+ GDATTIM  = f$fhr1
+ GLEVEL   = 0 
+ GVCORD   = none
+ GDPFUN   = add(p03i^${ymd}/${cyc}f${fhr3}+2,p03i^${ymd}/${cyc}f$fhr1)
+ CINT     = 0.1 
+ LINE     = 1
+ \$MAPFIL = county
+ WIND     = 0
+ TITLE    = 1/-1/~  NAM4 6-HR TOTAL PCP
+ DEVICE   = GIF|${ymdh}pcp6nestnsslf${fhr1}.gif|750;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-98;25;/1;1;1;1
+# GAREA    = 34.;-126.;44.;-114. 
+ GAREA    = tx
+ CLEAR    = y
+ PANEL    = t 
+ TEXT     = 0.8/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 0 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = .01;.1;.25;.5;.75;1;1.5;2;2.5;3;4;5;7.5;10
+ FLINE    = 0;21;22;23;4;25;27;28;29;30;15;2;17;10;5
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl2 
+ PANEL    = b 
+ GDPFUN   = p06i
+ CLRBAR   = 1/H/UL/.04;0.97/0.9;.03/1
+ CLEAR    = n
+ TITLE    = 1/-1/~  NSSL WRF 6-HR TOTAL PCP
+r
+
+ex
+EOF
+done
+gpend
+
+scp ${ymdh}*gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

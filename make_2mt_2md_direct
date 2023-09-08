@@ -1,0 +1,91 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+ymd=`cut -c 7-14 /com/date/t${cyc}z`
+month=`cut -c 11-12 /com/date/t${cyc}z`
+day=`cut -c 13-14 /com/date/t${cyc}z`
+
+#ymd=`cut -c 7-14 t${cyc}z`
+#cyc=`cut -c 15-16 t${cyc}z`
+
+#ymd=20020214
+#cyc=12
+
+mkdir /stmpp1/wx20mg/gempak.rap13/direct2mt
+rm /stmpp1/wx20mg/gempak.rap13/direct2mt/*
+cd /stmpp1/wx20mg/gempak.rap13/direct2mt
+cp /meso/save/wx20mg/casework/coltbl.xwp .
+
+times="00 01 02 03"
+counter=0
+for fhr in $times; do
+
+fmdl1=/com/nawips/para/rap.${ymd}/rap13_${ymd}${cyc}f0${fhr}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 2
+ GVCORD   = hght
+ GDPFUN   = tmpf 
+ CINT     = 2 
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1//~   RAP 2-M TEMP 
+ DEVICE   = GIF|compare2mt2md_${cyc}f${counter}.gif | 800;850
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-83.;25./2;2;1;1
+ GAREA    = 25.;-85.;29.;-79.
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 0.8/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/V/UL/.1;0.5/.8;.03/-2
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 46;48;50;52;54;56;58;60;62;64;66;68;70;72;74;76;78;80 
+ FLINE    = 0;12;30;29;28;4;25;26;27;24;23;22;21;5;20;10;17;16;2;15;32
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDPFUN   = dwpf
+ PANEL    = b
+ CLEAR    = n
+ TITLE    = 1//~  RAP 2-M DEW 
+ CINT     = 5 
+ CLRBAR   = 0
+r
+
+ex
+EOF
+
+counter=`expr $counter + 1`
+gpend
+done
+
+. /u/wx20mg/.Utils
+export w1=wd20mg
+export w2=$rzdm
+                                                                                        
+ftp -n -v << EOF > /meso/save/wx20mg/gempak.rap13/rzftp.out
+open rzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/rap/para/${cyc}z/images
+prompt
+mput *.gif
+bye
+EOF
+
+exit

@@ -1,0 +1,88 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmp/wx20mg/meg
+mkdir /stmp/wx20mg/meg/rtmawv
+rm /stmp/wx20mg/meg/rtmawv/*
+cd /stmp/wx20mg/meg/rtmawv
+cp /meso/save/wx20mg/casework/coltbl.xwp .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+ymdh=2013052014
+dayoweek=Mon
+ymd=`echo $ymdh | cut -c1-8`
+ymdh1="`/meso/save/wx20mg/board/advtime $ymdh -1 -1`"
+
+#fmdl1=/com/nawips/prod/rtma2p5.${ymd}/rtma2p5_${ymdh}f000
+fmdl1=/ptmp/wx20mg/rtma/rtma2p5_${ymdh}f000
+fmdl2=/ptmp/wx20mg/rtma/rtma2p5_${ymdh1}f001
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = last 
+ GLEVEL   = 10 
+ GVCORD   = hght 
+ GDPFUN   = kntv(wind) 
+ CINT     = 0 
+ LINE     = 1 
+ \$MAPFIL  = county
+ MAP      = 1/1/2
+ WIND     = AK15/0.6/1/2/1 
+ TITLE    = 1/-1/~   2.5 RTMA WIND 
+ DEVICE   = GIF|${ymdh}_2p5rtma10wv.gif|850;950
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-98;25;/1;1;1;1
+# GAREA    = 30.;-104.;40.;-88.
+ GAREA    = 34.;-99.4;36.3;-96.5 
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 0 
+ CONTUR   = 0
+ SKIP     = /60;60 
+ FINT     = 0 
+ FLINE    = 0
+ TYPE     = a
+ LUTFIL   =
+ STNPLT   =
+r
+
+ CLEAR    = n
+ GDFILE  = $fmdl2
+ PANEL    = b
+ TITLE    = 1/-1/~   2.5 GUESS RTMA WIND
+r
+
+ex
+EOF
+
+gpend
+
+. /u/wx20mg/.Utils
+export w1=wd20mg
+export w2=$rzdm
+
+ftp -n -v << EOF > /meso/save/wx20mg/casework/rzftp.out
+open emcrzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/${dayoweek}
+mput *gif
+bye
+EOF
+
+rm *gif
+exit

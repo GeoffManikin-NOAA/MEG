@@ -1,0 +1,59 @@
+#!/bin/sh
+echo 'into'
+
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/plots
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/plots/urma
+rm /lfs/h2/emc/stmp/geoffrey.manikin/plots/urma/*
+cd /lfs/h2/emc/stmp/geoffrey.manikin/plots/urma
+cp /lfs/h2/emc/vpppg/save/geoffrey.manikin/meg/coltbl.xwp .
+
+ymd=20230316
+
+times="00 06 12 18"
+times="12 15 18 21"
+for cyc in $times; do
+
+#fmdl1=/lfs/h1/ops/prod/com/urma/prod/rtma2p5.${ymd}/gempak/rtma2p5_${ymd}${cyc}f000
+fmdl1=/lfs/h2/emc/vpppg/noscrub/geoffrey.manikin/dews/urma2p5_${ymd}${cyc}f000
+echo $fmdl1
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = last 
+ GLEVEL   = 2 
+ GVCORD   = hght 
+ GDPFUN   = dwpf 
+ CINT     = 3 
+ LINE     = 0 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~ URMA ANALYSIS 2M DEW PT 
+ DEVICE   = GIF|urma2dew_${ymd}${cyc}.gif|750;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-78;25;/1;1;1;1
+ GAREA    = 36.;-85.;45.;-71. 
+ CLEAR    = y
+ PANEL    = 
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0 
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/H/UL/.05;0.94/.9;.02/2 
+ CONTUR   = 0
+ SKIP     = 0
+ FLINE    = 0;12;30;29;28;4;25;26;27;24;23;22;21;5;20;10;17;16;2;15;14;32
+ FINT     = 0;4;8;12;16;20;24;28;32;36;40;44;48;52;56;60;64;68;72;76;80
+ FINT     = -12;-8;-4;0;4;8;12;16;20;24;28;32;36;40;44;48;52;56;60;64;68
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ex
+EOF
+done
+gpend
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test9/.
+exit

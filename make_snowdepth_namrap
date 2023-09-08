@@ -1,0 +1,146 @@
+#!/bin/sh
+echo 'into'
+
+ymdh=2022020512
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+ymdhr=2022020509
+ymdr=`echo $ymdhr | cut -c1-8`
+cycr=`echo $ymdhr | cut -c9-10`
+
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/sndm
+rm /gpfs/dell1/stmp/Geoffrey.Manikin/sndm/*
+cd /gpfs/dell1/stmp/Geoffrey.Manikin/sndm
+cp /gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/coltbl.xwp .
+
+fhr1=00
+fhr2=42
+fhr2r=45
+
+#fmdl1=/gpfs/dell1/ptmp/Geoffrey.Manikin/data/nam32_${ymd}${cyc}f000
+#fmdl2=/gpfs/dell1/ptmp/Geoffrey.Manikin/data/nam32_${ymd}${cyc}f0${fhr}
+fmdl1=/gpfs/dell1/nco/ops/com/nam/prod/nam.${ymd}/gempak/nam32_${ymdh}f0${fhr1}
+fmdl2=/gpfs/dell1/nco/ops/com/nam/prod/nam.${ymd}/gempak/nam32_${ymdh}f0${fhr2}
+fmdl3=/gpfs/hps/nco/ops/com/rap/prod/rap.${ymdr}/gempak/rap20_${ymdhr}f0${fhr1}
+fmdl4=/gpfs/hps/nco/ops/com/rap/prod/rap.${ymdr}/gempak/rap20_${ymdhr}f0${fhr2r}
+fmdl5=/gpfs/dell1/nco/ops/com/gfs/prod/gfs.${ymd}/${cyc}/atmos/gempak/gfs_0p25_${ymdh}f0${fhr1}
+fmdl6=/gpfs/dell1/nco/ops/com/gfs/prod/gfs.${ymd}/${cyc}/atmos/gempak/gfs_0p25_${ymdh}f0${fhr2}
+
+echo $fmdl1
+echo $fmdl2
+
+areas="1 2 3 4 5"
+areas="6"
+for region in $areas; do
+
+if [ $region -eq 1 ]
+then
+garea="26.;-124.;56.;-62."
+proj="lcc/25.;-95.;25./2;2;1;1"
+elif [ $region -eq 2 ]
+then
+garea="ct"
+proj="lcc/25.;-80.;25./2;2;1;1"
+elif [ $region -eq 3 ]
+then
+garea="ia-"
+proj="lcc/25.;-95.;25./2;2;1;1"
+elif [ $region -eq 4 ]
+then
+garea="38.;-125.;52.;-109."
+proj="lcc/25.;-105.;25./2;2;1;1"
+elif [ $region -eq 5 ]
+then
+garea="30.;-122.;42.;-104."
+proj="lcc/25.;-115.;25./2;2;1;1"
+elif [ $region -eq 6 ]
+then
+garea="ok"
+proj="lcc/25.;-92.;25./2;2;1;1"
+fi
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr1
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = quo(mul(sndm,100),2.54) 
+ CINT     = 2 
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/1/ ${fhr1}-HR NAM SNOW COVER 
+ DEVICE   = GIF|namsndm_${ymdh}.gif|900;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = $proj 
+ GAREA    = $garea 
+ CLEAR    = y
+ PANEL    = t 
+ TEXT     = 1.2/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/V/UL/.15;0.4/.8;.03/-1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 0.1;1;3;5;7.5;10;15;20;25;50;75;100;125
+ FLINE    = 0;28;26;4;21;23;20;5;10;17;2;15;7;32
+ TYPE     = f/c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhr2
+ PANEL    = b
+ CLEAR    = n
+ TITLE    = 1/1/ ${fhr2}-HR NAM SNOW COVER 
+ CLRBAR   = 0
+r
+ 
+ GDFILE   = $fmdl3
+ GDATTIM  = f$fhr1
+ PANEL    = t
+ CLEAR    = y
+ TITLE    = 1/1/ ${fhr1}-HR RAP SNOW COVER 
+ CLRBAR   = 1/V/UL/.15;0.4/.8;.03/-1
+ DEVICE   = GIF|rapsndm_${ymdhr}.gif|900;900
+r
+
+ GDFILE   = $fmdl4
+ GDATTIM  = f$fhr2r
+ PANEL    = b
+ CLEAR    = n
+ CLRBAR   = 0 
+ TITLE    = 1/1/ ${fhr2r}-HR RAP SNOW COVER
+r
+
+ GDFILE   = $fmdl5
+ GDATTIM  = f$fhr1
+ PANEL    = t
+ CLEAR    = y
+ TITLE    = 1/1/ ${fhr1}-HR GFS SNOW COVER 
+ CLRBAR   = 1/V/UL/.15;0.4/.8;.03/-1
+ DEVICE   = GIF|gfssndm_${ymdh}.gif|900;900
+r
+
+ GDFILE   = $fmdl6
+ GDATTIM  = f$fhr2
+ PANEL    = b
+ CLEAR    = n
+ CLRBAR   = 0
+ TITLE    = 1/1/ ${fhr2}-HR GFS SNOW COVER
+r
+
+ex
+EOF
+gpend
+done
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test5/.
+exit
+
+exit
+

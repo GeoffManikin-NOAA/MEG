@@ -1,0 +1,78 @@
+#!/bin/ksh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/6pcp
+rm /stmpp1/Geoffrey.Manikin/meg/6pcp/*
+cd /stmpp1/Geoffrey.Manikin/meg/6pcp
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=2018051712
+ymd1=`echo $ymdh | cut -c1-8`
+dayoweek=hold
+
+hours="162 168 174 180 186 192 198"
+hours="144 150 156"
+#hours="120 126 132 138 144 150 156 162 168 174 180 186 192 198 204 210 216 222 228 234 240"
+for fhr1 in $hours; do
+typeset -Z3 fhr1 
+
+verymdh="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} ${fhr1} -1`"
+
+DAPATH=/ptmpp1/Geoffrey.Manikin/hold
+fmdl1=${DAPATH}/gfs_0p25_${ymdh}f${fhr1}
+echo $fmdl1
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = last 
+ GLEVEL   = 0 
+ GVCORD   = none
+ GDPFUN   = p06i
+ CINT     = 4 
+ LINE     = 1 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   GFS 6-HR PCP 
+ DEVICE   = GIF|gfsslp6cpcp_${ymd1}f${fhr1}.gif|750;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-80;25;/1;1;1;1
+ GAREA    = 14.;-90.;30.;-70. 
+ CLEAR    = y
+ PANEL    = t 
+ TEXT     = 0.8/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/V/UL/0.04;0.6/1.2;.02/1 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = .01;.1;.25;.5;.75;1.;1.5;2.;2.5;3.;4;5;7.5;10
+ FLINE    = 0;21;22;23;25;27;28;29;30;2;15;17;10;5;31
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ PANEL    = b
+ GDPFUN   = c06i
+ TITLE    = 1/-1/~   GFS 6-HR CNVCT PCP
+ CLRBAR   = 0
+ TYPE     = f
+ HILO     = 0
+ PANEL    = b
+ CLEAR    = n
+r
+
+ex
+EOF
+
+done
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

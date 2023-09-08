@@ -1,0 +1,75 @@
+#!/bin/sh
+echo 'into'
+
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/meg
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/meg/all2mt
+rm /gpfs/dell1/stmp/Geoffrey.Manikin/meg/all2mt/*
+cd /gpfs/dell1/stmp/Geoffrey.Manikin/meg/all2mt
+cp /gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/coltbl.xwp .
+
+ymdh=2022020412
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+fmdl1=/gpfs/dell2/nco/ops/com/rtma/prod/rtma2p5.${ymd}/gempak/rtma2p5_${ymdh}f000
+echo $fmdl1
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = last 
+ GLEVEL   = 2 
+ GVCORD   = hght 
+ GDPFUN   = tmpf 
+ CINT     = 3 
+ LINE     = 0 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~ RTMA ANALYSIS 2M TMPF
+ DEVICE   = GIF|rtma2mt_${ymdh}.gif|750;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-78.;25./2;2;1;1
+ GAREA    = 31.;-82.;37.;-74. 
+ GAREA    = 30.;-109.5;49.5;-81.
+ GAREA    = 21.;-122.;51.;-68.
+ GAREA    = 32.;-106.;56.;-70. 
+ GAREA    = 36.;-82.;44.;-68.
+ GAREA    = md 
+ CLEAR    = y
+ PANEL    = 
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0 
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/H/UL/.05;0.95/.9;.02/2 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 30;33;36;39;42;45;48;51;54;57;60;63;66;69;72;75;78;81;84;87;90
+ FINT     = 18;21;24;27;30;33;36;39;42;45;48;51;54;57;60;63;66;69;72;75;78
+# FINT     = -34;-28;-22;-16;-10;-4;2;8;14;20;26;32;38;44;50;56;62;68;74;80;86
+ FINT     = -40;-34;-28;-22;-16;-10;-4;2;8;14;20;26;32;38;44;50;56;62;68;74;80
+ FINT     = -45;-40;-35;-30;-25;-20;-15;-10;-5;0;5;10;15;20;25;30;35;40;45;50;55
+ FINT     = 12;15;18;21;24;27;30;33;36;39;42;45;48;51;54;57;60;63;66;69;72
+ FINT     = 2;5;8;11;14;17;20;23;26;29;32;35;38;41;44;47;50;53;56;59
+ FINT     =-4;0;4;8;12;16;20;24;28;32;36;40;44;48;52;56;60;64;68;72
+ FLINE    = 0;12;30;29;28;4;25;26;27;24;23;22;21;5;20;10;17;16;2;15;14;32
+
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ CINT     = 1/32/32
+ TYPE     = c
+ CLEAR    = n
+ LINE     = 1/1/4/0
+#r
+
+
+ex
+EOF
+
+gpend
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test5/.
+exit

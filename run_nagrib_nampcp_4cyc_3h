@@ -1,0 +1,98 @@
+#/bin/ksh
+
+set -x
+ymd=20180321
+
+mkdir /stmpp1/Geoffrey.Manikin/nampcp
+rm /stmpp1/Geoffrey.Manikin/nampcp/*
+cd /stmpp1/Geoffrey.Manikin/nampcp
+
+DAPATH=/com2/nam/prod/nam.${ymd}
+#DAPATH=/ptmpp1/Geoffrey.Manikin/hold
+
+export DAPATH DAPATH2
+. /nwprod/gempak/.gempak
+
+cycles="00 12"
+fhrs="03 06 09 12 15 18 21 24 27 30 33 36 39 42 45 48 51 54 57 60 63 66 69 72 75 78 81 84"
+for cyc in $cycles
+do
+for fhr in $fhrs
+do              
+
+fhrr=`expr $fhr - 0`
+fhr3=`expr $fhr - 3`
+wgrib ${DAPATH}/nam.t${cyc}z.awip12${fhr}.tm00 | grep kpds5=61:kpds6=1:kpds7=0:TR=4:P1=${fhr3}:P2=${fhrr} | wgrib ${DAPATH}/nam.t${cyc}z.awip12${fhr}.tm00 -i -grib -o mdl1
+
+wgrib ${DAPATH}/nam.t${cyc}z.awip12${fhr}.tm00 | grep kpds5=63:kpds6=1:kpds7=0:TR=4:P1=${fhr3}:P2=${fhrr} | wgrib ${DAPATH}/nam.t${cyc}z.awip12${fhr}.tm00 -i -grib -o mdl2
+
+wgrib ${DAPATH}/nam.t${cyc}z.awip12${fhr}.tm00 | grep kpds5=65:kpds6=1:kpds7=0:TR=4:P1=${fhr3}:P2=${fhrr} | wgrib ${DAPATH}/nam.t${cyc}z.awip12${fhr}.tm00 -i -grib -o mdl3
+
+  nagrib << EOF
+GBFILE  = mdl1
+INDXFL  =
+GDOUTF  = dummynampcp.grd
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+GBFILE = mdl2
+r
+
+GBFILE = mdl3
+r
+
+exit
+EOF
+done
+
+mv dummynampcp.grd /meso/save/Geoffrey.Manikin/meg/nampcp_${ymd}${cyc}
+done
+
+cycles="06 18"
+fhrs="03 06 09 12 15 18 21 24 27 30 33 36 39 42 45 48 51 54 57 60 63 66 69 72 75 78 81 84"
+
+for cyc in $cycles
+do
+for fhr in $fhrs
+do
+
+wgrib ${DAPATH}/nam.t${cyc}z.awip12${fhr}.tm00 | grep kpds5=61:kpds6=1:kpds7=0 | wgrib ${DAPATH}/nam.t${cyc}z.awip12${fhr}.tm00 -i -grib -o mdl1
+wgrib ${DAPATH}/nam.t${cyc}z.awip12${fhr}.tm00 | grep kpds5=63:kpds6=1:kpds7=0 | wgrib ${DAPATH}/nam.t${cyc}z.awip12${fhr}.tm00 -i -grib -o mdl2
+wgrib ${DAPATH}/nam.t${cyc}z.awip12${fhr}.tm00 | grep kpds5=65:kpds6=1:kpds7=0 | wgrib ${DAPATH}/nam.t${cyc}z.awip12${fhr}.tm00 -i -grib -o mdl3
+
+nagrib << EOF
+GBFILE  = mdl1
+INDXFL  =
+GDOUTF  = dummynampcp.grd 
+PROJ    =
+GRDAREA =
+KXKY    = 
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+GBFILE  = mdl2
+r
+
+GBFILE  = mdl3
+r
+
+exit
+EOF
+done
+mv dummynampcp.grd /meso/save/Geoffrey.Manikin/meg/nampcp_${ymd}${cyc}
+done
+gpend
+exit

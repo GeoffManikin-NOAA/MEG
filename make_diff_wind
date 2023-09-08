@@ -1,0 +1,102 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+da00=`cut -c 7-14 /com/date/t${cyc}z`
+hr00=`cut -c 15-16 /com/date/t${cyc}z`
+month=`cut -c 11-12 /com/date/t${cyc}z`
+day=`cut -c 13-14 /com/date/t${cyc}z`
+
+#da00=`cut -c 7-14 t${cyc}z`
+#hr00=`cut -c 15-16 t${cyc}z`
+
+#da00=20040609
+#hr00=18
+
+mkdir /stmpp1/wx20mg/gempak.ruc20/wind
+rm /stmpp1/wx20mg/gempak.ruc20/wind/*
+cd /stmpp1/wx20mg/gempak.ruc20/wind
+cp /meso/save/wx20mg/casework/coltbl.xwp .
+
+/nwprod/util/ush/startxvfb.sh /bin/sh
+. ./STARTXVFB
+
+#fmdl=/com/nawips/prod/ruc2.${da00}/ruc2_${da00}${hr00}f0${fhr}
+fmdl=/meso/save/wx20mg/gempak/nagribx/ruc2_${da00}${hr00}
+fmdl2=/meso/save/wx20mg/gempak/nagribx/ruc2x_${da00}${hr00}
+#fmdl2=/stmpp1/wx20mg/gempak.ruc20/ruc2_${da00}${cyc}f0${fhr}
+
+echo $fmdl1
+echo $fmdl2
+
+times="00 01 02 03 06 09 12 15 18"
+for fhr in $times; do
+
+    gdcntr << EOF
+
+ GDFILE   = ${fmdl1}+${fmdl2}
+ GDATTIM  = f${fhr}
+ GLEVEL   = 850 
+ GVCORD   = pres 
+ GFUNC    = knts(sub(sped+2,sped))
+ CINT     = 1 
+ LINE     = 0 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/1/ ~ 12-HR   RUCX - RUC2  850 WIND DIFF 
+ DEVICE   = GF|compare850w_${cyc}f${fhr}.gif|900;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-95.;25./1;1;1;1
+ GAREA    = grid
+ CLEAR    = y
+ PANEL    = 0 
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/V/UL/.10;0.42/.35;.012/
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = -15;-12;-9;-6;-3;3;6;9;12;15 
+ FLINE    = 15;2;17;10;5;0;21;23;25;26;29 
+ CTYPE    = f 
+ LUTFIL   =
+ STNPLT   =
+r
+
+ CLEAR    = n
+ GLEV     = 300
+ TITLE    = 1/1/ ~ 12-HR   RUC2 - RUCX  300 WIND DIFF
+ FINT     = -25;-20;-15;-10;-5;5;10;15;20;25
+ DEVICE   = GF|compare300w_${cyc}f${fhr}.gif
+r
+
+ex
+EOF
+
+done
+gpend
+
+. /u/wx20mg/.Utils
+export w1=wd20mg
+export w2=$rzdm
+                                                                                      
+                                                                                      
+ftp -n -v << EOF > /meso/save/wx20mg/gempak.ruc20/rzftp.out
+open rzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/ruc2/para/${cyc}z/images/today
+prompt
+mput *.gif
+bye
+EOF
+                                                                                      
+
+echo abouttoexitdiffs
+exit

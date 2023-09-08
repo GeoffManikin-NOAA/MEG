@@ -1,0 +1,80 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+ymdh=2015071115
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+stnm=kikw
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/snd
+rm /stmpp1/Geoffrey.Manikin/meg/snd/*
+cd /stmpp1/Geoffrey.Manikin/meg/snd
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+#ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+#ymd=`cut -c 7-14 /com/date/t${cyc}z`
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+dayoweek=hold
+
+times="00 01 02 03 04"
+times="81"
+for fhr in $times; do
+
+fmdl1=/ptmpd2/Geoffrey.Manikin/com2/nawips/para/sref.${ymd}/sref_arwp1_${ymd}${cyc}f0${fhr}
+
+validtime="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} $fhr -1 x`"
+echo validtime = $validtime
+dattim=`echo $validtime | cut -c5-11`
+echo dattim = $dattim
+
+    gdprof << EOF
+ GPOINT   = 40.2;-92.9
+ GDATTIM  = last 
+ GVCORD   = pres
+ GFUNC    = tmpc 
+ GVECT    = WND
+ GDFILE   = $fmdl1 
+ LINE     = 2/1/7 
+ MARKER   = 0
+ BORDER   = 1//2
+ PTYPE    = skewt
+ SCALE    = 0
+ YAXIS    = 1050/300/50/1;1;1
+ XAXIS    = -15/45/10/;1
+ WIND     = 0 
+ REFVEC   =
+ WINPOS   = 1
+ FILTER   = YES
+ TITLE    = 1//  SREFX NEW  ARW P1 
+ PANEL    = 0
+ CLEAR    = YES
+ TEXT     = 1
+ DEVICE   = gif|sref_${stnm}_${ymdh}f0${fhr}.gif | 800;850
+ OUTPUT   = t
+ THTALN   = 8/3/1/250/500/5
+ THTELN   = 23/1/1/250/500/5
+ MIXRLN   = 17/10/2/0/40./1.
+r
+
+ CLEAR    = n
+ GFUNC    = dwpc
+ LINE     = 3/1/7
+r
+ 
+ex
+EOF
+
+done
+gpend
+
+#scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/hrrr/para/${cyc}z/images/.
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/${dayoweek}/
+exit

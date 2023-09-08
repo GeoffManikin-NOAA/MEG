@@ -1,0 +1,85 @@
+#!/bin/ksh
+
+set -x
+
+# @ step_name = nagrib
+# @ output = /meso/save/wx20mg/gempak/nagrib/nagrib.out
+# @ error = /meso/save/wx20mg/gempak/nagrib/nagrib.out 
+# @ class = dev
+# @ queue
+
+. /nwprod/gempak/.gempak
+
+export cyc=$1
+
+da00=`cut -c 7-14 /com/date/t${cyc}z`
+hr00=`cut -c 15-16 /com/date/t${cyc}z`
+
+mkdir  /ptmp/wx20mg/opsruc
+mkdir  /ptmp/wx20mg/opsruc/ruc2a.${da00}
+cd  /ptmp/wx20mg/opsruc/ruc2a.${da00}
+
+#da00=20010625
+#hr00=12
+
+echo $da00
+echo $hr00
+echo $cyc
+
+if [ ! -s /com/ruc/prod/ruc2a.${da00}/ruc2.t${cyc}z.pgrbf09 ]
+then 
+  echo exiting
+  exit
+fi
+
+cp /com/ruc/prod/ruc2a.${da00}/ruc2.t${cyc}z.pgrb13anl.grib2 .
+/nwprod/util/exec/cnvgrib -g21 ruc2.t${cyc}z.pgrb13anl.grib2 ruc2.t${cyc}z.pgrb13anl.grib 
+
+nagrib << EOF
+ GBFILE   = ruc2.t${cyc}z.pgrb13anl
+ INDXFL   =
+ GDOUTF   = /ptmp/wx20mg/opsruc/ruc2a.${da00}/ruc13_${da00}${hr00}f000
+ PROJ     = MER
+ GRDAREA  =
+ KXKY     = 10;10
+ MAXGRD   = 3000
+ CPYFIL   = gds 
+ GAREA    = grid
+ OUTPUT   = T
+ GBTBLS   =
+ GBDIAG   =
+
+r
+exit
+EOF
+
+fhrs="01 02 03 04 05 06 07 08 09"
+
+for hh in $fhrs
+do
+
+cp /com/ruc/prod/ruc2a.${da00}/ruc2.t${cyc}z.pgrb13f${hh}.grib2 .
+/nwprod/util/exec/cnvgrib -g21 ruc2.t${cyc}z.pgrb13f${hh}.grib2 ruc2.t${cyc}z.pgrb13f${hh}.grib 
+
+nagrib << EOF
+ GBFILE   = ruc2.t${cyc}z.pgrb13f${hh}.grib
+ INDXFL   =  
+ GDOUTF   = /ptmp/wx20mg/opsruc/ruc2a.${da00}/ruc13_${da00}${hr00}f0${hh} 
+ PROJ     = MER
+ GRDAREA  =  
+ KXKY     = 10;10
+ MAXGRD   = 3000 
+ CPYFIL   = gds 
+ GAREA    = grid 
+ OUTPUT   = T
+ GBTBLS   =  
+ GBDIAG   =  
+
+r
+exit
+EOF
+
+done
+
+gpend
+exit

@@ -1,0 +1,107 @@
+#
+# Generate the plot.
+# The area displayed is garea.
+#
+
+gdplot2 << EOF
+
+gdfile=
+gdattim=f48
+map=1
+glevel=10
+gvcord=hght
+gdpfun=wnd
+type=b
+wind=bm21
+proj=lcc/12.190;-133.459;0/1;1;1;4
+#garea=43.5;-126.5;50.5;-114.5
+garea=45.5;-125.5;49.0;-120.0
+device=gf
+colors=21
+filter=no
+skip=/2;2
+panel=l
+title=21/1/10m Meso22 Winds at 12Z 31 Jan 2001
+r
+exit
+gpend
+EOF
+
+sfmap << EOF
+
+sffile=20010131.sfc
+dattim=31/12
+area=45.5;-125.5;49.0;-120.0
+map=1
+glevel=10
+gvcord=hght
+sfparm=brbm
+type=bm1
+contur=0
+line=0
+clear=no
+colors=6
+filter=no
+panel=l
+title=6/2/10-m Obs Wind at 12Z 31 Jan 2001
+r
+
+sffile=2001013112.ship
+colors=2
+clear=no
+r
+
+exit
+
+gpend
+
+EOF
+gdplot2 << EOF
+
+gdfile=west10.awp218.gmpk
+gdattim=f48
+map=1
+glevel=10
+gvcord=hght
+gdpfun=wnd
+type=b
+wind=bm21
+proj=lcc/12.190;-133.459;0/1;1;1;4
+colors=21
+filter=no
+skip=/2;2
+panel=r
+title=21/1/10m West10 Winds at 12Z 31 Jan 2001
+r
+exit
+gpend
+EOF
+
+sfmap << EOF
+
+sffile=20010131.sfc
+dattim=31/12
+map=1
+glevel=10
+gvcord=hght
+sfparm=brbm
+type=bm1
+contur=0
+line=0
+clear=no
+colors=6
+filter=no
+panel=r
+title=6/2/10-m Obs Wind at 12Z 31 Jan 2001
+r
+
+sffile=2001013112.ship
+colors=2
+clear=no
+r
+
+exit
+
+gpend
+
+EOF

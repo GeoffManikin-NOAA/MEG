@@ -1,0 +1,93 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+ymdh=$1
+ymd=`echo $ymdh | cut -c1-8`
+month=`echo $ymdh | cut -c5-6`
+day=`echo $ymdh | cut -c7-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+mkdir /stmpp1/Geoffrey.Manikin/gempak.rap13/launch4/cins
+cd /stmpp1/Geoffrey.Manikin/gempak.rap13/launch4/cins
+cp /meso/save/Geoffrey.Manikin/gempak.rap13/coltbl.xwp .
+
+times="00 01 02 03 06 09 12 15 18"
+counter=0
+for fhr in $times; do
+
+fmdl=/com/nawips/prod/rap.${ymd}/rap13_${ymd}${cyc}f0${fhr}
+fmdl2=/ptmpp1/Geoffrey.Manikin/com/nawips/para/rap.${ymd}/rap13_${ymd}${cyc}f0${fhr}
+echo $fmdl
+echo $fmdl2
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = cins 
+ CINT     = -400;-350;-300;-250;-200;-150;-100;-50;-25 
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 0
+ DEVICE   = GIF|comparecins_${cyc}f${counter}.gif|900;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-95.;25./2;2;1;1
+ GAREA    = grid
+ CLEAR    = y
+ PANEL    = 0.;.51;1.;1.
+ TEXT     = 1.2/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/V/UL/.15;0.5/.8;.03/-2
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = -400;-350;-300;-250;-200;-150;-100;-50;-25 
+ FLINE    = 15;2;17;10;5;23;21;25;28;0 
+ TYPE     = f/c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ TITLE    = 1/1/ ${fhr}-HR RAP CINS
+ TEXT     = 1.2/11/2
+ GDPFUN   = blurk
+ CINT     = -2000/-2000/-2000
+ TYPE     = f/c
+ CLEAR    = n
+ CLRBAR   = 0
+r
+
+ TITLE    = 29/-1/ FCST MADE ${cyc}Z  ${month}/$day
+ TEXT     = 1.1/11/1/SW
+r
+
+ TITLE    = 1/1/ ${fhr}-HR RAPX  CINS
+ GDFILE   = $fmdl2 
+ GAREA    = 16.;-126.;55.;-57.
+ TEXT     = 1.2/11/2
+ PANEL    = 0;0;1;.49
+r
+
+ GDFILE   = $fmdl2 
+ GDPFUN   = cins 
+ TITLE    = 0
+ CINT     = -400;-350;-300;-250;-200;-150;-100;-50;-25 
+r
+
+ex
+EOF
+
+counter=`expr $counter + 1`
+gpend
+done
+
+mv *gif ../../ftphold/.
+echo abouttoexitcins
+exit

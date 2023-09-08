@@ -1,0 +1,52 @@
+#!/bin/ksh --login
+#
+. /nwprod/gempak/.gempak
+
+mkdir /stmpp1/Geoffrey.Manikin/nagrib
+rm /stmpp1/Geoffrey.Manikin/nagrib/*
+cd /stmpp1/Geoffrey.Manikin/nagrib
+
+ymdh=2015113012
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+mkdir /ptmpd2/Geoffrey.Manikin/com2/nawips/para/gfs.${ymd}
+
+PARMgfs=/meso/save/Geoffrey.Manikin/gempak
+cp $PARMgfs/sngfs.prm . 
+cp $PARMgfs/sfgfs.prm . 
+
+#  Set input file name.
+
+outfilbase=gfs_${ymd}${cyc}
+stations="724030 724050 724060"
+for stnm in $stations; do
+
+INFILE=/com/gfs/prod/gfs.${ymd}/bufr.t${cyc}z/bufr3.${stnm}.${ymdh}
+export INFILE
+
+#  Set output directory:
+OUTDIR=${COMAWP:-/ptmpd2/Geoffrey.Manikin/com2/nawips/para/gfs.${ymd}}
+
+   namsnd << EOF > /dev/null
+SNBUFR   = $INFILE
+SNOUTF   = ${outfilbase}.snd
+SFOUTF   = ${outfilbase}.sfc
+SNPRMF   = sngfs.prm
+SFPRMF   = sfgfs.prm
+TIMSTN   = 85/2000
+r
+
+exit
+EOF
+done
+gpend
+
+snd=${outfilbase}.snd
+sfc=${outfilbase}.sfc
+aux=${outfilbase}.sfc_aux
+cp $snd $OUTDIR/.$snd
+cp $sfc $OUTDIR/.$sfc
+mv $OUTDIR/.$snd $OUTDIR/$snd
+mv $OUTDIR/.$sfc $OUTDIR/$sfc
+
+exit

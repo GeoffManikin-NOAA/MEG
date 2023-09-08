@@ -1,0 +1,22 @@
+#!/bin/ksh
+
+mkdir /stmpp1p1/Geoffrey.Manikin/change
+rm /stmpp1p1/Geoffrey.Manikin/change/*
+cd /stmpp1p1/Geoffrey.Manikin/change
+cp /meso/save/Geoffrey.Manikin/gempak.rap13/make* .
+cp /meso/save/Geoffrey.Manikin/gempak.rap13/lau* .
+echo 'into'
+
+for f in *; do
+vi $f << EOF > /dev/null
+:1,\$ s/stmpp1/stmpp1p1/g
+:1,\$ s/ptmpp1/ptmpp1p1/g
+:wq
+EOF
+
+echo $f
+sleep 1
+done
+mv make* /meso/save/Geoffrey.Manikin/meg/.
+mv lau* /meso/save/Geoffrey.Manikin/meg/.
+exit

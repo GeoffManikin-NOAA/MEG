@@ -1,0 +1,58 @@
+#!/bin/sh
+echo 'into'
+
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/plots
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/plots/rtma
+rm /gpfs/dell1/stmp/Geoffrey.Manikin/plots/rtma/*
+cd /gpfs/dell1/stmp/Geoffrey.Manikin/plots/rtma
+cp /gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/coltbl.xwp .
+
+ymd=20210514
+
+times="06 08 10 12 14 16"
+times="21"
+for cyc in $times; do
+
+fmdl1=/gpfs/dell2/nco/ops/com/rtma/prod/rtma2p5.${ymd}/gempak/rtma2p5_${ymd}${cyc}f000
+fmdl1=/gpfs/dell1/ptmp/Geoffrey.Manikin/rtma/rtma2p5_${ymd}${cyc}f000
+echo $fmdl1
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = last 
+ GLEVEL   = 2 
+ GVCORD   = hght 
+ GDPFUN   = dwpf 
+ CINT     = 3 
+ LINE     = 0 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~ RTMA ANALYSIS 2M DEW PT 
+ DEVICE   = GIF|rtma2dew_${ymd}${cyc}.gif|750;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-92;25;/1;1;1;1
+ GAREA    = 36.;-102.;50.;-80. 
+ CLEAR    = y
+ PANEL    = 
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0 
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/H/UL/.05;0.95/.9;.02/2 
+ CONTUR   = 0
+ SKIP     = 0
+ FLINE    = 0;12;30;29;28;4;25;26;27;24;23;22;21;5;20;10;17;16;2;15;14;32
+ FINT     = 0;4;8;12;16;20;24;28;32;36;40;44;48;52;56;60;64;68;72;76;80
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ex
+EOF
+done
+gpend
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test7/.
+exit

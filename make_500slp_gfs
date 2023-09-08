@@ -1,0 +1,60 @@
+#!/bin/sh
+echo 'into'
+
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/meg
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/meg/veg
+rm /lfs/h2/emc/stmp/geoffrey.manikin/meg/veg/*
+cd /lfs/h2/emc/stmp/geoffrey.manikin/meg/veg
+cp /lfs/h2/emc/vpppg/save/geoffrey.manikin/meg/coltbl.xwp .
+
+ymdh=2023031618
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+times="00 06 12 15 18 21 24"
+times="06 12 15 18 21 24 30"
+times="00"
+for fhr in $times; do
+
+fmdl1=/lfs/h2/emc/vpppg/noscrub/geoffrey.manikin/dews/gfs_0p25_${ymdh}f0${fhr}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 500 
+ GVCORD   = pres 
+ GDPFUN   = quo(hght,10)
+ CINT     = 6 
+ LINE     = 4/1/3/3 
+ DEVICE   = GIF|gfs500slp_${ymdh}f${fhr}.gif | 800;850
+ PROJ     = lcc/25.;-80.;25./2;2;1;1
+ GAREA    = 27.;-95.;53.;-57. 
+ TITLE    = 1//~  GFS  500Z  ANALYSIS 
+ CLEAR    = y
+ SCALE    = 0
+ PANEL    = t
+ HILO     = 0
+ HLSYM    = 0 
+ CLRBAR   = 0 
+ TEXT     = 1.1/11/2
+ TYPE     = c 
+r
+
+ GLEVEL   = 0
+ GVCORD   = none
+ GDPFUN   = pmsl
+ LINE     = 23/1/3/3
+ CINT     = 4
+ CLEAR    = n
+ PANEL    = b
+ TITLE    = 1//~  GFS  PMSL ANALYSIS
+ HILO     = ;2/S12#;S13#/1000-1080;920-1000/5/2;2/yes
+ HLSYM    = 2;1/3/1;1/3;2/HW
+r
+
+ex
+EOF
+done
+gpend
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test9/.
+exit

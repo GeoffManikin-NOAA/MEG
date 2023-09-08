@@ -1,0 +1,127 @@
+#!/bin/ksh
+echo 'into'
+
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/meg
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/meg/swem
+rm /lfs/h2/emc/stmp/geoffrey.manikin/meg/swem/*
+cd /lfs/h2/emc/stmp/geoffrey.manikin/meg/swem
+cp /lfs/h2/emc/vpppg/save/geoffrey.manikin/meteograms.nam/coltbl.xwp .
+
+ymdh=2022122900
+ymd=`echo $ymdh | cut -c1-8`
+month=`echo $ymdh | cut -c5-6`
+day=`echo $ymdh | cut -c7-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+gfsver=v16.3
+namver=v4.2
+DAPATH=/lfs/h1/ops/prod/com/gfs/${gfsver}/gfs.${ymd}
+#DAPATH=/lfs/h2/emc/ptmp/geoffrey.manikin/gfs/gfs.${ymd}
+
+times="00"
+for fhr in $times; do
+
+typeset -Z3 fhr
+cp ${DAPATH}/${cyc}/atmos/gfs.t${cyc}z.pgrb2.0p25.f${fhr} gfs.grb2 
+
+  nagrib2 << EOF
+GBFILE  = gfs.grb2 
+INDXFL  = 
+GDOUTF  = gfssnowf${fhr}.grd 
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid 
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+ex
+EOF
+
+fmdl1=gfssnowf${fhr}.grd
+fmdl2=/lfs/h1/ops/prod/com/nam/${namver}/nam.${ymd}/gempak/nam32_${ymdh}f${fhr}
+echo $fmdl1
+echo $fmdl2
+
+areas="1 2 3 4 5"
+areas="6"
+for region in $areas; do
+
+if [ $region -eq 1 ]
+then
+garea="26.;-122.;58.;-62."
+proj="lcc/25.;-95.;25./2;2;1;1"
+elif [ $region -eq 2 ]
+then
+garea="35.;-85.;49.;-65."
+proj="lcc/25.;-75.;25./2;2;1;1"
+elif [ $region -eq 3 ]
+then
+garea="ia-"
+proj="lcc/25.;-95.;25./2;2;1;1"
+elif [ $region -eq 4 ]
+then
+garea="38.;-125.;52.;-109."
+proj="lcc/25.;-115.;25./2;2;1;1"
+elif [ $region -eq 5 ]
+then
+garea="30.;-123.;42.;-103."
+proj="lcc/25.;-115.;25./2;2;1;1"
+elif [ $region -eq 6 ]
+then
+garea="id"
+proj="lcc/25.;-115.;25./2;2;1;1"
+fi
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = quo(mul(sndm,100),2.54) 
+ CINT     = 2 
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1//~ ${fhr}-HR GFS SNOW DEPTH (IN) 
+ DEVICE   = GIF|gfssndm${region}_${ymdh}f${fhr}.gif|900;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = $proj 
+ GAREA    = $garea 
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1.0/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/V/UL/.14;0.9/.8;.03/-1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 0.1;1;3;5;7.5;10;15;20;25;50;75;100;125
+ FLINE    = 0;28;26;4;21;23;20;5;10;17;2;15;9;32
+ TYPE     = f/c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = last
+ TITLE    = 1//~ ${fhr}-HR  NAM SNOW DEPTH (in)
+ PANEL    = b
+ CLEAR    = n
+r
+
+ex
+EOF
+gpend
+done
+done
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test/.
+exit

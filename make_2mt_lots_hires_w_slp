@@ -1,0 +1,150 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/tmpf
+rm /stmpp1/Geoffrey.Manikin/meg/tmpf/*
+cd /stmpp1/Geoffrey.Manikin/meg/tmpf
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=2017061512
+ymd=`echo $ymdh | cut -c1-8`
+dayoweek=hold5
+
+hours="09 12 15"
+for fhr in $hours; do
+
+fmdl1=/com2/nawips/prod/nam.${ymd}/nam_conusnest_${ymdh}f0${fhr}
+fmdl2=/com2/nawips/prod/hrrr.${ymd}/hrrr_${ymdh}f0${fhr}00
+fmdl3=/meso2/noscrub/Eric.Rogers/com/nawips/para/nam.${ymd}/nam_conusnest_${ymdh}f0${fhr}
+fmdl4=/com/nawips/prod/hiresw.${ymd}/hiresw_conusarw_${ymdh}f0${fhr}
+fmdl5=/com/nawips/prod/hiresw.${ymd}/hiresw_conusnmmb_${ymdh}f0${fhr}
+fmdl4=/ptmpd2/Geoffrey.Manikin/hold/hiresw_arw_${ymdh}f0${fhr}
+fmdl5=/ptmpd2/Geoffrey.Manikin/hold/hiresw_nmmb_${ymdh}f0${fhr}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = last 
+ GLEVEL   = 2 
+ GVCORD   = hght 
+ GDPFUN   = tmpf 
+ CINT     = 5 
+ LINE     = 1 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   NAM3  2M TEMP  SLP
+ DEVICE   = GIF|${ymdh}tmpfslp_nam3f${fhr}.gif|750;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-98;25;/1;1;1;1
+ GAREA    = 35.;-103.;41.;-92.8 
+ CLEAR    = y
+ PANEL    = 0
+ TEXT     = 0.9/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/H/UL/.02;0.92/0.95;.03/2 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 15;20;25;30;35;40;45;50;55;60;65;70;75;80;85;90;95;100;105;110
+ FLINE    = 0;12;30;29;28;4;25;26;27;24;23;22;21;5;20;10;17;16;2;15;32
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDPFUN   = pmsl
+ GLEVEL   = 0
+ GVCORD   = none
+ CINT     = 4
+ LINE     = 1/1/2/1
+ CLEAR    = n
+ TYPE     = c
+r
+
+ GDFILE   = $fmdl2
+ TITLE    = 1/-1/~   HRRR  2M TEMP  SLP
+ DEVICE   = GIF|${ymdh}tmpfslp_hrrr${fhr}.gif|750;900
+ GDPFUN   = tmpf 
+ GLEVEL   = 2
+ GVCORD   = hght 
+ CLEAR    = y
+ TYPE     = f
+r
+
+ GDPFUN   = mmsl
+ GLEVEL   = 0
+ GVCORD   = none
+ CINT     = 4
+ LINE     = 1/1/2/1
+ CLEAR    = n
+ TYPE     = c
+r
+
+ GDFILE   = $fmdl3
+ TITLE    = 1/-1/~   NAM3X  2M TEMP  SLP
+ DEVICE   = GIF|${ymdh}tmpfpmsl_nam3x${fhr}.gif|750;900
+ GDPFUN   = tmpf
+ GLEVEL   = 2
+ GVCORD   = hght
+ CLEAR    = y
+ TYPE     = f
+r
+
+ GDPFUN   = pmsl 
+ GLEVEL   = 0
+ GVCORD   = none
+ CINT     = 4
+ LINE     = 1/1/2/1
+ CLEAR    = n
+ TYPE     = c
+r
+
+ GDFILE   = $fmdl4
+ TITLE    = 1/-1/~   HRW ARW  2M TEMP  SLP
+ DEVICE   = GIF|${ymdh}tmpfslp_arw${fhr}.gif|750;900
+ GDPFUN   = tmpf
+ GLEVEL   = 2
+ GVCORD   = hght
+ CLEAR    = y
+ TYPE     = f
+r
+
+ GDPFUN   = pmsl
+ GLEVEL   = 0
+ GVCORD   = none
+ CINT     = 4
+ LINE     = 1/1/2/1
+ CLEAR    = n
+ TYPE     = c
+r
+ 
+ GDFILE   = $fmdl5
+ TITLE    = 1/-1/~   HRW NMMB  2M TEMP  SLP
+ DEVICE   = GIF|${ymdh}tmpfslp_nmmb${fhr}.gif|750;900
+ GDPFUN   = tmpf
+ GLEVEL   = 2
+ GVCORD   = hght
+ CLEAR    = y
+ TYPE     = f
+r
+
+ GDPFUN   = pmsl
+ GLEVEL   = 0
+ GVCORD   = none
+ CINT     = 4
+ LINE     = 1/1/2/1
+ CLEAR    = n
+ TYPE     = c
+r
+
+ex
+EOF
+done
+gpend
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

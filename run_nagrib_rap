@@ -1,0 +1,45 @@
+#/bin/ksh
+
+set -x
+
+cyc=$1
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`cut -c 7-14 /com/date/t${cyc}z`
+
+ymdh=2015041012
+ymd=`echo $ymdh | cut -c1-8`
+
+DAPATH=/ptmpp2/Geoffrey.Manikin/hold
+
+export DAPATH DAPATH2
+. /nwprod/gempak/.gempak
+
+fhrs="00 01 02 03 04 05 06 07 08 09"
+for fhr in $fhrs
+do
+
+nagrib2 << EOF
+GBFILE  = ${DAPATH}/rap.t${cyc}z.awp130pgrbf${fhr}.grib2
+INDXFL  =
+GDOUTF  = rap13_${ymdh}f0${fhr} 
+PROJ    =
+GRDAREA =
+KXKY    = 
+GAREA   = grid
+MAXGRD  = 12000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+exit
+EOF
+
+done
+gpend
+mkdir /ptmpd2/Geoffrey.Manikin/com/rap/prod/rap.${ymd}
+mv rap13* /ptmpd2/Geoffrey.Manikin/com/rap/prod/rap.${ymd} 
+return
+end

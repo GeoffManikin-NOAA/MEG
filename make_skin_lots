@@ -1,0 +1,196 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/skin
+rm /stmpp1/Geoffrey.Manikin/meg/skin/*
+cd /stmpp1/Geoffrey.Manikin/meg/skin
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=2015081512
+ymd=`echo $ymdh | cut -c1-8`
+dayoweek=hold4
+
+hours="00 03 06 12 15"
+for fhr in $hours; do
+
+fmdl1=/com/nawips/prod/nam.${ymd}/nam20_${ymdh}f0${fhr}
+fmdl2=/com/nawips/prod/gfs.${ymd}/gfs_0p50_${ymdh}f0${fhr}
+fmdl3=/com/nawips/prod/rap.${ymd}/rap13_${ymdh}f0${fhr}
+fmdl4=/com/nawips/prod/nam.${ymd}/nam_conusnest_${ymdh}f0${fhr}
+fmdl5=/com2/nawips/prod/hrrr.${ymd}/hrrr_${ymdh}f0${fhr}00
+fmdl6=/meso2/noscrub/Eric.Rogers/com/nawips/para/nam.${ymd}/nam20_${ymdh}f0${fhr}
+fmdl7=/meso2/noscrub/Eric.Rogers/com/nawips/para/nam.${ymd}/nam_conusnest_${ymdh}f0${fhr}
+fmdl8=/ptmpd2/Geoffrey.Manikin/com2/nawips/para/gfs.${ymd}/gfs_${ymdh}f0${fhr}
+fmdl9=/ptmpd2/Geoffrey.Manikin/com2/nawips/para/hrrr.${ymd}/hrrr_${ymdh}f0${fhr}00
+fmdl10=/com/nawips/prod/hiresw.${ymd}/hiresw_conusarw_${ymdh}f0${fhr}
+fmdl11=/com/nawips/prod/hiresw.${ymd}/hiresw_conusnmmb_${ymdh}f0${fhr}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = last 
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = tmpf 
+ CINT     = 5 
+ LINE     = 1 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   NAM  SKIN TEMP 
+ DEVICE   = GIF|${ymdh}skinnamgfs${fhr}.gif|750;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-99;25;/1;1;1;1
+ GAREA    = 38.;-107.;50.;-89. 
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/V/UL/.03;0.5/1.0;.03/2 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 25;30;35;40;45;50;55;60;65;70;75;80;85;90;95;100;105;110;115;120
+ FLINE    = 0;12;30;29;28;4;25;26;27;24;23;22;21;5;20;10;17;16;2;15;32
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl2
+ CLEAR    = n
+ PANEL    = b
+ CLRBAR   = 0
+ TITLE    = 1/-1/~   GFS  SKIN TEMP
+r
+
+ GDFILE   = $fmdl1
+ CLEAR    = y
+ PANEL    = t
+ TITLE    = 1/-1/~   NAM  SKIN TEMP
+ CLRBAR   = 1/V/UL/.03;0.5/1.0;.03/2
+ DEVICE   = GIF|${ymdh}skinnamrap${fhr}.gif|750;900
+r
+
+ GDFILE   = $fmdl3
+ CLEAR    = n
+ PANEL    = b
+ CLRBAR   = 0
+ TITLE    = 1/-1/~   RAP  SKIN TEMP
+r
+
+ GDFILE   = $fmdl1
+ CLEAR    = y
+ PANEL    = t
+ TITLE    = 1/-1/~   NAM  SKIN TEMP
+ CLRBAR   = 1/V/UL/.03;0.5/1.0;.03/2
+ DEVICE   = GIF|${ymdh}skinnamnest${fhr}.gif|750;900
+r
+
+ GDFILE   = $fmdl4
+ CLEAR    = n
+ PANEL    = b
+ CLRBAR   = 0
+ TITLE    = 1/-1/~   NAM4  SKIN TEMP
+r
+
+ GDFILE   = $fmdl3
+ CLEAR    = y
+ PANEL    = t
+ TITLE    = 1/-1/~   RAP  SKIN TEMP
+ CLRBAR   = 1/V/UL/.03;0.5/1.0;.03/2
+ DEVICE   = GIF|${ymdh}skinraphrrr${fhr}.gif|750;900
+r
+
+ GDFILE   = $fmdl5
+ CLEAR    = n
+ PANEL    = b
+ CLRBAR   = 0
+ TITLE    = 1/-1/~   HRRR  SKIN TEMP
+r
+
+ GDFILE   = $fmdl1
+ CLEAR    = y
+ PANEL    = t
+ TITLE    = 1/-1/~   NAM  SKIN TEMP
+ CLRBAR   = 1/V/UL/.03;0.5/1.0;.03/2
+ DEVICE   = GIF|${ymdh}skinnamx${fhr}.gif|750;900
+r
+
+ GDFILE   = $fmdl6
+ CLEAR    = n
+ PANEL    = b
+ CLRBAR   = 0
+ TITLE    = 1/-1/~   NAMX  SKIN TEMP
+r
+
+ GDFILE   = $fmdl4
+ CLEAR    = y
+ PANEL    = t
+ TITLE    = 1/-1/~   NAM4  SKIN TEMP
+ CLRBAR   = 1/V/UL/.03;0.5/1.0;.03/2
+ DEVICE   = GIF|${ymdh}skinnam4x${fhr}.gif|750;900
+r
+
+ GDFILE   = $fmdl7
+ CLEAR    = n
+ PANEL    = b
+ CLRBAR   = 0
+ TITLE    = 1/-1/~   NAM4X  SKIN TEMP
+r
+
+ GDFILE   = $fmdl2
+ CLEAR    = y
+ PANEL    = t
+ TITLE    = 1/-1/~   GFS  SKIN TEMP
+ CLRBAR   = 1/V/UL/.03;0.5/1.0;.03/2
+ DEVICE   = GIF|${ymdh}skingfsx${fhr}.gif|750;900
+r
+
+ GDFILE   = $fmdl8
+ CLEAR    = n
+ PANEL    = b
+ CLRBAR   = 0
+ TITLE    = 1/-1/~   GFSX  SKIN TEMP
+r
+
+ GDFILE   = $fmdl5
+ CLEAR    = y
+ PANEL    = t
+ TITLE    = 1/-1/~   HRRR  SKIN TEMP
+ CLRBAR   = 1/V/UL/.03;0.5/1.0;.03/2
+ DEVICE   = GIF|${ymdh}skinhrrrx${fhr}.gif|750;900
+r
+
+ GDFILE   = $fmdl9
+ CLEAR    = n
+ PANEL    = b
+ CLRBAR   = 0
+ TITLE    = 1/-1/~   HRRRX  SKIN TEMP
+r
+
+ GDFILE   = $fmdl10
+ CLEAR    = y
+ PANEL    = t
+ TITLE    = 1/-1/~   ARW  SKIN TEMP
+ CLRBAR   = 1/V/UL/.03;0.5/1.0;.03/2
+ DEVICE   = GIF|${ymdh}skinhiresw${fhr}.gif|750;900
+r
+
+ GDFILE   = $fmdl11
+ CLEAR    = n
+ PANEL    = b
+ CLRBAR   = 0
+ TITLE    = 1/-1/~   NMMB  SKIN TEMP
+r
+
+ex
+EOF
+done
+gpend
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

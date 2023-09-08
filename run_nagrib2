@@ -1,0 +1,38 @@
+#/bin/ksh
+
+set -x
+
+PATH=/ptmp/wx20mg/etaretro.2001040912
+cyc=12
+
+export PATH
+export cyc
+. /nwprod/gempak/.gempak
+
+fhrs="19 20 21 22 23 24"
+
+for hr in $fhrs
+do
+
+
+/nwprod/gempak/nawips1/exe/aix4/nagrib << EOF
+GBFILE  = /ptmp/wx20mg/case/eta.t12z.awip12${hr}.tm00  
+INDXFL  =
+GDOUTF  = /ptmp/wx20mg/case/eta12_2003112612f${hr} 
+PROJ    =
+GRDAREA =
+KXKY    = 
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+exit
+EOF
+
+done
+exit
+

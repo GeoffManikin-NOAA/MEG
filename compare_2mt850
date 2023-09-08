@@ -1,0 +1,123 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/2mt850
+rm /stmpp1/Geoffrey.Manikin/meg/2mt850/*
+cd /stmpp1/Geoffrey.Manikin/meg/2mt850
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`cut -c 7-14 /com/date/t${cyc}z`
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+
+ymdh=2015021612
+ymd=`echo $ymdh | cut -c1-8`
+dayoweek=hold2
+
+times="108 120 132 144 156 168 180 192 204"
+times="72 84 96"
+for fhr in $times; do
+fmdl1=/com/nawips/prod/gfs.${ymd}/gfs_0p25_${ymdh}f0${fhr}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 850 
+ GVCORD   = pres 
+ GDPFUN   = tmpc 
+ CINT     = 4 
+ LINE     = 1 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   GFS 850 MB  TEMP 
+ DEVICE   = GIF|2mt850models_f0${fhr}.gif|850;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-75;25;/1;1;1;1
+ GAREA    = ny- 
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/V/UL/.02;0.95/0.85;.03/2 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 5;10;15;20;25;30;35;40;45;50;55;60;65;70;75;80;85;90;95;100;105
+ FINT     = -36;-33;-30;-27;-24;-21;-18;-15;-12;-9;-6;-3;0;3;6;9;12;15;18
+ FLINE    = 0;12;30;29;28;4;25;26;27;24;23;22;21;5;20;10;17;16;2;15;14;32
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GVCORD   = hght
+ GLEVEL   = 2
+ GDPFUN   = tmpf
+ GDATTIM  = f$fhr
+ TITLE    = 1/-1/~  GFS 2-M TEMP 
+ PANEL    = b
+ FINT     = -48;-40;-32;-24;-16;-8;0;8;16;24;32;40;48;56;64;72;80;88;96
+ CLEAR    = n
+r
+
+ex
+EOF
+
+    gdcntr << EOF
+ GDATTIM  = f${fhr}
+ GLEVEL   = 2  
+ GVCORD   = hght 
+ GFUNC    = sub(tmpc@850%pres,tmpc)
+ CINT     = 2 
+ LINE     = 1
+ MAP      = 1
+ WIND     = bk1/0.7/2/122
+ TITLE    = 1//~  GFS TMPC   850mb - 2M 
+ DEVICE   = GIF|2mt850diff_f0${fhr}.gif | 600;650
+ SATFIL   =
+ RADFIL   =
+ CLEAR    = y
+ PANEL    = 0
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/H/UL/.1;.9/.8;.02/-1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = -18;-14;-10;-6;-2;2;6;10;14;18
+ FLINE    = 30;28;26;27;22;0;5;10;17;2;15
+ CTYPE    = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ex
+EOF
+done
+gpend
+
+for fhr in $times; do
+
+CONV=/usrx/local/ImageMagick/6.8.3-3/bin
+$CONV/convert -crop 0x0 2mt850models_f0${fhr}.gif 2mt8501.gif
+$CONV/convert -crop 0x0 2mt850diff_f0${fhr}.gif 2mt8502.gif
+$CONV/montage -geometry 800x850 2mt8501.gif 2mt8502.gif ${cyc}2mt850${fhr}.gif
+done
+
+scp ${cyc}*gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+
+rm *gif
+exit

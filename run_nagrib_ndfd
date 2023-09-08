@@ -1,0 +1,82 @@
+#!/bin/ksh
+
+set -x
+
+# @ step_name = nagrib
+# @ output = /meso/save/wx20mg/gempak/nagrib/ndfd.out
+# @ error = /meso/save/wx20mg/gempak/nagrib/ndfd.out
+# @ class = dev
+# @ queue
+
+. /nwprod/gempak/.gempak
+
+export cyc=$1
+export PS4='PRDGEN${fhr}_T$SECONDS + '
+export XLFRTEOPTS="unit_vars=yes"
+
+da00=`cut -c 7-14 /com/date/t${cyc}z`
+hr00=`cut -c 15-16 /com/date/t${cyc}z`
+
+echo $da00
+echo $hr00
+echo $cyc
+
+if [ -s /meso/save/wx20mg/gempak/nagrib/ruc2_${da00}${hr00} ]
+then
+ exit
+fi
+
+if [ -s /meso/save/wx20mg/gempak/nagrib/dummy.grd ]
+then
+ exit
+fi
+
+cd /meso/save/wx20mg/gempak/nagrib
+rm opsndfd*
+rm testndfd*
+
+nagrib << EOF
+ GBFILE   = /com/ruc/prod/ruc2a.${da00}/ruc2.t${cyc}z.ndfdanl
+ INDXFL   =
+ GDOUTF   = opsndfd_${da00}${hr00}00 
+ PROJ     = MER
+ GRDAREA  =
+ KXKY     = 10;10
+ MAXGRD   = 3000
+ CPYFIL   = gds 
+ GAREA    = grid
+ OUTPUT   = T
+ GBTBLS   =
+ GBDIAG   =
+
+r
+exit
+EOF
+
+nagrib << EOF
+ GBFILE   = /ptmp/wx20mg/ruc2/ruc2a.${da00}/ruc2.t${cyc}z.ndfd00
+ INDXFL   =
+ GDOUTF   = testndfd_${da00}${hr00}00
+ PROJ     = MER
+ GRDAREA  =
+ KXKY     = 10;10
+ MAXGRD   = 3000
+ CPYFIL   = gds
+ GAREA    = grid
+ OUTPUT   = T
+ GBTBLS   =
+ GBDIAG   =
+
+r
+exit
+EOF
+
+gpend
+chmod 777 opsndfd* 
+chmod 777 testndfd*
+cp /com/date/t${cyc}z .
+
+. /meso/save/wx20mg/casework/compare_dwpf_ruc5 $da00 $cyc
+. /meso/save/wx20mg/casework/compare_tmpf_ruc5 $da00 $cyc
+. /meso/save/wx20mg/casework/compare_tmpf_ruc5-13 $da00 $cyc
+exit

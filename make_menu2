@@ -1,0 +1,259 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /ptmpp1/wx20mg/menu
+rm /ptmpp1/wx20mg/menu/*
+cd /ptmpp1/wx20mg/menu
+
+. /u/wx20mg/.Utils
+export w1=wd20mg
+export w2=$rzdm
+
+ftp -n -i << EOF > /meso/save/wx20mg/gempak.ruc13/animate.out
+open rzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/ruc2/para/14z
+prompt
+mget menu*
+bye
+EOF
+
+cycles="00 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 17 18 19 20 21 22 23"
+for cyc in $cycles; do
+                                                                                 
+cp menu14.html menu${cyc}.html
+vi menu${cyc}.html << EOF > /dev/null
+:1,\$ s/14f/${cyc}f
+:wq
+EOF
+
+cp menu14_yesterday.html menu${cyc}_yesterday.html
+vi menu${cyc}_yesterday.html << EOF > /dev/null
+:1,\$ s/14f/${cyc}f
+:wq
+EOF
+   
+. /u/wx20mg/.Utils
+export w1=wd20mg
+export w2=$rzdm
+                
+ftp -n -i << EOF > /meso/save/wx20mg/gempak.ruc13/ftp.out
+open rzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/ruc2/para/${cyc}z
+prompt
+mput menu${cyc}.html
+mput menu${cyc}_yesterday.html
+bye
+EOF
+
+ftp -n -i << EOF > /meso/save/wx20mg/gempak.ruc13/ftp2.out
+open rzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/ruc2/para/${cyc}z
+prompt
+mput menu${cyc}_yesterday.html
+bye
+EOF
+
+done
+
+ftp -n -i << EOF > /meso/save/wx20mg/gempak.ruc13/animate.out
+open rzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/ruc2/para/14z
+prompt
+mget refd*
+bye
+EOF
+mv refd* on.html
+
+ftp -n -i << EOF > /meso/save/wx20mg/gempak.ruc13/animate.out
+open rzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/ruc2/para/14z
+prompt
+mget *pcp*
+bye
+EOF
+
+ftp -n -i << EOF > /meso/save/wx20mg/gempak.ruc13/animate.out
+open rzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/ruc2/para/14z
+prompt
+mget diff*
+bye
+EOF
+
+ftp -n -i << EOF > /meso/save/wx20mg/gempak.ruc13/animate.out
+open rzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/ruc2/para/14z
+prompt
+mget pwtr*
+bye
+EOF
+
+ftp -n -i << EOF > /meso/save/wx20mg/gempak.ruc13/animate.out
+open rzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/ruc2/para/14z
+prompt
+mget inc*
+bye
+EOF
+
+ftp -n -i << EOF > /meso/save/wx20mg/gempak.ruc13/animate.out
+open rzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/ruc2/para/14z
+prompt
+mget *cape*
+bye
+EOF
+
+ftp -n -i << EOF > /meso/save/wx20mg/gempak.ruc13/animate.out
+open rzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/ruc2/para/14z
+prompt
+mget hel*
+bye
+EOF
+
+ftp -n -i << EOF > /meso/save/wx20mg/gempak.ruc13/animate.out
+open rzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/ruc2/para/14z
+prompt
+mget jet*
+bye
+EOF
+
+mv pcp.animate.html on2.html
+mv pcpdiff.animate.html on3.html
+mv diff.animate.html on4.html
+mv pwtr.animate.html on5.html
+mv inc.animate.html on6.html
+mv cpcp.animate.html on7.html
+mv bestcape.animate.html on8.html
+mv sfccape.animate.html on9.html
+mv helic.animate.html on10.html
+mv jetdiff.animate.html on11.html
+mv
+
+ftp -n -i << EOF > /meso/save/wx20mg/gempak.ruc13/animate.out
+open rzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/ruc2/para/14z
+prompt
+mget diff*
+bye
+EOF
+
+cycles="00 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 17 18 19 20 21 22 23"
+for cyc in $cycles; do
+
+vars="10e 10c 10w 250 2dew 2dewzoom 2m 2mt 2mtzoom 500 700 850 850t 850w 925 base basezoom blrh capezoom cins frzh gust lift msav parc refc refd rich1 rich2 rich3 skin slp sndm top topc type vis viszoom"
+for field in $vars; do
+
+cp on.html ${field}.animate.html
+vi ${field}.animate.html << EOF > /dev/null
+:1,\$ s/14f/${cyc}f
+:wq
+EOF
+
+vi ${field}.animate.html << EOF > /dev/null
+:1,\$ s/refd/${field}
+:wq
+EOF
+
+done 
+
+cp on2.html pcp.animate.html
+vi pcp.animate.html << EOF > /dev/null
+:1,\$ s/14f/${cyc}f
+:wq
+EOF
+
+cp on3.html pcpdiff.animate.html
+vi pcpdiff.animate.html << EOF > /dev/null
+:1,\$ s/14f/${cyc}f
+:wq
+EOF
+
+cp on4.html diff.animate.html
+vi diff.animate.html << EOF > /dev/null
+:1,\$ s/14f/${cyc}f
+:wq
+EOF
+
+cp on5.html pwtr.animate.html
+vi pwtr.animate.html << EOF > /dev/null
+:1,\$ s/14f/${cyc}f
+:wq
+EOF
+
+cp on6.html inc.animate.html
+vi inc.animate.html << EOF > /dev/null
+:1,\$ s/14f/${cyc}f
+:wq
+EOF
+
+cp on7.html cpcp.animate.html
+vi cpcp.animate.html << EOF > /dev/null
+:1,\$ s/14f/${cyc}f
+:wq
+EOF
+
+cp on8.html bestcape.animate.html
+vi bestcape.animate.html << EOF > /dev/null
+:1,\$ s/14f/${cyc}f
+:wq
+EOF
+
+cp on9.html sfccape.animate.html
+vi sfccape.animate.html << EOF > /dev/null
+:1,\$ s/14f/${cyc}f
+:wq
+EOF
+
+cp on10.html helic.animate.html
+vi helic.animate.html << EOF > /dev/null
+:1,\$ s/14f/${cyc}f
+:wq
+EOF
+
+cp on11.html jetdiff.animate.html
+vi jetdiff.animate.html << EOF > /dev/null
+:1,\$ s/14f/${cyc}f
+:wq
+EOF
+
+ftp -n -i << EOF > /meso/save/wx20mg/gempak.ruc13/animate.out
+open rzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/ruc2/para/${cyc}z
+prompt
+mput *animate* 
+bye
+EOF
+done
+
+exit

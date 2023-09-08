@@ -1,0 +1,177 @@
+#!/bin/ksh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/sref24pcp
+rm /stmpp1/Geoffrey.Manikin/meg/sref24pcp/*
+cd /stmpp1/Geoffrey.Manikin/meg/sref24pcp
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`cut -c 7-14 /com/date/t${cyc}z`
+
+#ymdh=2013082718
+#ymd=20130827
+
+ymdhs="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -3 -1`"
+ymds=`echo $ymdhs | cut -c1-8`
+cycs=`echo $ymdhs | cut -c9-10`
+pcpymdhs="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -3 -1 x`"
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+#dayoweek=today
+
+if [ $cyc -eq 00 ]; then
+ hours="39 63 87"
+elif [ $cyc -eq 06 ]; then
+ hours="33 57 81"
+elif [ $cyc -eq 12 ]; then
+ hours="27 51 75"
+else
+ hours="45 69"
+fi
+
+for fhrs in $hours; do
+
+fhrnew=`expr $fhrs - 3`
+typeset -Z2 fhrs fhrnew
+
+fmdl1=/meso/save/Geoffrey.Manikin/meg/nampcp_${ymdh}
+fmdl2=/meso/save/Geoffrey.Manikin/meg/gfspcp_${ymdh}
+fmdl3=/com2/nawips/prod/sref.${ymds}/sref212_${ymdhs}_mean
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl3
+ GDATTIM  = f$fhrs
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = quo(p24menmw,25.4) 
+ CINT     = 4 
+ LINE     = 4/1/2/3 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   SREF MEAN 24-HR PCP  
+ DEVICE   = GIF|sref24pcp_f0${fhrs}.gif|850;950
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-95;25;/1;1;1;1
+ GAREA    = 18.;-128.;58.;-62. 
+ CLEAR    = y
+ PANEL    = 0
+ TEXT     = 1.0/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0
+ CLRBAR   = 1/h/UL/.06;.95/.9;.02/-1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = .01;.1;.25;.5;.75;1;1.5;2;2.5;3;3.5
+ FLINE    = 0;21;22;23;4;25;27;28;29;30;2;15
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ex
+EOF
+
+    gdcntr << EOF
+ GDFILE   = $fmdl1 + $fmdl3
+ GDATTIM  = f${fhrnew}
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GFUNC    = sub(quo(p24menmw^${ymds}/${cycs}f${fhrs}+2,25.4),p24i)
+ CINT     = 2 
+ LINE     = 1
+ MAP      = 1
+ WIND     = bk1/0.7/2/122
+ TITLE    = 1//24-HR PCP  ${cycs}z SREF f${fhrs}   -   ${cyc}z NAM f${fhrnew}
+ DEVICE   = GIF|sref24pcpdiff_f0${fhrs}.gif | 600;650
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-95.;25./2;2;1;1
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1./11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/V/UL/.12;.45/.9;.02/-1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = -1.5;-1.;-0.75;-0.5;-0.25;0.25;0.5;0.75;1.;1.5
+ FLINE    = 30;28;26;27;22;0;5;10;17;2;15
+ CTYPE    = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl2 + $fmdl3
+ TITLE    = 1//24-HR PCP  ${cycs}z SREF f${fhrs}   -   ${cyc}z GFS f${fhrnew}
+ CLEAR    = n
+ PANEL    = b
+ CLRBAR   = 0
+r
+
+ex
+EOF
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl3
+ GDATTIM  = f87
+ GLEVEL   = 0
+ GVCORD   = none
+ GDPFUN   = quo(add(add(add(p24menmw,p24menmw^${pcpymdhs}f063),p24menmw^${pcpymdhs}f039),p12menmw^${pcpymdhs}f015),25.4)
+ CINT     = 4
+ LINE     = 4/1/2/3
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   SREF MEAN 84-HR PCP
+ DEVICE   = GIF|${cycs}sref84pcp.gif|850;950
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-95;25;/1;1;1;1
+ GAREA    = 18.;-128.;58.;-62.
+ CLEAR    = y
+ PANEL    = 0
+ TEXT     = 1.0/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/h/UL/.06;.95/.9;.02/-1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = .01;.1;.25;.5;.75;1;1.5;2;2.5;3;3.5
+ FLINE    = 0;21;22;23;4;25;27;28;29;30;2;15
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ex
+EOF
+done
+gpend
+
+for fhrs in $hours; do
+typeset -Z2 fhrs
+
+CONV=/usrx/local/ImageMagick/6.8.3-3/bin
+$CONV/convert -crop 0x0 sref24pcp_f0${fhrs}.gif sref24pcp2.gif
+$CONV/convert -crop 0x0 sref24pcpdiff_f0${fhrs}.gif sref24pcp1.gif
+$CONV/montage -geometry 800x850 sref24pcp1.gif sref24pcp2.gif ${cycs}24pcpsref${fhrs}.gif
+done
+
+#scp ${cycs}*gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+mv ${cycs}*gif /stmpp1/Geoffrey.Manikin/meg/holdshort/.
+rm *gif
+exit

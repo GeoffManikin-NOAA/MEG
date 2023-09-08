@@ -1,0 +1,6 @@
+#!/bin/ksh
+
+echo 'here'
+cd /lfs/h2/emc/vpppg/save/geoffrey.manikin/meg
+qsub run_nagrib2_gfspcp_4cyc
+exit

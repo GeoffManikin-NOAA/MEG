@@ -1,0 +1,101 @@
+2!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/snd
+rm /stmpp1/Geoffrey.Manikin/meg/snd/*
+cd /stmpp1/Geoffrey.Manikin/meg/snd
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`cut -c 7-14 /com/date/t${cyc}z`
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+
+fmdl1=/com/nawips/prod/nam.${ymd}/nam_${ymdh}.snd
+fmdl2=/com/nawips/prod/gfs.${ymd}/gfs_${ymdh}.snd
+
+times="00 12 24 36 48 60 72
+for fhr in $times; do
+
+validtime="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} $time -1 x`"
+echo validtime = $validtime
+dattim=`echo $validtime | cut -c5-11`
+echo dattim = $dattim
+
+stations="724030 723630 745600" 
+if [ $time -lt 10 ]
+then
+fhr=0${time}
+else
+fhr=$time
+fi
+
+    snprof << EOF
+ SNFILE   = $fmdl1
+ DATTIM   = $dattim
+ AREA     = @${stnm}
+ SNPARM   = tmpc;dwpc
+ LINE     = 2;4/1/7
+ PTYPE    = skewt
+ VCOORD   = PRES
+ STNDEX   = cape;cins
+ STNCOL   = 24
+ WIND     = bk1
+ WINPOS   = 2
+ MARKER   = 0
+ BORDER   = 1//2
+ TITLE    = 1//  NAM 
+ DEVICE   = gif|${cyc}snd${stnm}_$fhr.gif | 800;850
+ YAXIS    = 1050/300/50/1;1;1
+ XAXIS    = -20/45/10/;1
+ FILTER   = n 
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 0.8 
+ THTALN   = 8/3/1/250/500/5
+ THTELN   = 23/1/1/250/500/5
+ MIXRLN   = 17/10/2/0/40./1.
+r
+
+ SNFILE   = $fmdl2
+ CLEAR    = n
+ TITLE    = 1//  GFS
+ PANEL    = b
+r
+
+ex
+EOF
+
+done
+gpend
+
+. /u/Geoffrey.Manikin/.Utils
+export w1=wd20mg
+export w2=$rzdm
+
+ftp -n -v << EOF > /meso/save/Geoffrey.Manikin/casework/rzftp.out
+open emcrzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/today
+mput ${cyc}*gif
+bye
+EOF
+
+ftp -n -v << EOF > /meso/save/Geoffrey.Manikin/casework/rzftp.out
+open emcrzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/${dayoweek}
+mput ${cyc}*gif
+bye
+EOF
+
+exit

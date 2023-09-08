@@ -1,0 +1,118 @@
+#!/bin/ksh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/gfssndm
+rm /stmpp1/Geoffrey.Manikin/meg/gfssndm/*
+cd /stmpp1/Geoffrey.Manikin/meg/gfssndm
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+
+ymdh1=2017031406
+ymd1=`echo $ymdh1 | cut -c1-8`
+cyc1=`echo $ymdh1 | cut -c9-10`
+dayoweek=hold9
+
+hours="24"
+for fhr1 in $hours; do
+ymdh2="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh1} -6 -1`"
+ymdh3="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh1} -12 -1`"
+ymdh4="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh1} -18 -1`"
+ymd2=`echo $ymdh2 | cut -c1-8`
+ymd3=`echo $ymdh3 | cut -c1-8`
+ymd4=`echo $ymdh4 | cut -c1-8`
+cyc2=`echo $ymdh2 | cut -c9-10`
+cyc3=`echo $ymdh3 | cut -c9-10`
+cyc4=`echo $ymdh4 | cut -c9-10`
+
+fhr2=`expr $fhr1 + 6`
+fhr3=`expr $fhr1 + 12`
+fhr4=`expr $fhr1 + 18`
+
+verymdh="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh1} ${fhr1} -1`"
+typeset -Z2 fhr1 fhr2 fhr3
+DAPATH=/com2/nawips/prod
+#DAPATH=/ptmpd2/Geoffrey.Manikin/com2/nawips/prod
+fmdl1=${DAPATH}/gfs.${ymd1}/gfs_0p25_${ymdh1}f0${fhr1}
+fmdl2=${DAPATH}/gfs.${ymd2}/gfs_0p25_${ymdh2}f0${fhr2}
+fmdl3=${DAPATH}/gfs.${ymd3}/gfs_0p25_${ymdh3}f0${fhr3}
+fmdl4=${DAPATH}/gfs.${ymd4}/gfs_0p25_${ymdh4}f0${fhr4}
+
+fmdl1a=${DAPATH}/gfs.${ymd1}/gfs_0p25_${ymdh1}f000
+fmdl2a=${DAPATH}/gfs.${ymd2}/gfs_0p25_${ymdh2}f000
+fmdl3a=${DAPATH}/gfs.${ymd3}/gfs_0p25_${ymdh3}f000
+fmdl4a=${DAPATH}/gfs.${ymd4}/gfs_0p25_${ymdh4}f000
+
+garea="37.5;-81.;47.;-67."
+proj="lcc/25.;-76.;25./2;2;1;1"
+garea="40.8;-78.4;43.8;-73.8"
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1a + $fmdl1
+ GDATTIM  = f$fhr1
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = mul(sub(sndm+2,sndm^${ymd1}/${cyc1}f000),39.37)
+ CINT     = 5 
+ LINE     = 0 
+ DEVICE   = GIF|${ymd1}${cyc1}gfssndm_f${fhr1}.gif | 800;850
+ PROJ     = $proj 
+ GAREA    = $garea 
+ TITLE    = 1// ${ymd1} ${cyc1}z GFS   ${fhr1}-HR ACC SNOW DPTH
+ \$MAPFIL  = county
+ CLEAR    = y
+ SCALE    = 0
+ PANEL    = ul 
+ HILO     = 0
+ HLSYM    = 0 
+ CLRBAR   = 0
+ TEXT     = 0.9/11/2
+ FINT     = 0.1;1;2;3;4;6;8;10;12;16;20;24;28;32
+ FLINE    = 0;21;22;23;4;25;27;28;29;30;2;15;17;10;5
+ TYPE     = f 
+r
+
+# TITLE    = 15/1/     CYCLES RUN ON   $ymd1
+# CLEAR    = n
+#r
+
+ GDFILE   = $fmdl2a + $fmdl2
+ GDATTIM  = f$fhr2
+ GDPFUN   = mul(sub(sndm+2,sndm^${ymd2}/${cyc2}f000),39.37)
+ PANEL    = ur 
+ CLEAR    = n
+ TITLE    = 1//  ${ymd2} ${cyc2}z GFS   ${fhr2}-HR ACC SNOW DPTH 
+r
+
+ TITLE    = 2/1/VERIFYING TIME   $verymdh
+r
+
+ GDFILE   = $fmdl3a + $fmdl3
+ GDATTIM  = f$fhr3
+ GDPFUN   = mul(sub(sndm+2,sndm^${ymd3}/${cyc3}f000),39.37)
+ PANEL    = ll 
+ TITLE    = 1//  ${ymd3} ${cyc3}z GFS   ${fhr3}-HR ACC SNOW DPTH 
+ CLRBAR   = 1/H/UL/.02;0.97/1.9;.03/1
+r
+
+ GDFILE   = $fmdl4a + $fmdl4
+ GDATTIM  = f$fhr4
+ GDPFUN   = mul(sub(sndm+2,sndm^${ymd4}/${cyc4}f000),39.37)
+ PANEL    = lr
+ TITLE    = 1//  ${ymd4} ${cyc4}z GFS   ${fhr4}-HR ACC SNOW DPTH 
+ CLRBAR   = 0
+r
+
+ex
+EOF
+done
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

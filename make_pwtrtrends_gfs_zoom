@@ -1,0 +1,114 @@
+#!/bin/ksh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/pwtrtrnam
+rm /stmpp1/Geoffrey.Manikin/meg/pwtrtrnam/*
+cd /stmpp1/Geoffrey.Manikin/meg/pwtrtrnam
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=2018032118
+ymd1=`echo $ymdh | cut -c1-8`
+cyc1=`echo $ymdh | cut -c9-10`
+ymdh2="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -6 -1`"
+ymdh3="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -12 -1`"
+ymdh4="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -18 -1`"
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+dayoweek=hold10
+
+hours="06"
+
+ymd2=`echo $ymdh2 | cut -c1-8`
+ymd3=`echo $ymdh3 | cut -c1-8`
+ymd4=`echo $ymdh4 | cut -c1-8`
+cyc2=`echo $ymdh2 | cut -c9-10`
+cyc3=`echo $ymdh3 | cut -c9-10`
+cyc4=`echo $ymdh4 | cut -c9-10`
+counter=1
+
+for fhr1 in $hours; do
+
+fhr2=`expr $fhr1 + 6`
+fhr3=`expr $fhr1 + 12`
+fhr4=`expr $fhr1 + 18`
+typeset -Z2 fhr2 fhr3 fhr4
+
+verymdh="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} ${fhr1} -1`"
+DAPATH=/ptmpd2/Geoffrey.Manikin/com2/nawips/prod
+DAPATH=/gpfs/hps/nco/ops/com/nawips/prod/
+fmdl1=${DAPATH}/gfs.${ymd1}/gfs_0p25_${ymdh}f0${fhr1}
+fmdl2=${DAPATH}/gfs.${ymd2}/gfs_0p25_${ymdh2}f0${fhr2}
+fmdl3=${DAPATH}/gfs.${ymd3}/gfs_0p25_${ymdh3}f0${fhr3}
+fmdl4=${DAPATH}/gfs.${ymd4}/gfs_0p25_${ymdh4}f0${fhr4}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f${fhr1} 
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = quo(pwtr,25.4) 
+ CINT     = 0.25 
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1//   GFS PWTR  $ymd1 ${cyc1}z  F${fhr1}
+ DEVICE   = GIF|gfspwtrtr_${ymd1}f${fhr1}.gif | 800;850
+ SATFIL   =
+ GAREA    = 31.;-82.;47.;-60. 
+ PROJ     = lcc/25;-71;25/2;2;1;1
+ CLEAR    = n
+ PANEL    = 0.;0.42;0.48;1.
+ TEXT     = 0.8/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/H/UL/.2;0.94/1.7;.02/1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = .25;.5;.75;1.;1.25;1.5;1.75;2.;2.25
+ FLINE    = 0;21;22;23;28;30;2;15;10;5
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ TITLE    = 15/1/ CYCLES RUN ON   $ymd1
+ CLEAR    = n
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f${fhr2}
+ TITLE    = 1//   GFS PWTR  $ymd2 ${cyc2}z  F${fhr2}
+ PANEL    = 0.52;0.42;1.;1.
+ CLRBAR   = 0
+ CLEAR    = n
+r
+
+ TITLE    = 2/1/VERIFYING TIME   $verymdh
+r
+
+ GDFILE   = $fmdl3
+ GDATTIM  = f${fhr3}
+ TITLE    = 1//   GFS PWTR  $ymd3 ${cyc3}z  F${fhr3}
+ PANEL    = 0;0;0.48;0.58
+r
+
+ GDFILE   = $fmdl4
+ GDATTIM  = f${fhr4}
+ TITLE    = 1//   GFS PWTR  $ymd4 ${cyc4}z  F${fhr4}
+ PANEL    = 0.52;0;1.;0.58
+r
+
+ex
+EOF
+gpend
+counter=`expr $counter + 1`
+done
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

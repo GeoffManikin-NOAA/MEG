@@ -1,0 +1,148 @@
+#!/bin/sh
+echo 'into'
+
+dayoweek=hold9
+mdlymdh=2021020912
+mdlymd=`echo $mdlymdh | cut -c1-8`
+station="744550"
+
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/gempak.sound
+rm /gpfs/dell1/stmp/Geoffrey.Manikin/gempak.sound/*
+cd /gpfs/dell1/stmp/Geoffrey.Manikin/gempak.sound
+cp /gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/coltbl.xwp .
+
+DAPATH=/gpfs/dell2/emc/verification/noscrub/Geoffrey.Manikin/dec20storm/bufr
+DAPATH=/gpfs/dell2/emc/verification/noscrub/Geoffrey.Manikin/okice
+DAPATH=/gpfs/dell2/emc/verification/noscrub/Geoffrey.Manikin/cold
+
+cp ${DAPATH}/gfs/gfs_${mdlymdh}.snd fmdl1
+cp ${DAPATH}/gfsx/gfsx_${mdlymdh}.snd fmdl2
+
+fhr1=132
+fhr2=144
+
+#cp /ptmpd2/Geoffrey.Manikin/com2/nawips/prod/nam.${mdlymd}/nam_${station}_${mdlymdh}.snd nam_${station}_${mdlymdh}.snd
+dattim="`/gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/advtime ${mdlymdh} $fhr1 -1 x`"
+validtime=`echo $dattim | cut -c1-11`
+ymd1=`echo $validtime | cut -c1-8`
+cyc1=`echo $validtime | cut -c10-11`
+
+dattim="`/gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/advtime ${mdlymdh} $fhr2 -1 x`"
+validtime2=`echo $dattim | cut -c1-11`
+ymd2=`echo $validtime2 | cut -c1-8`
+cyc2=`echo $validtime2 | cut -c10-11`
+
+cp /gpfs/dell2/emc/verification/noscrub/Geoffrey.Manikin/obs/uair/$ymd1.snd fobs
+
+stn=`echo $station | cut -c1-5`
+if [ $time -lt 10 ]
+then
+fhr=0${time}
+else
+fhr=$time
+fi
+
+echo 'here'
+    snprof << EOF
+ SNFILE   = fmdl1
+ DATTIM   = $ymd1/$cyc1
+ AREA     = @${station}
+ SNPARM   = tmpc
+ LINE     = 2;4/2/6
+ PTYPE    = skewt
+ VCOORD   = PRES
+ STNDEX   = capv;cinv;lclp
+ STNCOL   = 24
+ WIND     = bk1
+ WINPOS   = 1
+ MARKER   = 0
+ BORDER   = 1//2
+ TITLE    = 1//  GFS TEMPS  f${fhr1} DASH/LEFT WINDS  f${fhr2} SOLID/RIGHT WINDS
+ DEVICE   = gif|gfs${station}_${mdlymdh}f${fhr1}-f${fhr2}.gif|1000;1000
+ YAXIS    = 1050/200/50/1;1;1
+ XAXIS    = -40/15/10/;1
+ FILTER   = 0.7
+ CLEAR    = y
+ PANEL    = 0
+! TEXT     = 1.0/11/2/SW
+ TEXT     = 1.1/23/SW
+ THTALN   = 8/3/1/250/500/5
+ THTELN   = 23/1/1/250/500/5
+ MIXRLN   = 17/10/2/0/40./1.
+r
+
+ CLEAR    = n
+ DATTIM   = $ymd2/$cyc2
+ WINPOS   = 2
+ LINE     = 2;4/1/6 
+r
+
+ SNFILE   = fmdl2
+ DATTIM   = $ymd1/$cyc1
+ AREA     = @${station}
+ SNPARM   = tmpc
+ LINE     = 2;4/2/6
+ PTYPE    = skewt
+ VCOORD   = PRES
+ STNDEX   = capv;cinv;lclp
+ STNCOL   = 24
+ WIND     = bk1
+ WINPOS   = 1
+ MARKER   = 0
+ BORDER   = 1//2
+ TITLE    = 1//  GFSX TEMPS  f${fhr1} DASH/LEFT WINDS  f${fhr2} SOLID/RIGHT WINDS
+ DEVICE   = gif|gfsx${station}_${mdlymdh}f${fhr1}-f${fhr2}.gif|1000;1000
+ FILTER   = 0.7
+ CLEAR    = y
+ PANEL    = 0
+! TEXT     = 1.0/11/2/SW
+ TEXT     = 1.1/23/SW
+ THTALN   = 8/3/1/250/500/5
+ THTELN   = 23/1/1/250/500/5
+ MIXRLN   = 17/10/2/0/40./1.
+r
+
+ CLEAR    = n
+ DATTIM   = $ymd2/$cyc2
+ WINPOS   = 2
+ LINE     = 2;4/1/6 
+r
+
+ SNFILE   = fobs
+ DATTIM   = $ymd1/$cyc1
+ AREA     = @${stn}
+ SNPARM   = tmpc
+ LINE     = 2;4/2/6
+ PTYPE    = skewt
+ VCOORD   = PRES
+ STNDEX   = capv;cinv;lclp
+ STNCOL   = 24
+ WIND     = bk1
+ WINPOS   = 1
+ MARKER   = 0
+ BORDER   = 1//2
+ TITLE    = 1//  OBS TEMPS  f${fhr1} DASH/LEFT WINDS  f${fhr2} SOLID/RIGHT WINDS
+ DEVICE   = gif|${station}_${mdlymdh}f${fhr1}-f${fhr2}.gif|1000;1000
+ FILTER   = 0.7
+ CLEAR    = y
+ PANEL    = 0
+! TEXT     = 1.0/11/2/SW
+ TEXT     = 1.1/23/SW
+ THTALN   = 8/3/1/250/500/5
+ THTELN   = 23/1/1/250/500/5
+ MIXRLN   = 17/10/2/0/40./1.
+r
+
+ CLEAR    = n
+ DATTIM   = $ymd2/$cyc2
+ WINPOS   = 2
+ LINE     = 2;4/1/6 
+r
+
+ex
+EOF
+
+gpend
+#scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test5/.
+exit

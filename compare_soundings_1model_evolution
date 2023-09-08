@@ -1,0 +1,136 @@
+#!/bin/sh
+echo 'into'
+
+vymdh=2022071300
+vymd=`echo $vymdh | cut -c1-8`
+day=`echo $vymdh | cut -c7-8`
+cyc=`echo $vymdh | cut -c9-10`
+stnm=722590
+
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/meg
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/meg/snd
+rm /lfs/h2/emc/stmp/geoffrey.manikin/meg/snd/*
+cd /lfs/h2/emc/stmp/geoffrey.manikin/meg/snd
+cp /lfs/h2/emc/vpppg/save/geoffrey.manikin/casework/coltbl.xwp .
+
+#ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+#ymd=`cut -c 7-14 /com/date/t${cyc}z`
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+dayoweek=hold3
+
+time1=24
+time2=48
+time3=72
+time4=96
+time5=120
+time6=144
+time7=168
+
+validtime1="`/lfs/h2/emc/vpppg/save/geoffrey.manikin/meteograms.nam/advtime ${vymdh} -$time1 -1`"
+echo validtime1 = $validtime1
+fymdh1=`echo $validtime1 | cut -c1-10`
+
+validtime2="`/lfs/h2/emc/vpppg/save/geoffrey.manikin/meteograms.nam/advtime ${vymdh} -$time2 -1`"
+echo validtime2 = $validtime2
+fymdh2=`echo $validtime2 | cut -c1-10`
+
+validtime3="`/lfs/h2/emc/vpppg/save/geoffrey.manikin/meteograms.nam/advtime ${vymdh} -$time3 -1`"
+echo validtime3 = $validtime3
+fymdh3=`echo $validtime3 | cut -c1-10`
+
+validtime4="`/lfs/h2/emc/vpppg/save/geoffrey.manikin/meteograms.nam/advtime ${vymdh} -$time4 -1`"
+echo validtime4 = $validtime4
+fymdh4=`echo $validtime4 | cut -c1-10`
+
+validtime5="`/lfs/h2/emc/vpppg/save/geoffrey.manikin/meteograms.nam/advtime ${vymdh} -$time5 -1`"
+echo validtime5 = $validtime5
+fymdh5=`echo $validtime5 | cut -c1-10`
+
+validtime6="`/lfs/h2/emc/vpppg/save/geoffrey.manikin/meteograms.nam/advtime ${vymdh} -$time6 -1`"
+echo validtime6 = $validtime6
+fymdh6=`echo $validtime6 | cut -c1-10`
+
+validtime7="`/lfs/h2/emc/vpppg/save/geoffrey.manikin/meteograms.nam/advtime ${vymdh} -$time7 -1`"
+echo validtime7 = $validtime7
+fymdh7=`echo $validtime7 | cut -c1-10`
+echo $fymdh7
+
+cp /lfs/h2/emc/vpppg/noscrub/geoffrey.manikin/gfsheat/gfs_${fymdh1}.snd fmdl1
+cp /lfs/h2/emc/vpppg/noscrub/geoffrey.manikin/gfsheat/gfs_${fymdh2}.snd fmdl2
+cp /lfs/h2/emc/vpppg/noscrub/geoffrey.manikin/gfsheat/gfs_${fymdh3}.snd fmdl3
+cp /lfs/h2/emc/vpppg/noscrub/geoffrey.manikin/gfsheat/gfs_${fymdh4}.snd fmdl4
+cp /lfs/h2/emc/vpppg/noscrub/geoffrey.manikin/gfsheat/gfs_${fymdh5}.snd fmdl5
+cp /lfs/h2/emc/vpppg/noscrub/geoffrey.manikin/gfsheat/gfs_${fymdh6}.snd fmdl6
+cp /lfs/h2/emc/vpppg/noscrub/geoffrey.manikin/gfsheat/gfs_${fymdh7}.snd fmdl7
+
+if [ $time -lt 10 ]
+then
+fhr=0${time}
+else
+fhr=$time
+fi
+
+    snprof << EOF
+ SNFILE   = fmdl1
+ DATTIM   = $day/$cyc
+ AREA     = @${stnm}
+ SNPARM   = tmpc;dwpc
+ LINE     = 2;4/1/7
+ PTYPE    = skewt
+ VCOORD   = PRES
+ STNDEX   = 
+ STNCOL   = 24
+ WIND     = 0 
+ WINPOS   = 0
+ MARKER   = 0
+ BORDER   = 1//2
+ TITLE    = 1//  GFS 
+ DEVICE   = gif|${vymdh}_snd${stnm}_evolution.gif | 800;850
+ YAXIS    = 1050/300/50/1;1;1
+ XAXIS    = -15/50/5/;1
+ FILTER   = 0.9 
+ CLEAR    = y
+ PANEL    = 0
+ TEXT     = 0.8 
+ THTALN   = 8/3/1/250/500/5
+ THTELN   = 23/1/1/250/500/5
+ MIXRLN   = 17/10/2/0/40./1.
+r
+
+ SNFILE   = fmdl2
+ CLEAR    = n
+ LINE     = 13;24/1/7
+ TITLE    = 0
+r
+
+ SNFILE   = fmdl3
+ LINE     = 16;25/1/7
+r
+ 
+ SNFILE   = fmdl4
+ LINE     = 12;26/1/7
+r
+
+ SNFILE   = fmdl5
+ LINE     = 11;27/1/7
+r
+
+ SNFILE   = fmdl6
+ LINE     = 9;22/1/7
+r
+
+ SNFILE   = fmdl7
+ LINE     = 10;21/1/7
+r
+
+ex
+EOF
+gpend
+
+#scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+#cp *gif /lfs/h2/emc/stmp/geoffrey.manikin/hold/.
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test8/.
+exit

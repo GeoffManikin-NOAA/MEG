@@ -1,0 +1,79 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+fhr=$2
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/500mr2
+rm /stmpp1/Geoffrey.Manikin/meg/500mr2/*
+cd /stmpp1/Geoffrey.Manikin/meg/500mr2
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`cut -c 7-14 /com/date/t${cyc}z`
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+
+ymdh=2016013012
+ymd=`echo $ymdh | cut -c1-8`
+dayoweek=Sat
+
+fmdl1=/com2/nawips/prod/gfs.${ymd}/gfs_${ymdh}f${fhr}
+fmdl2=/com2/nawips/prod/gefs.${ymd}/geavg_${ymdh}f${fhr}
+echo $fmdl2
+exit
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 500
+ GVCORD   = pres
+ GDPFUN   = quo(hght,10) 
+ CINT     = 6
+ LINE     = 4/1/3/3 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   GFS 500 mb  Z
+ DEVICE   = GIF|500gefs_${ymdh}f${fhr}.gif|900;950
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-95;25;/1;1;1;1
+ GAREA    = 12.;-142.;68.;-50. 
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 0 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 0 
+ FLINE    = 0
+ TYPE     = c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl2
+ TITLE    = 1/-1/~   GEFS MEAN 500 mb Z
+ CLEAR    = n
+ PANEL    = b
+r
+
+ex
+EOF
+
+gpend
+#mv ${cyc}*gif /stmpp1/Geoffrey.Manikin/meg/holdmedr/.
+scp ${cyc}*gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/medr/images_medr/$dayoweek/.
+scp ${cyc}*gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/medr/images_medr/today/.
+exit
+
+exit

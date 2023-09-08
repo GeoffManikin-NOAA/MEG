@@ -1,0 +1,57 @@
+#!/bin/ksh --login
+#
+#BSUB -oo /meso/save/Geoffrey.Manikin/meg/gemrefd.out
+#BSUB -eo /meso/save/Geoffrey.Manikin/meg/gemrefd.out
+#BSUB -J megrefd 
+#BSUB -n 10 
+#BSUB -R span[ptile=4]
+#BSUB -W 00:30
+#BSUB -R affinity[core(4):distribute=balance]
+#BSUB -P NAM-T2O
+#BSUB -q "dev"
+#BSUB -x
+#BSUB -a poe
+#
+
+set -x
+
+export HOLDIN=/stmpp1/Geoffrey.Manikin
+export GBexec=/nwprod/util/exec
+
+echo intoscript
+mkdir /stmpp1/Geoffrey.Manikin/meg
+rm -rf /stmpp1/Geoffrey.Manikin/meg/holdrefd
+mkdir /stmpp1/Geoffrey.Manikin/meg/holdrefd
+cyc=`cut -c 15-16 /meso/save/Geoffrey.Manikin/meg/NMCDATE`
+export cyc
+
+set +x
+set -x
+
+cd $HOLDIN/meg
+mkdir $HOLDIN/meg/refdpoe
+cd $HOLDIN/meg/refdpoe
+rm poescript
+
+echo "/meso/save/Geoffrey.Manikin/meg/compare_refd_hires1 ${cyc}" >> poescript
+echo "/meso/save/Geoffrey.Manikin/meg/compare_refd_hires2 ${cyc}" >> poescript
+echo "/meso/save/Geoffrey.Manikin/meg/compare_refd_hires3 ${cyc}" >> poescript
+echo "/meso/save/Geoffrey.Manikin/meg/compare_refd_hires4 ${cyc}" >> poescript
+echo "/meso/save/Geoffrey.Manikin/meg/compare_refd_hires5 ${cyc}" >> poescript
+echo "/meso/save/Geoffrey.Manikin/meg/compare_refd_hires6 ${cyc}" >> poescript
+echo "/meso/save/Geoffrey.Manikin/meg/compare_refd_hires7 ${cyc}" >> poescript
+echo "/meso/save/Geoffrey.Manikin/meg/compare_refd_hires8 ${cyc}" >> poescript
+echo "/meso/save/Geoffrey.Manikin/meg/compare_refd_hires9 ${cyc}" >> poescript
+echo "/meso/save/Geoffrey.Manikin/meg/compare_refd_hires10 ${cyc}" >> poescript
+chmod 775 poescript
+export MP_PGMMODEL=mpmd
+export MP_CMDFILE=poescript
+#
+# Execute the script.
+
+echo beforelsf
+mpirun.lsf
+echo pastlsf
+
+bsub < /meso/save/Geoffrey.Manikin/meg/run_ftp_refd
+exit

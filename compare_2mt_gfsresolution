@@ -1,0 +1,77 @@
+#!/bin/ksh
+echo 'into'
+cyc=$1
+
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/meg
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/meg/capemr
+rm /gpfs/dell1/stmp/Geoffrey.Manikin/meg/capemr/*
+cd /gpfs/dell1/stmp/Geoffrey.Manikin/meg/capemr
+cp /gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/coltbl.xwp .
+
+ymdh=2021092412
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+dayoweek=hold4
+
+times="24 36 48 60 72 84 96 108 120 132 144 156 168 180 192"
+times="06"
+for fhr in $times; do
+
+typeset -Z3 fhr
+fmdl1=/gpfs/dell1/nco/ops/com/gfs/prod/gfs.${ymd}/${cyc}/atmos/gempak/gfs_0p25_${ymdh}f${fhr}
+fmdl2=/gpfs/dell1/nco/ops/com/gfs/prod/gfs.${ymd}/${cyc}/atmos/gempak/gfs_0p50_${ymdh}f${fhr}
+echo $fmdl1
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 2 
+ GVCORD   = hght 
+ GDPFUN   = tmpf 
+ CINT     = 500
+ LINE     = 0 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   GFS 0.25 2-m TEMP 
+ DEVICE   = GIF|gfs2mte_resolution_${ymdh}f0${fhr}.gif|900;950
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-85;25;/1;1;1;1
+ GAREA    = tn- 
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/V/UL/.1;0.6/1.2;.03/1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 20;25;30;35;40;45;50;55;60;65;70;75;80;85;90;95;
+ FINT     = 28;32;36;40;44;48;52;56;60;64;68;72;76;80;84;88;92
+ FINT     = 37;40;43;46;49;52;55;58;61;64;67;70;73;76;79;82;85;88;91
+# FINT     = -34;-28;-22;-16;-10;-4;2;8;14;20;26;32;38;44;50;56;62;68;74;80;86
+ FLINE    = 0;12;30;29;28;4;25;26;27;24;23;22;21;5;20;10;17;16;2;15;14;32
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhr
+ TITLE    = 1/-1/~   GFS 0.50  2-M TEMP 
+ PANEL    = b
+ CLEAR    = n
+ CLRBAR   = 0
+ TYPE     = f 
+r
+
+ex
+EOF
+
+done
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

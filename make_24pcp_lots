@@ -1,0 +1,177 @@
+#!/bin/sh
+echo 'into'
+
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/meg/nestpcp
+rm /lfs/h2/emc/stmp/geoffrey.manikin/meg/nestpcp/*
+cd /lfs/h2/emc/stmp/geoffrey.manikin/meg/nestpcp
+cp /lfs/h2/emc/vpppg/save/geoffrey.manikin/meg/coltbl.xwp .
+
+ymdh=2022092812
+ymd=`echo $ymdh | cut -c1-8`
+ym=`echo $ymdh | cut -c3-8`
+cyc=`echo $ymdh | cut -c9-10`
+dayoweek=hold
+
+DAPATH=/lfs/h2/emc/vpppg/noscrub/geoffrey.manikin/ian
+fmdl1=${DAPATH}/hrefmeanpcp_${ymdh}
+fmdl2=${DAPATH}/hreflpmmpcp_${ymdh}
+fmdl3=${DAPATH}/hrefpmmnpcp_${ymdh}
+fmdl4=${DAPATH}/gfspcp_${ymdh}
+fmdl5=${DAPATH}/nampcp_${ymdh}
+fmdl6=${DAPATH}/namnestpcp_${ymdh}
+fmdl7=${DAPATH}/hireswarwpcp_${ymdh}
+fmdl8=${DAPATH}/hireswarw2pcp_${ymdh}
+fmdl9=${DAPATH}/hireswfv3pcp_${ymdh}
+hours="24 36 48"
+
+for fhr in $hours
+do
+
+ymdh2="`/lfs/h2/emc/vpppg/save/geoffrey.manikin/meg/advtime ${ymdh} ${fhr} -1`"
+ymd2=`echo $ymdh2 | cut -c1-8`
+fmdl10=${DAPATH}/st4_${ymdh2}.grd
+fhr2=`expr $fhr - 12`
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0
+ GVCORD   = none
+ GDPFUN   = p24i
+ CINT     = 4
+ LINE     = 1
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   HREF MEAN 24-HR TOTAL PCP
+ DEVICE   = GIF|hrefmeanpcp_${ymdh}f${fhr}.gif|750;900
+ SATFIL   =
+ RADFIL   =
+# PROJ     = lcc/25;-84;25;/1;1;1;1
+ PROJ     = lcc/25;-83;25;/1;1;1;1
+ GAREA    = 23.4;-89.;33.;-77 
+# GAREA    = 27.;-86.2;37.;-74.
+# GAREA    = 31.;-86.;41.;-72.
+ CLEAR    = y
+ PANEL    = 0
+ TEXT     = 1.0/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/V/UL/.01;0.85/0.7;.02/1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = .01;.1;.25;.5;.75;1;1.25;1.5;1.75;2;2.5;3;4;5;7;10;15;20;30
+ FLINE    = 0;21;22;23;4;25;26;27;28;29;30;14;15;2;17;18;19;20;11;31
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl2
+ DEVICE   = GIF|hreflpmmpcp_${ymdh}f${fhr}.gif|750;900
+ TITLE    = 1/-1/~  HREF LPMM 24-HR TOTAL PCP
+ CLEAR    = y
+r
+
+ GDFILE   = $fmdl3
+ DEVICE   = GIF|hrefpmmnpcp_${ymdh}f${fhr}.gif|750;900
+ TITLE    = 1/-1/~  HREF PMMN 24-HR TOTAL PCP
+ CLEAR    = y
+r
+
+ GDFILE   = $fmdl4
+ DEVICE   = GIF|gfspcp_${ymdh}f${fhr}.gif|750;900
+ TITLE    = 1/-1/~  GFS 24-HR TOTAL PCP
+ CLEAR    = y
+r
+
+ GDFILE   = $fmdl5
+ DEVICE   = GIF|nampcp_${ymdh}f${fhr}.gif|750;900
+ GDPFUN   = add(p12i^${ym}/${cyc}f0${fhr2},p12i)
+ TITLE    = 1/-1/~  NAM 24-HR TOTAL PCP
+ CLEAR    = y
+r
+
+ GDFILE   = $fmdl6
+ DEVICE   = GIF|namnestpcp_${ymdh}f${fhr}.gif|750;900
+ GDPFUN   = p24i
+ TITLE    = 1/-1/~  NAM3 24-HR TOTAL PCP
+ CLEAR    = y
+r
+
+
+ GDFILE   = $fmdl7
+ DEVICE   = GIF|arwpcp_${ymdh}f${fhr}.gif|750;900
+ TITLE    = 1/-1/~  ARW 24-HR TOTAL PCP
+ CLEAR    = y
+r
+
+ GDFILE   = $fmdl8
+ DEVICE   = GIF|arw2pcp_${ymdh}f${fhr}.gif|750;900
+ GDPFUN   = p24i
+ TITLE    = 1/-1/~  ARW2 24-HR TOTAL PCP
+ CLEAR    = y
+r
+
+ GDFILE   = $fmdl9
+ DEVICE   = GIF|fv3pcp_${ymdh}f${fhr}.gif|750;900
+ GDPFUN   = p24i
+ TITLE    = 1/-1/~  FV3 24-HR TOTAL PCP
+ CLEAR    = y
+r
+
+ GDFILE   = $fmdl10
+ GDATTIM  = last 
+ DEVICE   = GIF|st4pcp_${ymdh2}.gif|750;900
+ GDPFUN   = p24i
+ TITLE    = 1/-1/12Z ${ymdh2}  STAGE IV 24-HR TOTAL PCP
+ CLEAR    = y
+r
+
+ex
+EOF
+done
+
+hours="24"
+for fhr in $hours
+do
+fmdl10=${DAPATH}/hrrr_${ymdh}f0${fhr}00
+
+     gdplot2 << EOF
+ GDFILE   = $fmdl10
+ GDATTIM  = f$fhr
+ DEVICE   = GIF|hrrrpcp_${ymdh}f${fhr}.gif|750;900
+ GDPFUN   = p24i
+ TITLE    = 1/-1/~  HRRR 24-HR TOTAL PCP
+ CLEAR    = y
+r
+
+ex
+EOF
+done
+
+hours=""
+for fhr in $hours
+do
+fhr24=`expr $fhr - 24`
+fmdl10=${DAPATH}/hrrr_${ymdh}f0${fhr}00
+cp ${DAPATH}/hrrr_${ymdh}f0${fhr24}00 fmdl10a
+
+   gdplot2 << EOF
+ GDFILE   = fmdl10a + $fmdl10
+ GDPFUN   = sub(p${fhr}i+2,p${fhr24}i^${ym}/${cyc}f${fhr24})
+ DEVICE   = GIF|hrrrpcp_${ymdh}f${fhr}.gif|750;900
+ TITLE    = 1/-1/~  HRRR 24-HR TOTAL PCP
+ GDATTIM  = last
+ CLEAR    = y
+r
+
+ex
+EOF
+done
+
+gpend
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test8/.
+exit

@@ -1,0 +1,88 @@
+#!/bin/sh
+echo 'into'
+
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/meg
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/meg/type
+rm /gpfs/dell1/stmp/Geoffrey.Manikin/meg/type/*
+cd /gpfs/dell1/stmp/Geoffrey.Manikin/meg/type
+cp /gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/coltbl.xwp .
+
+ymdh=2022013012
+ymd=`echo $ymdh | cut -c1-8`
+month=`echo $ymdh | cut -c5-6`
+day=`echo $ymdh | cut -c7-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+times="60 61 62 63 64 65 66"
+times="120"
+for fhr in $times; do
+
+fmdl=/gpfs/dell1/nco/ops/com/gfs/prod/gfs.${ymd}/${cyc}/atmos/gempak/gfs_0p25_${ymd}${cyc}f0${fhr}
+fmdl=/gpfs/dell1/ptmp/Geoffrey.Manikin/gfs/gfs_0p25_${ymd}${cyc}f${fhr}
+echo $fmdl
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = wxtr 
+ CINT     = .11;10 
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1//~   GFS   PTYPE 
+ DEVICE   = GIF|gfstype2mt_${ymdh}f0${fhr}.gif|900;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-78.;25./2;2;1;1
+ GAREA    = md 
+ CLEAR    = y
+ PANEL    = t 
+ TEXT     = 1.2/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 0 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = .11;10 
+ FLINE    = 0;3 
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDPFUN   = wxts
+ CLEAR    = n
+ FLINE    = 0;26
+ r
+
+ GDPFUN   = wxtp
+ FLINE    = 0;29
+ r
+
+ GDPFUN   = wxtz
+ FLINE    = 0;2
+ r
+
+ GLEVEL   = 2
+ GVCORD   = hght
+ GDPFUN   = tmpf
+ PANEL    = b
+ TITLE    = 1//~   GFS 2m TMPF
+ CLRBAR   = 1/V/UL/.1;0.95/0.9;.03/2
+ FINT     = 2;5;8;11;14;17;20;23;26;29;32;35;38;41;44;47;50;53;56;59
+ FINT     =-4;0;4;8;12;16;20;24;28;32;36;40;44;48;52;56;60;64;68;72
+ FLINE    = 0;12;30;29;28;4;25;26;27;24;23;22;21;5;20;10;17;16;2;15;14;32
+r
+
+ex
+EOF
+
+gpend
+done
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test5/.
+exit

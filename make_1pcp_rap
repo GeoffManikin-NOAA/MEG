@@ -1,0 +1,74 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /stmp/wx20mg/meg
+mkdir /stmp/wx20mg/meg/nestpcp
+rm /stmp/wx20mg/meg/nestpcp/*
+cd /stmp/wx20mg/meg/nestpcp
+cp /meso/save/wx20mg/casework/coltbl.xwp .
+
+ymdh=2013011223
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+dayoweek=Sat
+
+hours="01"
+for fhr in $hours; do
+fmdl1=/com/nawips/prod/rap.${ymd}/rap13_${ymdh}f0${fhr}
+fmdl1=/ptmp/wx20mg/data/rap13_${ymdh}f0${fhr}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0
+ GVCORD   = none
+ GDPFUN   = p01i
+ CINT     = 4
+ LINE     = 1
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   RAP 1-HR TOTAL PCP
+ DEVICE   = GIF|${ymdh}pcp1rapf${fhr}.gif|750;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-95;25;/1;1;1;1
+ GAREA    = ar- 
+ CLEAR    = y
+ PANEL    = 0 
+ TEXT     = 0.8/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/V/UL/.05;0.8/0.6;.03/1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = .01;.05;.1;.25;.5;.75;1.;1.5;2.
+ FLINE    = 0;21;23;25;27;28;30;2;15;10;5
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ex
+EOF
+done
+gpend
+
+. /u/wx20mg/.Utils
+export w1=wd20mg
+export w2=$rzdm
+
+ftp -n -v << EOF > /meso/save/wx20mg/casework/rzftp.out
+open emcrzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/${dayoweek}
+mput *gif
+bye
+EOF
+
+rm *gif
+exit

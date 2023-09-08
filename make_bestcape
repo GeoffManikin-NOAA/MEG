@@ -1,0 +1,104 @@
+#/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+ymdh=$1
+ymd=`echo $ymdh | cut -c1-8`
+month=`echo $ymdh | cut -c5-6`
+day=`echo $ymdh | cut -c7-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+mkdir /stmpp1/Geoffrey.Manikin/gempak.rap13/launch14/best
+cd /stmpp1/Geoffrey.Manikin/gempak.rap13/launch14/best
+cp /meso/save/Geoffrey.Manikin/gempak.rap13/coltbl.xwp .
+
+times="00 01 02 03 06 09 12 15 18"
+counter=0
+for fhr in $times; do
+
+fmdl=/com/nawips/prod/rap.${ymd}/rap13_${ymd}${cyc}f0${fhr}
+fmdl2=/ptmpp1/Geoffrey.Manikin/com/nawips/para/rap.${ymd}/rap13_${ymd}${cyc}f0${fhr}
+echo $fmdl
+echo $fmdl2
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl
+ GDATTIM  = f$fhr
+ GLEVEL   = 255:0
+ GVCORD   = pdly
+ GDPFUN   = cape
+ CINT     = 100;500;1000;1500;2000;2500;3000;3500;4000;4500;5000;5500 
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 0
+ DEVICE   = GIF|comparebest_${cyc}f${counter}.gif|900;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-95.;25./2;2;1;1
+ GAREA    = grid
+ CLEAR    = y
+ PANEL    = 0.;.51;1.;1.
+ TEXT     = 1.2/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/V/UL/.15;0.5/.8;.03/-2
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 100;500;1000;1500;2000;2500;3000;3500;4000;4500;5000;5500 
+ FLINE    = 0;0;25;21;22;23;5;10;17;16;2;15;32 
+ TYPE     = f/c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ CINT     = 100/100/100
+ LINE     = 1/1/2/0
+ CTYPE    = c
+ CLEAR    = n
+r
+
+ TITLE    = 1/1/ ${fhr}-HR RAP BEST CAPE 
+ TEXT     = 1.2/11/2
+ GDPFUN     = blurk
+ CINT     = -2000/-2000/-2000
+ TYPE     = f/c
+ CLRBAR   = 0
+r
+
+ TITLE    = 29/-1/ FCST MADE ${cyc}Z  ${month}/$day
+ TEXT     = 1.1/11/1/SW
+r
+
+ TITLE    = 1/1/ ${fhr}-HR RAPX  BEST CAPE 
+ GDFILE   = $fmdl2 
+ GAREA    = 16.;-126.;55.;-57.
+ TEXT     = 1.2/11/2
+ PANEL    = 0;0;1;.49
+r
+
+ GDFILE   = $fmdl2 
+ GDPFUN   = cape 
+ TITLE    = 0
+ LINE     = 0
+ CINT     = 100;500;1000;1500;2000;2500;3000;3500;4000;4500;5000;5500 
+r
+
+ CINT     = 100/100/100
+ LINE     = 1/1/2/0
+ CTYPE    = c
+r
+
+ex
+EOF
+
+counter=`expr $counter + 1`
+gpend
+done
+
+mv *gif ../../ftphold/.
+echo abouttoexitbestcape
+exit

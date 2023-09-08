@@ -1,0 +1,96 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+ymdh=2019041912
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+stnm=726590
+stnm=744550
+stnm=722330
+stnm=724506
+stnm=726546
+#stnm=725336
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/snd
+rm /stmpp1/Geoffrey.Manikin/meg/snd/*
+cd /stmpp1/Geoffrey.Manikin/meg/snd
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+#ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+#ymd=`cut -c 7-14 /com/date/t${cyc}z`
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+dayoweek=hold7
+
+DAPATH1=/com2/nawips/prod/nam.${ymd}
+#DAPATH2=/ptmpd2/Geoffrey.Manikin/com2/nawips/prod/hrrr.${ymd}
+DAPATH2=/gpfs/hps/nco/ops/com/hrrr/prod/hrrr.${ymd}/conus/nawips/
+fmdl1=${DAPATH1}/nam_conusnest_${ymdh}.snd.tm00
+#fmdl2=${DAPATH2}/hrrr_${ymdh}.snd
+cp ${DAPATH2}/hrrr_${ymdh}.snd fmdl2
+
+times="00 01 02 03 04 05 06 07 08 09"
+times="00 03 06 09 12"
+times="24 27 30 33 36"
+for time in $times; do
+
+validtime="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} $time -1 x`"
+echo validtime = $validtime
+dattim=`echo $validtime | cut -c5-11`
+echo dattim = $dattim
+
+if [ $time -lt 10 ]
+then
+fhr=0${time}
+else
+fhr=$time
+fi
+
+    snprof << EOF
+ SNFILE   = $fmdl1
+ DATTIM   = $dattim
+ AREA     = @${stnm}
+ SNPARM   = tmpc;dwpc
+ LINE     = 2;4/1/7
+ PTYPE    = skewt
+ VCOORD   = PRES
+ STNDEX   = cape;cins
+ STNCOL   = 24
+ WIND     = bk1
+ WINPOS   = 2
+ MARKER   = 0
+ BORDER   = 1//2
+ TITLE    = 1//  NAM NEST
+ DEVICE   = gif|${ymdh}nesthrrrsnd${stnm}_$fhr.gif | 800;850
+ YAXIS    = 1050/300/50/1;1;1
+ XAXIS    = -15/40/10/;1
+ FILTER   = n 
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 0.8 
+ THTALN   = 8/3/1/250/500/5
+ THTELN   = 23/1/1/250/500/5
+ MIXRLN   = 17/10/2/0/40./1.
+r
+
+ SNFILE   = fmdl2 
+ CLEAR    = n
+ TITLE    = 1//  HRRR 
+ PANEL    = b
+r
+
+ex
+EOF
+
+done
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

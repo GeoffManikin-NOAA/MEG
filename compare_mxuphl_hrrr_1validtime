@@ -1,0 +1,109 @@
+#!/bin/ksh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/hrrruphl3
+rm /stmpp1/Geoffrey.Manikin/meg/hrrruphl3/*
+cd /stmpp1/Geoffrey.Manikin/meg/hrrruphl3
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=`cut -c 7-16 /meso/save/Geoffrey.Manikin/meg/NMCDATE`
+ymd=`cut -c 7-14 /meso/save/Geoffrey.Manikin/meg/NMCDATE`
+
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+
+ymdh=2014111709
+fhr1=7
+dayoweek=hold
+
+fhr2=`expr $fhr1 + 1`
+fhr3=`expr $fhr1 + 2`
+fhr4=`expr $fhr1 + 3`
+
+typeset -Z2 fhr1 fhr2 fhr3 fhr4
+ymdh1="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -${fhr1} -1`"
+ymd1=`echo $ymdh1 | cut -c1-8`
+cyc1=`echo $ymdh1 | cut -c9-10`
+
+ymdh2="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -${fhr2} -1`"
+ymd2=`echo $ymdh2 | cut -c1-8`
+cyc2=`echo $ymdh2 | cut -c9-10`
+
+ymdh3="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -${fhr3} -1`"
+ymd3=`echo $ymdh3 | cut -c1-8`
+cyc3=`echo $ymdh3 | cut -c9-10`
+
+ymdh4="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -${fhr4} -1`"
+ymd4=`echo $ymdh4 | cut -c1-8`
+cyc4=`echo $ymdh4 | cut -c9-10`
+
+fmdl1=/com/nawips/prod/hrrr.${ymd1}/hrrr_${ymdh1}f0${fhr1}00
+fmdl2=/com/nawips/prod/hrrr.${ymd2}/hrrr_${ymdh2}f0${fhr2}00
+fmdl3=/com/nawips/prod/hrrr.${ymd3}/hrrr_${ymdh3}f0${fhr3}00
+fmdl4=/com/nawips/prod/hrrr.${ymd4}/hrrr_${ymdh4}f0${fhr4}00
+
+areas="1"
+for region in $areas; do
+
+garea="27.;-91.3;34.4;-82.9"
+proj="lcc/25.;-85.;25./2;2;1;1"
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr1
+ GLEVEL   = 5000:2000 
+ GVCORD   = hght 
+ GDPFUN   = MXUPHL01
+ CINT     = 5 
+ LINE     = 0 
+ DEVICE   = GIF|${cyc}hrrruphl${region}2_${ymdh}.gif | 800;850
+ PROJ     = $proj 
+ GAREA    = $garea 
+ MAP      = 1/1/2;1
+ TITLE    = 1//~  HRRR ${cyc1}z  2-5 KM MAX UPDRAFT HLCY 
+ CLEAR    = y
+ SCALE    = 0
+ PANEL    = ul 
+ HILO     = 0
+ HLSYM    = 0 
+ CLRBAR   = 1/H/UL/.46;0.94/1.1;.03/1
+ TEXT     = 0.9/11/2
+ FINT     = 10;25;50;75;100;125;150;175;200
+ FLINE    = 0;21;23;4;26;2;15;16;10;5
+ TYPE     = f 
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhr2
+ PANEL    = ur 
+ CLEAR    = n
+ TITLE    = 1//~  HRRR ${cyc2}z  2-5 KM MAX UPDRAFT HLCY 
+ CLRBAR   = 0 
+r
+
+ GDFILE   = $fmdl3
+ GDATTIM  = f$fhr3
+ PANEL    = ll 
+ TITLE    = 1//~  HRRR ${cyc3}z  2-5 KM MAX UPDRAFT HLCY 
+ CLRBAR   = 0 
+r
+
+ GDFILE   = $fmdl4
+ GDATTIM  = f$fhr4
+ PANEL    = lr
+ TITLE    = 1//~  HRRR ${cyc4}z 2-5 KM MAX UPDRAFT HLCY  
+ CLRBAR   = 0
+r
+
+ex
+EOF
+done
+gpend
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+rm *gif
+exit

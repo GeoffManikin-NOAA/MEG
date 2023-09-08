@@ -1,0 +1,132 @@
+#/bin/ksh
+
+set -x
+
+cyc=$1
+
+mkdir /stmp/wx20mg/meg
+mkdir /stmp/wx20mg/meg/spc2m
+rm /stmp/wx20mg/meg/spc2m/*
+cd /stmp/wx20mg/meg/spc2m
+cp /meso/save/wx20mg/casework/coltbl.xwp .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+ymdh=2013061100
+ymd=20130611
+dayoweek=Tue
+
+DAPATH=/meso/noscrub/wx20py/com/hiresw/prod/spcprod.${ymd}
+export DAPATH
+. /nwprod/gempak/.gempak
+
+fhrs="06 07 08 09 10 11 12"
+for fhr in $fhrs
+do
+
+wgrib ${DAPATH}/conusnmm.t${cyc}z.awpreg${fhr}.tm00 | grep kpds5=11:kpds6=105:kpds7=2 | wgrib ${DAPATH}/conusnmm.t${cyc}z.awpreg${fhr}.tm00 -i -grib -o tmp.fil 
+
+wgrib ${DAPATH}/conusnmm.t${cyc}z.awpreg${fhr}.tm00 | grep kpds5=212:kpds6=200:kpds7=0 | wgrib ${DAPATH}/conusnmm.t${cyc}z.awpreg${fhr}.tm00 -i -grib -o refc.fil
+
+/nwprod/gempak/nawips1/os/aix5/bin/nagrib_nc << EOF
+GBFILE  = tmp.fil 
+INDXFL  =
+GDOUTF  = dummy.grd 
+PROJ    =
+GRDAREA =
+KXKY    = 
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+GBFILE  = refc.fil
+r
+
+exit
+EOF
+done
+
+for fhr in $fhrs
+do
+   gdplot2 << EOF
+ GDFILE   = dummy.grd 
+ GDATTIM  = f$fhr 
+ GLEVEL   = 2     
+ GVCORD   = hght  
+ GDPFUN   = tmpf  
+ CINT     = 4     
+ LINE     = 1     
+ MAP      = 1     
+ WIND     = 0     
+ TITLE    = 1/-1/~   WRF-NMM 4 KM 2-M  TEMP 
+ DEVICE   = GIF|2mt_f0${fhr}.gif|850;900
+ SATFIL   =                                   
+ RADFIL   =                                   
+ PROJ     = lcc/25;-100;25;/1;1;1;1
+ GAREA    = ks+
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/V/UL/.02;0.9/0.8;.03/2
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 15;20;25;30;35;40;45;50;55;60;65;70;75;80;85;90;95;100;105;110;115
+ FLINE    = 0;12;30;29;28;4;25;26;27;24;23;22;21;5;20;10;17;16;2;15;14;32
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GLEVEL   = 0
+ GVCORD   = none
+ GDPFUN   = refc
+ PANEL    = b
+ CLEAR    = n
+ TITLE    = 1/-1/~   WRF-NMM 4 KM COMPOSITE REFL 
+ FINT     = 5;10;15;20;25;30;35;40;45;50;55;60;65;70
+ FLINE    = 0;27;26;4;21;22;23;5;20;17;16;15;14;7;29
+r
+ 
+ex
+EOF
+done
+gpend
+
+for fhr in $fhrs; do
+/usrx/local/im_beta/bin/convert -crop 0x0 2mt_f0${fhr}.gif spc2mtrefc_f0${fhr}.gif 
+done
+
+. /u/wx20mg/.Utils
+export w1=wd20mg
+export w2=$rzdm
+
+ftp -n -v << EOF > /meso/save/wx20mg/casework/rzftp.out
+open emcrzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/today
+mput spc*gif
+bye
+EOF
+
+ftp -n -v << EOF > /meso/save/wx20mg/casework/rzftp.out
+open emcrzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/${dayoweek}
+mput spc*gif
+bye
+EOF
+
+exit
+

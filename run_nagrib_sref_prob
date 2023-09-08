@@ -1,0 +1,42 @@
+#/bin/ksh
+
+set -x
+
+cyc=$1
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymdh=2015021321
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+#DAPATH=/ptmpd2/Geoffrey.Manikin/com/sref/prod/sref.${ymd}/${cyc}/ensprod/
+DAPATH=/ptmpd1/Geoffrey.Manikin/hold2/ensprod
+export DAPATH 
+. /nwprod/gempak/.gempak
+
+nagrib << EOF
+GBFILE  = ${DAPATH}/sref.t${cyc}z.pgrb212.mean_3hrly
+INDXFL  =
+GDOUTF  = sref212_${ymdh}_mean
+PROJ    =
+GRDAREA =
+KXKY    = 
+GAREA   = grid
+MAXGRD  = 2500
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+PDSEXT  = yes
+r
+
+GBFILE  = ${DAPATH}/sref.t${cyc}z.pgrb212.prob_3hrly
+MAXGRD  = 3500 
+GDOUTF  = sref212_${ymdh}_prob
+r
+
+exit
+EOF
+gpend
+mv sref212* /ptmpd2/Geoffrey.Manikin/com2/nawips/prod/sref.${ymd}
+end

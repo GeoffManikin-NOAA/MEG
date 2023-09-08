@@ -1,0 +1,112 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+mkdir /stmp/wx20mg/meg/raptrw
+cd /stmp/wx20mg/meg/raptrw
+rm /stmp/wx20mg/meg/raptrw/*
+cp /meso/save/wx20mg/casework/coltbl.xwp .
+cp /meso/save/wx20mg/gempak/nagrib/ncepgrib2.tbl .
+
+year=`cut -c 7-10 /com/date/t${cyc}z`
+month=`cut -c 11-12 /com/date/t${cyc}z`
+date=`cut -c 13-14 /com/date/t${cyc}z`
+ymd=`cut -c 7-14 /com/date/t${cyc}z`
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+DAPATH=/com/rap/prod/rap.${ymd}
+
+date
+date > holddate 
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+echo $dayoweek
+
+#year=2002
+#month=11
+#date=10
+#yyyymmdd=20021110
+#dayoweek=Sun
+
+times="07 10"
+for fhr in $times; do
+
+wgrib -i -d 728 ${DAPATH}/rap.t${cyc}z.awp130bgrbf${fhr} -grib -o new.grd
+#wgrib -i -d 730 ${DAPATH}/rap.t${cyc}z.awp130bgrbf${fhr} -grib -o new.grd
+
+/nwprod/gempak/nawips1/os/aix5/bin/nagrib_nc << EOF
+GBFILE  = new.grd
+INDXFL  =
+GDOUTF  = rapthunderf${fhr}.grd
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+ex
+EOF
+
+fmdl=rapthunderf${fhr}.grd
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl
+ GDATTIM  = f$fhr 
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = ltng 
+ CINT     = 1 
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~  RAP THUNDER 
+ DEVICE   = GIF|${cyc}raptrw${fhr}.gif|700;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-75;25;/1;1;1;1
+# GAREA    = 23.;-111.;51.;-67. 
+ GAREA    = md
+ CLEAR    = y
+ PANEL    = 0
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 0 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 0.9;10 
+ FLINE    = 0;2
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ex
+EOF
+
+gpend
+done
+
+. /u/wx20mg/.Utils
+export w1=wd20mg
+export w2=$rzdm
+
+ftp -n -v << EOF > /meso/save/wx20mg/meg/trwftp.out
+open emcrzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/today
+mput *.gif
+bye
+EOF
+
+exit
+stop

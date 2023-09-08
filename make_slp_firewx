@@ -1,0 +1,75 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmp/Geoffrey.Manikin/meg
+mkdir /stmp/Geoffrey.Manikin/meg/fireslp
+rm /stmp/Geoffrey.Manikin/meg/fireslp/*
+cd /stmp/Geoffrey.Manikin/meg/fireslp
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`echo $ymdh | cut -c1-8`
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+
+ymdh=2013121112
+ymd=20131211
+dayoweek=Wed
+
+hours="00 01 02 03 04 05 06 07 08 09 10 11 12"
+hours="27 30"
+#hours="24 30 36 42 48 54 60"
+for fhr in $hours; do
+
+fmdl1=/com/nawips/prod/nam.${ymd}/nam_conusnest_${ymdh}f0${fhr}
+fmdl1=/meso/save/Geoffrey.Manikin/meg/namfirewxnest_${ymdh}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = pmsl 
+ CINT     = 1 
+ LINE     = 1/1/2/1 
+ DEVICE   = GIF|${cyc}slpfirenest${fhr}.gif | 800;850
+ PROJ     = lcc/25;-80;25;/1;1;1;1
+# GAREA    = 28.;-88.;50.;-52.
+ GAREA    = 42.;-80.1;45.;-74.7 
+ TITLE    = 1//~  NAM FIREWX NEST SLP 
+ CLEAR    = y
+ SCALE    = 0
+ PANEL    = 0
+ HILO     = 2;2/S12#;S13#/1025-1060;1020-1024/10/1;2/yes
+ HLSYM    = 2;2/3/21;21/4;2/HW
+ CLRBAR   = 1/H/UL/.06;0.94/0.8;.03/1
+ TEXT     = 1.1/11/2
+ FINT     = 0
+ FLINE    = 0
+ TYPE     = c 
+r
+
+ GLEVEL   = 10
+ GVCORD   = HGHT
+ WIND     = ak1/0.6/2/122/0.7
+ GDPFUN   = wnd
+ CLEAR    = n
+ TYPE     = a
+ CLRBAR   = 0
+ TITLE    = 0
+ SKIP     = 10;10
+r
+
+ex
+EOF
+
+done
+gpend
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

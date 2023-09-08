@@ -1,0 +1,54 @@
+#!/bin/ksh 
+#
+set -x
+
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/hrrrtest
+rm /lfs/h2/emc/stmp/geoffrey.manikin/hrrrtest/*
+cd /lfs/h2/emc/stmp/geoffrey.manikin/hrrrtest
+cp /lfs/h2/emc/vpppg/save/geoffrey.manikin/gempak/nagrib2/* .
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`cut -c 7-14 /com/date/t${cyc}z`
+
+ymd=20230521
+hrrrver=v4.1.0
+
+fhrs="00 06 12 18 24 30 36"
+fhrs="42 48"
+
+cycles="00 06 12 18"
+cycles="06 12 18"
+cycles="06 12 18"
+cycles="12"
+for cyc in $cycles
+do
+for fhr in $fhrs
+do
+
+#typeset -Z3 fhr
+
+DAPATH=/lfs/h2/emc/ptmp/Benjamin.Blake/com/hrrr/${hrrrver}/hrrr.${ymd}/conus
+export DAPATH
+
+  nagrib2 << EOF
+GBFILE  = ${DAPATH}/hrrr.t${cyc}z.wrfsfcf${fhr}.grib2 
+INDXFL  =
+GDOUTF  = hrrr_${ymd}${cyc}f0${fhr}00
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+exit
+EOF
+
+mv hrrr_${ymd}${cyc}f$0{fhr}00 /lfs/h2/emc/vpppg/noscrub/geoffrey.manikin/smoke/.
+done
+done
+gpend
+exit

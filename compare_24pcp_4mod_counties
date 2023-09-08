@@ -1,0 +1,161 @@
+#!/bin/ksh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/4modpcp
+rm /stmpp1/Geoffrey.Manikin/meg/4modpcp/*
+cd /stmpp1/Geoffrey.Manikin/meg/4modpcp
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=`cut -c 7-16 /meso/save/Geoffrey.Manikin/meg/NMCDATE`
+ymd=`cut -c 7-14 /meso/save/Geoffrey.Manikin/meg/NMCDATE`
+
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+
+ymdh=2013091012
+ymd=`echo $ymdh | cut -c1-8`
+dayoweek=Tue
+
+hours="10 11 12 13 14 15 16 17 18"
+hours="21 22 23 24 25 26 27 28 29 30"
+hours="24 48"
+for fhr in $hours; do
+
+fhr24=`expr $fhr - 24`
+typeset -Z3 fhr fhr24
+fmdl1=/meso/save/Geoffrey.Manikin/meg/nampcp_${ymdh}
+fmdl2=/meso/save/Geoffrey.Manikin/meg/gfspcp_${ymdh}
+fmdl3=/com/nawips/prod/ecmwf.${ymd}/ecmwf_hr_${ymdh}f${fhr}
+cp /com/nawips/prod/ecmwf.${ymd}/ecmwf_hr_${ymdh}f${fhr24} fmdl3a
+fmdl3b=/com/nawips/prod/ecmwf.${ymd}/ecmwf_hr_${ymdh}f048
+fmdl4=/meso/save/Geoffrey.Manikin/meg/namxpcp_${ymdh}
+
+areas="1"
+for region in $areas; do
+
+if [ $region -eq 1 ]
+then
+garea="33.9;-111.4;42.9;-98."
+proj="lcc/25.;-105.;25./2;2;1;1"
+fi
+
+if [ $fhr -eq 24 ]
+then
+ecmdl="$fmdl3"
+ecfun="quo(mul(pxxm,1000),25.4)"
+else
+ecmdl="fmdl3a + $fmdl3"
+ecfun="sub(quo(mul(pxxm+2,1000),25.4),quo(mul(pxxm^${ymd}/${cyc}f${fhr24},1000),25.4)"
+fi
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = p24i 
+ CINT     = 5 
+ LINE     = 1 
+ DEVICE   = GIF|${cyc}_4mod24pcp${region}_f${fhr}.gif | 800;850
+ PROJ     = $proj 
+ GAREA    = $garea 
+ \$MAPFIL = county
+ MAP      = 1/1/2;1
+ TITLE    = 1//~  NAM  24-HR TOT PCP
+ CLEAR    = y
+ SCALE    = 0
+ PANEL    = ul 
+ HILO     = 0
+ HLSYM    = 0 
+ CLRBAR   = 0
+ TEXT     = 0.9/11/2
+ FINT     = .01;.1;.25;.5;.75;1;1.5;2;2.5;3;4;5;6;8
+ FLINE    = 0;21;22;23;4;25;27;28;29;30;2;15;17;10;5
+ TYPE     = f 
+r
+
+ GDFILE   = $fmdl2
+ PANEL    = ur 
+ CLEAR    = n
+ TITLE    = 1//~  GFS 24-HR TOT PCP 
+r
+
+ GDFILE   = $ecmdl
+ GDPFUN   = $ecfun
+ PANEL    = ll 
+ TITLE    = 1//~  ECMWF 24-HR TOT PCP 
+ CLRBAR   = 1/H/UL/.05;0.98/1.9;.03/1
+r
+
+ GDFILE   = $fmdl4
+ PANEL    = lr
+ GDPFUN   = p24i
+ TITLE    = 1//~  NAMX  24-HR TOT PCP 
+ CLRBAR   = 0
+r
+
+ex
+EOF
+done
+
+   gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0
+ GVCORD   = none
+ GDPFUN   = p48i
+ CINT     = 5
+ LINE     = 1
+ DEVICE   = GIF|${cyc}hirescounty48pcp${region}.gif | 800;850
+ PROJ     = $proj
+ GAREA    = $garea
+ \$MAPFIL = county
+ MAP      = 1/1/2;1
+ TITLE    = 1//~  NAM 48-HR TOT PCP
+ CLEAR    = y
+ SCALE    = 0
+ PANEL    = ul
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 0
+ TEXT     = 0.9/11/2
+ FINT     = .01;.1;.25;.5;.75;1;1.5;2;2.5;3;4;5;6;8
+ FLINE    = 0;21;22;23;4;25;27;28;29;30;2;15;17;10;5
+ TYPE     = f
+r
+
+ GDFILE   = $fmdl2
+ PANEL    = ur 
+ CLEAR    = n
+ TITLE    = 1//~  GFS  48-HR TOT PCP
+r
+
+ GDFILE   = $fmdl3b
+ GDPFUN   = quo(mul(pxxm,1000),25.4)
+ PANEL    = ll
+ TITLE    = 1//~  ECMWF  48-HR TOT PCP
+ CLRBAR   = 1/H/UL/.05;0.98/1.9;.03/1
+r
+
+ GDFILE   = $fmdl4
+ PANEL    = lr
+ GDPFUN   = p48i
+ TITLE    = 1//~  NAMX  48-HR TOT PCP
+ CLRBAR   = 0
+r
+
+ex
+EOF
+done
+gpend
+
+#scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/today
+#scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/images_short/$dayoweek/.
+exit

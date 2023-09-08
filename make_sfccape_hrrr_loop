@@ -1,0 +1,61 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/cape
+rm /stmpp1/Geoffrey.Manikin/meg/cape/*
+cd /stmpp1/Geoffrey.Manikin/meg/cape
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=2015101606
+ymd=`echo $ymdh | cut -c1-8`
+dayoweek=hold4
+counter=11
+
+hours="00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15"
+hours="00 01 02 03 04 05 06 07 08 09 10"
+for fhr in $hours; do
+
+fmdl1=/ptmpd2/Geoffrey.Manikin/com2/nawips/prod/hrrr.${ymd}/hrrr_${ymdh}f0${fhr}00
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = cape 
+ CINT     = 5 
+ LINE     = 0 
+ DEVICE   = GIF|hrrrcape_${ymdh}f${counter}.gif | 800;850
+ PROJ     = lcc/25.;-70.;25./2;2;1;1
+ GAREA    = ri+ 
+ \$MAPFIL = county
+ TITLE    = 1//~  HRRR SFC-BASED CAPE 
+ CLEAR    = y
+ SCALE    = 0
+ PANEL    = 0
+ HILO     = 0
+ HLSYM    = 0 
+ CLRBAR   = 1/H/UL/.06;0.97/0.8;.03/1
+ TEXT     = 1.1/11/2
+ FINT     = 100;500;1000;1500;2000;2500;3000;3500;4000;4500;5000
+ FLINE    = 0;25;21;22;23;5;10;17;16;2;15;32
+ TYPE     = f 
+r
+
+ex
+EOF
+
+counter=`expr $counter + 1`
+done
+gpend
+convert -loop 0 -delay 90 hrrr*gif hrrr_capeloop_${ymdh}.gif
+scp *loop*gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+scp hrrrcape* wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+#scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+#rm *gif
+exit

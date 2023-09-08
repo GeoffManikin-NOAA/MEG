@@ -1,0 +1,127 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+length=$2
+
+da00=`cut -c 7-14 /com/date/t${cyc}z`
+hr00=`cut -c 15-16 /com/date/t${cyc}z`
+month=`cut -c 11-12 /com/date/t${cyc}z`
+day=`cut -c 13-14 /com/date/t${cyc}z`
+
+#da00=`cut -c 7-14 t${cyc}z`
+#hr00=`cut -c 15-16 t${cyc}z`
+
+#da00=20020214
+#hr00=12
+
+mkdir /stmpp1/wx20mg/gempak.ruc20/launch5/2mt
+cd /stmpp1/wx20mg/gempak.ruc20/launch5/2mt
+rm /stmpp1/wx20mg/gempak.ruc20/launch5/2mt/*
+cp /meso/save/wx20mg/casework/coltbl.xwp .
+
+if [ $length -eq 12 ]
+then
+times="00 01 02 03 06 09 12"
+else
+times="00 01 02 03 06 09 12 15 18"
+fi
+
+/nwprod/util/ush/startxvfb.sh /bin/sh
+. ./STARTXVFB
+
+counter=0
+times="00"
+for fhr in $times; do
+
+#fmdl=/com/nawips/prod/ruc2.${da00}/ruc2_${da00}${hr00}f0${fhr}
+fmdl=/meso/save/wx20mg/gempak/nagribx/ruc2_${da00}${hr00}
+fmdl2=/meso/save/wx20mg/gempak/nagribx/ruc2x_${da00}${hr00}
+#fmdl2=/stmpp1/wx20mg/gempak.ruc20/ruc2_${da00}${cyc}f0${fhr}
+
+echo $fmdl
+echo $fmdl2
+
+    gdplot2 << EOF
+
+ GDFILE   = $fmdl
+ GDATTIM  = f$fhr
+ GLEVEL   = 5
+ GVCORD   = dpth 
+ GDPFUN   = sltk 
+ CINT     = 5
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 0
+ DEVICE   = GIF|compare5soilt_${cyc}f${counter}.gif|900;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-95.;25./2;2;1;1
+ GAREA    = 28.;-114.;50.;-86. 
+ CLEAR    = y
+ PANEL    = 0.;.51;1.;1.
+ TEXT     = 1.2/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/V/UL/.15;0.5/.8;.03/-2
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 249;253;257;261;265;269;273;277;281;285;289;293;297;301 
+ FLINE    = 0;12;30;28;4;25;27;24;23;22;21;5;20;10;17;2;15
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ TITLE    = 1/1/ ${fhr}-HR RUC2 5-CM SOIL TEMP 
+ TEXT     = 1.2/11/2
+ CLEAR    = n
+ GDPFUN     = blurk
+ CINT     = -2000/-2000/-2000
+ CLRBAR   = 0
+r
+
+ TITLE    = 7/-1/ FCST MADE ${cyc}Z  ${month}/$day
+ TEXT     = 1.1/11/1/SW
+r
+
+ TITLE    = 1/1/ ${fhr}-HR RUCX 5-CM SOIL TEMP
+ GDFILE   = $fmdl2 
+ TEXT     = 1.2/11/2
+ PANEL    = 0;0;1;.49
+r
+
+ GDFILE   = $fmdl2 
+ GDPFUN   = sltk 
+ TITLE    = 0
+ CINT     = 5 
+r
+
+ex
+EOF
+
+counter=`expr $counter + 1`
+gpend
+done
+/nwprod/util/ush/stopxvfb.sh /bin/sh
+
+. /u/wx20mg/.Utils
+export w1=wd20mg
+export w2=$rzdm
+
+ftp -n -v << EOF > /nfsuser/g01/emcsrc/wx20mg/gempak.ruc20/rzftp.out
+open rzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/ruc2/para/${cyc}z/images/today
+mput *gif 
+bye
+EOF
+
+echo abouttoexit5t
+exit

@@ -1,0 +1,51 @@
+#/bin/sh
+
+set -x
+
+mkdir /stmpp2/Geoffrey.Manikin/gfspcp1
+rm /stmpp2/Geoffrey.Manikin/gfspcp1/*
+cd /stmpp2/Geoffrey.Manikin/gfspcp1
+
+ymdh=2015120200
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-19`
+
+DAPATH=/com/gfs/prod/gfs.${ymd}
+
+export DAPATH DAPATH2
+. /nwprod/gempak/.gempak
+
+cp /meso/save/Geoffrey.Manikin/gempak/nagrib2/*tbl .
+
+#fhrs="06 12 18 24 30 36 42 48 54 60 66 72 78 84 90 96"
+fhrs="06 12 18 24 30 36 42 48 54 60"
+#fhrs="06 12 18 24 30 36 42 48 54 60 66 72 78 84 90 96 102 108 114 120 126 132 138 144 150 156"
+for fhr in $fhrs
+do
+
+typeset -Z3 fhr
+
+cp ${DAPATH}/gfs.t${cyc}z.pgrb2.0p50.f0${fhr} .
+/nwprod/util/exec/cnvgrib -g21 gfs.t${cyc}z.pgrb2.0p50.f${fhr} gfs.t${cyc}z.pgrb.0p50.f${fhr}
+nagrib << EOF
+GBFILE  = gfs.t${cyc}z.pgrb.0p50.f${fhr} 
+INDXFL  =
+GDOUTF  = dummy.grd
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+exit
+EOF
+mv dummy.grd gfs_${ymdh}f0${fhr}
+mv gfs_${ymdh}f0${fhr} /ptmpd2/Geoffrey.Manikin/com2/nawips/prod/gfs.${ymd}
+done
+gpend
+exit

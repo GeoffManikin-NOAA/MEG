@@ -1,0 +1,133 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/500z
+rm /stmpp1/Geoffrey.Manikin/meg/500z/*
+cd /stmpp1/Geoffrey.Manikin/meg/500z
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`cut -c 7-14 /com/date/t${cyc}z`
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+
+ymdh=2013050812
+ymd=20130508
+dayoweek=Wed
+
+times="06"
+for fhr in $times; do
+
+fmdl1=/com/nawips/prod/nam.${ymd}/nam40_${ymdh}f0${fhr}
+fmdl2=/com/nawips/prod/rap.${ymd}/rap_${ymdh}f0${fhr}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 500
+ GVCORD   = pres
+ GDPFUN   = avor
+ CINT     = 2/10/46
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   NAM 500 mb  Z/AVOR
+ DEVICE   = GIF|500models_f0${fhr}.gif|850;950
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-95;25;/1;1;1;1
+ GAREA    = ok- 
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 5
+ LATLON   = 0
+ HILO     = 2/x#;/14-46;/5//yes
+ HLSYM    = 1//21;//HW
+ CLRBAR   = 0 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 16;20;24;28;32;36
+ FLINE    = 0;23;21;5;19;17;16
+ TYPE     = f/c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDPFUN   = quo(hght,10)
+ CINT     = 6
+ LINE     = 4/1/3/3
+ TITLE    = 0
+ CLEAR    = n
+ SCALE    = 0
+ HILO     = 0
+ HLSYM    = 2;2//2/4/SW
+ TEXT     = 1.2/11/2
+ FINT     = 0
+ FLINE    = 0
+ TYPE     = c
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhr
+ GLEVEL   = 500
+ GVCORD   = pres
+ GDPFUN   = avor
+ CINT     = 2/10/46
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   RAP 500 mb Z/AVOR
+ SATFIL   =
+ RADFIL   =
+ PANEL    = b
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 5
+ LATLON   = 0
+ HILO     = 2/x#;/14-46;/5//yes
+ HLSYM    = 1//21;//HW
+ CLRBAR   = 0 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 16;20;24;28;32;36
+ FLINE    = 0;23;21;5;19;17;16
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDPFUN   = quo(hght,10)
+ CINT     = 6
+ LINE     = 4/1/3/3
+ TITLE    = 0
+ CLEAR    = n
+ SCALE    = 0
+ HILO     = 0
+ HLSYM    = 2;2//2/4/SW
+ TEXT     = 1.2/11/2
+ FINT     = 0
+ FLINE    = 0
+ TYPE     = c
+r
+
+ex
+EOF
+
+done
+gpend
+
+for fhr in $times; do
+CONV=/usrx/local/ImageMagick/6.8.3-3/bin
+$CONV/convert -crop 0x0 500models_f0${fhr}.gif ${cyc}500rap${fhr}.gif 
+done
+
+mv ${cyc}*gif /stmpp1/Geoffrey.Manikin/meg/holdshort/.
+rm *gif
+exit

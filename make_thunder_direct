@@ -1,0 +1,108 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+da00=`cut -c 7-14 /com/date/t${cyc}z`
+hr00=`cut -c 15-16 /com/date/t${cyc}z`
+month=`cut -c 11-12 /com/date/t${cyc}z`
+day=`cut -c 13-14 /com/date/t${cyc}z`
+
+#da00=`cut -c 7-14 t${cyc}z`
+#hr00=`cut -c 15-16 t${cyc}z`
+
+#da00=20040609
+#hr00=18
+
+mkdir /stmpp1/wx20mg/gempak.rap13/launch4/trw
+cd /stmpp1/wx20mg/gempak.rap13/launch4/trw
+cp /meso/save/wx20mg/casework/coltbl.xwp .
+
+times="00 01 02 03 06 09 12 15 18"
+
+counter=0
+for fhr in $times; do
+
+fmdl=/ptmpp1/wx20mg/rap13gem/rap.${da00}/rap32_${da00}${hr00}f0${fhr}
+
+echo $fmdl
+
+    gdplot2 << EOF
+
+ GDFILE   = $fmdl
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = thun 
+ CINT     = 0.9
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 0
+ DEVICE   = GIF|comparetrw_${cyc}f${counter}.gif|900;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-80.;25./2;2;1;1
+ GAREA    = 22.;-95.;48.;-65. 
+ CLEAR    = y
+ PANEL    = 0.;.51;1.;1.
+ TEXT     = 1.2/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/V/UL/.15;0.5/.8;.03/-2
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 0.9;10
+ FLINE    = 0;2
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ TITLE    = 1/1/ ${fhr}-HR RAPX THUNDER
+ TEXT     = 1.2/11/2
+ CLEAR    = n
+ GDPFUN   = blurk
+ CINT     = -2000/-2000/-2000
+ TYPE     = f/c
+ CLRBAR   = 0
+r
+
+ TITLE    = 29/-1/ FCST MADE ${cyc}Z  ${month}/$day
+ TEXT     = 1.1/11/1/SW
+r
+
+ TITLE    = 1/1/ ${fhr}-HR RAPX THUNDER 
+ TEXT     = 1.2/11/2
+ PANEL    = 0;0;1;.49
+ GAREA    = 24.;-125.;50.;-93.
+ PROJ     = lcc/25.;-110.;25./2;2;1;1
+r
+
+
+ex
+EOF
+
+counter=`expr $counter + 1`
+gpend
+done
+
+. /u/wx20mg/.Utils
+export w1=wd20mg
+export w2=$rzdm
+
+ftp -n -v << EOF > /meso/save/wx20mg/gempak.rap13/rzftp.out
+open rzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/rap/para/${cyc}z/images
+prompt
+mput *.gif
+bye
+EOF
+
+exit

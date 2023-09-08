@@ -1,0 +1,98 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+validtime=2013042700
+dayoweek=Sat
+ymd=`echo $validtime | cut -c1-8`
+cyc=`echo $validtime | cut -c9-10`
+mdlymdh=2013042700
+mdlymd=`echo $mdlymdh | cut -c1-8`
+stations="744550 726320 722150"
+stations="724030  725180 725200"
+stations="725620 722080 726450 722300 722150 722350"
+stations="727470"
+
+mkdir /stmpp1/Geoffrey.Manikin/gempak.sound
+rm /stmpp1/Geoffrey.Manikin/gempak.sound/*
+cd /stmpp1/Geoffrey.Manikin/gempak.sound
+cp /meso/save/Geoffrey.Manikin/casework/*xwp .
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+fmdl=/com/nawips/prod/nam.${mdlymd}/nam_${mdlymdh}.snd
+#fmdl=/ptmpp1/Geoffrey.Manikin/hold2/${ymd}.snd
+#fmdl=/ptmpp1/Geoffrey.Manikin/hold/ruc2_${ymdh}.snd
+#fmdl2=/ptmpp1/Geoffrey.Manikin/hold/${ymd}.snd
+fmdl2=/ptmpp1/hpcops/obs/$ymd.snd
+echo $fmdl
+
+times="00"
+for time in $times; do
+for stnm in $stations; do
+
+stn=`echo $stnm | cut -c1-5`
+if [ $time -lt 10 ]
+then
+fhr=0${time}
+else
+fhr=$time
+fi
+
+    snprof << EOF
+ SNFILE   = $fmdl
+ DATTIM   = $ymd/$cyc
+ AREA     = @${stnm}
+ SNPARM   = tmpc;dwpc
+ LINE     = 2;4/2/6
+ PTYPE    = skewt
+ VCOORD   = PRES
+# STNDEX   = lift;cape;cins
+ STNDEX   = cape
+ STNCOL   = 24
+ WIND     = bk1
+ WINPOS   = 2
+ MARKER   = 0
+ BORDER   = 1//2
+ TITLE    = 1//  OPS NAM DASHED   OBS SOLID/LEFT WINDS
+ DEVICE   = gif|nam${stnm}_${mdlymdh}f$fhr.gif|1000;1000
+ YAXIS    = 1050/200/50/1;1;1
+ XAXIS    = -25/35/10/;1
+ FILTER   = 0.7
+ CLEAR    = y
+ PANEL    = 0
+! TEXT     = 1.0/11/2/SW
+ TEXT     = 1.1/23/SW
+ THTALN   = 8/3/1/250/500/5
+ THTELN   = 23/1/1/250/500/5
+ MIXRLN   = 17/10/2/0/40./1.
+r
+
+ SNFILE   = $fmdl2
+ CLEAR    = n
+ WINPOS   = 1
+ LINE     = 2;4/1/6 
+ AREA     = @${stn}
+r
+
+ex
+EOF
+
+done
+done
+gpend
+
+. /u/Geoffrey.Manikin/.Utils
+export w1=wd20mg
+export w2=$rzdm
+
+ftp -n -v << EOF > /meso/save/Geoffrey.Manikin/meg/rzftp.out
+open emcrzdm
+user $w1 $w2
+binary
+cd /home/www/emc/htdocs/mmb/gmanikin/meg/short/images_short/${dayoweek}
+mput *.gif
+bye
+EOF
+
+exit

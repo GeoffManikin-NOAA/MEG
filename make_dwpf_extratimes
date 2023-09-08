@@ -1,0 +1,135 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+length=$2
+
+da00=`cut -c 7-14 /com/date/t${cyc}z`
+hr00=`cut -c 15-16 /com/date/t${cyc}z`
+month=`cut -c 11-12 /com/date/t${cyc}z`
+day=`cut -c 13-14 /com/date/t${cyc}z`
+
+#da00=`cut -c 7-14 t${cyc}z`
+#hr00=`cut -c 15-16 t${cyc}z`
+
+#da00=20020214
+#hr00=12
+
+mkdir /stmpp1/wx20mg/gempak.ruc20/launch3/dwpf
+cd /stmpp1/wx20mg/gempak.ruc20/launch3/dwpf
+
+if [ $length -eq 12 ]
+then
+times="00 01 02 03 04 05 06 07 08 09 10 11 12"
+else
+times="00 01 02 03 04 05 06 07 08 09 12 15 18"
+fi
+
+counter=0
+for fhr in $times; do
+
+#fmdl=/com/nawips/prod/ruc2.${da00}/ruc2_${da00}${hr00}f0${fhr}
+fmdl=/meso/save/wx20mg/gempak/nagribx/ruc2_${da00}${hr00}
+fmdl2=/meso/save/wx20mg/gempak/nagribx/ruc2x_${da00}${hr00}
+#fmdl2=/stmpp1/wx20mg/gempak.ruc20/ruc2_${da00}${cyc}f0${fhr}
+
+echo $fmdl
+echo $fmdl2
+
+/nwprod/util/ush/startxvfb.sh /bin/sh
+. ./STARTXVFB
+
+# negate the colors ahead of time except white and black
+gpcolor << EOFC
+COLORS=0=255:255:255?
+COLORS=101=255:255:255;1=0:0:0
+DEVICE   = GF
+r
+
+ex
+EOFC
+
+    gdplot2 << EOF
+
+ GDFILE   = $fmdl
+ GDATTIM  = f$fhr
+ GLEVEL   = 2
+ GVCORD   = hght
+ GDPFUN   = dwpf
+ CINT     = -6;-2;2;6;10;14;18;22;26;30;34;38;42;46;50;54;58;62;66
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 0
+ DEVICE   = GF|compare2dew_${cyc}f${counter}.gif
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-95.;25./2;2;1;1
+ GAREA    = nv- 
+ CLEAR    = y
+ PANEL    = 0.;.51;1.;1.
+ TEXT     = 1.2/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/V/UL/.15;0.5/.8;.03/-2
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = -6;-2;2;6;10;14;18;22;26;30;34;38;42;46;50;54;58;62;66
+ FLINE    = 0;12;10;17;19;20;5;21;22;23;27;26;4;24;28;29;30;16;2;15
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ TITLE    = 1/1/ ${fhr}-HR RUC2 2-M DEW PT
+ TEXT     = 1.2/11/2
+ CLEAR    = n
+ GDPFUN   = blurk
+ CINT     = -2000/-2000/-2000
+ CLRBAR   = 0
+r
+
+ TITLE    = 4/-1/ FCST MADE ${cyc}Z  ${month}/$day
+ TEXT     = 1.1/11/1/SW
+r
+
+ TITLE    = 1/1/ ${fhr}-HR RUCX  2-M DEW PT
+ GDFILE   = $fmdl2 
+ TEXT     = 1.2/11/2
+ PANEL    = 0;0;1;.49
+r
+
+ GDFILE   = $fmdl2 
+ GDPFUN   = dwpf
+ TITLE    = 0
+ CINT     = -2;2;6;10;14;18;22;26;30;34;38;42;46;50;54;58;62;66;70 
+r
+
+ex
+EOF
+
+counter=`expr $counter + 1`
+gpend
+done
+
+/nwprod/util/ush/startxvfb.sh /bin/sh
+echo abouttoexitdwpf
+
+. /u/wx20mg/.Utils
+export w1=wd20mg
+export w2=$rzdm
+
+ftp -n -v << EOF > /nfsuser/g01/emcsrc/wx20mg/casework/rzftp.out
+open rzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/ruc2/nvdwpt
+mput *gif
+bye
+EOF
+
+exit

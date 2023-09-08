@@ -1,0 +1,123 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+da00=`cut -c 7-14 /com/date/t${cyc}z`
+hr00=`cut -c 15-16 /com/date/t${cyc}z`
+month=`cut -c 11-12 /com/date/t${cyc}z`
+day=`cut -c 13-14 /com/date/t${cyc}z`
+
+#da00=`cut -c 7-14 t${cyc}z`
+#hr00=`cut -c 15-16 t${cyc}z`
+
+#da00=20020214
+#hr00=12
+
+mkdir /stmpp1/wx20mg/gempak.ruc20/launch1/300
+cd /stmpp1/wx20mg/gempak.ruc20/launch1/300
+cp /meso/save/wx20mg/casework/coltbl.xwp .
+
+times="00 03 06 09 12"
+
+counter=0
+for fhr in $times; do
+
+#fmdl=/com/nawips/prod/ruc2.${da00}/ruc2_${da00}${hr00}f0${fhr}
+fmdl=/meso/save/wx20mg/gempak/nagribx/ruc2_${da00}${hr00}
+fmdl2=/meso/save/wx20mg/gempak/nagribx/ruc2x_${da00}${hr00}
+#fmdl2=/stmpp1/wx20mg/gempak.ruc20/ruc2_${da00}${cyc}f0${fhr}
+
+echo $fmdl
+echo $fmdl2
+
+    gdplot2 << EOF
+
+ GDFILE   = $fmdl
+ GDATTIM  = f$fhr
+ GLEVEL   = 300 
+ GVCORD   = pres 
+ GDPFUN   = knts(sped) 
+ CINT     = 10 
+ LINE     = 0 
+ MAP      = 1
+ WIND     = BK1/0.7/2/122 
+ TITLE    = 0 
+ DEVICE   = GF|compare300_${cyc}f${counter}.gif
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-95.;25./2;2;1;1
+ GAREA    = va- 
+ CLEAR    = y
+ PANEL    = 0.;.51;1.;1.
+ TEXT     = 0.9/11/1/SW 
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/V/UL/.15;0.5/.8;.03/-2
+ CONTUR   = 0
+ SKIP     = /7;7 
+ FINT     = 50;60;70;80;90;100;110;120;130;140;150;160
+ FLINE    = 0;30;28;27;25;23;21;5;10;17;11;2;15
+ TYPE     = f/c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDPFUN   = kntv(wnd) 
+ TYPE     = b 
+ TITLE    = 1/1/ ${fhr}-HR RUC2 300 MB WINDS (KT)
+ CLEAR    = n
+r
+
+
+ TITLE    = 7/-1/ FCST MADE ${cyc}Z  ${month}/$day
+ TEXT     = 1.0/11/1/SW
+r
+
+ GDFILE   = $fmdl2
+ GDPFUN   = knts(sped)
+ TITLE    = 1/1/ RUCX  ${fhr}-HR FCST 300 MB WINDS (kt)
+ PANEL    = 0;0;1;.49
+ CLEAR    = n
+ CLRBAR   = 0
+ TEXT     = 0.9/11/1/SW
+ TYPE     = f/c
+r
+
+ GDPFUN   = kntv(wnd) 
+ TYPE     = b
+ TITLE    = 0
+ CLEAR    = n
+r
+
+exit
+EOF
+
+counter=`expr $counter + 1`
+gpend
+done
+
+echo abouttoexit300
+. /u/wx20mg/.Utils
+export w1=wd20mg
+export w2=$rzdm
+                                                                                   
+                                                                                   
+ftp -n -v << EOF > /nfsuser/g01/emcsrc/wx20mg/gempak.ruc20/rzftp.out
+open rzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/ruc2/para/${cyc}z/images/today
+prompt
+mput *.gif
+bye
+EOF
+                                                                                   
+exit
+~
+
+exit

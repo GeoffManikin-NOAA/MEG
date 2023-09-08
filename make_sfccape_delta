@@ -1,0 +1,82 @@
+#!/bin/ksh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/scape
+rm /stmpp1/Geoffrey.Manikin/meg/scape/*
+cd /stmpp1/Geoffrey.Manikin/meg/scape
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=2016061412
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+dayoweek=hold4
+
+times="18 19 20 21 22 23 24 25 26 27"
+times="00 03 06 09 12"
+times="00 03 06 09 12 15"
+times="11"
+for fhr in $times; do
+
+fhr3=`expr $fhr - 3`
+typeset -Z2 fhr3
+
+fmdl1=/com/nawips/prod/nam.${ymd}/nam32_${ymdh}f0${fhr3}
+fmdl2=/com/nawips/prod/nam.${ymd}/nam32_${ymdh}f0${fhr}
+fmdl3=/com2/nawips/prod/gfs.${ymd}/gfs_0p25_${ymdh}f0${fhr3}
+fmdl4=/com2/nawips/prod/gfs.${ymd}/gfs_0p25_${ymdh}f0${fhr}
+echo $fmdl1
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1 + $fmdl2
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = sub(cape+2,cape^${ymd}/${cyc}f0${fhr3})
+ CINT     = 500 
+ LINE     = 1 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   NAM  SFC-BASED CAPE f${fhr} - f${fhr3}
+ DEVICE   = GIF|deltasfccape_${ymdh}f0${fhr}.gif|750;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-92;25;/1;1;1;1
+ GARREA    = 22.;-106.;42.;-82.
+ GAREA    = mo- 
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 0.9/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/V/UL/.04;0.4/0.8;.03/1 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = -2000;-1500;-1000;-750;-500;500;750;1000;1500;2000
+ FLINE    = 30;28;26;27;22;0;5;10;17;2;15
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl3 + $fmdl4
+ GDATTIM  = f$fhr
+ TITLE    = 1/-1/~  GFS  SFC-BASED CAPE  f${fhr} - f${fhr3}
+ PANEL    = b
+ CLRBAR   = 0
+ CLEAR    = n
+r
+
+ex
+EOF
+done
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

@@ -1,0 +1,143 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/skin
+rm /stmpp1/Geoffrey.Manikin/meg/skin/*
+cd /stmpp1/Geoffrey.Manikin/meg/skin
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`cut -c 7-14 /com/date/t${cyc}z`
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+
+ymdh=2015101612
+ymd=`echo $ymdh | cut -c1-8`
+dayoweek=hold4
+
+times="00 06 12 18 24 30 36 42 48 54 60 66 72 78 84"
+times="00"
+for fhr in $times; do
+
+fmdl1=/com/nawips/prod/nam.${ymd}/nam20_${ymdh}f0${fhr}
+fmdl2=/com/nawips/prod/gfs.${ymd}/gfs_0p25_${ymdh}f0${fhr}
+#fmdl1=/ptmpd2/Geoffrey.Manikin/com2/nawips/prod/nam.${ymd}/nam12_${ymdh}f0${fhr}
+#fmdl2=/ptmpd2/Geoffrey.Manikin/com2/nawips/prod/gfs.${ymd}/gfs_0p25_${ymdh}f0${fhr}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = tmpf
+ CINT     = 4 
+ LINE     = 0 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   NAM SKIN T 
+ DEVICE   = GIF|skinmodels_f0${fhr}.gif|850;950
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-70;25;/1;1;1;1
+# GAREA    = 21.;-121.;51.;-65. 
+# GAREA    = 28.;-88.;44.;-66.
+ GAREA    = 28.;-100.;48.;-64.
+ GAREA    = ri+ 
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/V/UL/.08;.4/.8;.02/-1
+ CONTUR   = 0
+ SKIP     = 0
+# FINT     = -35;-30;-25;-20;-15;-10;-5;0;5;10;15;20;25;30;35;40;45;50;55;60
+ FINT     = 10;15;20;25;30;35;40;45;50;55;60;65;70;75;80;85;90;95;100;105;110
+ FINT     = -48;-40;-32;-24;-16;-8;0;8;16;24;32;40;48;56;64;72;80;88;96
+ FINT     = 24;28;32;36;40;44;48;52;56;60;64;68;72;76;80;84;88;92;96
+ FLINE    = 0;12;30;29;28;4;25;26;27;24;23;22;21;5;20;10;17;16;2;15;14;32
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ CINT     = 1/32/32
+ TYPE     = c
+ LINE     = 1/1/4/0
+ CLEAR    = n
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhr
+ CINT     = 4 
+ LINE     = 4/1/3/2 
+ TITLE    = 1/-1/~   GFS SKINT T 
+ PANEL    = b
+ CLRBAR   = 0 
+ TYPE     = f
+r
+
+ CINT     = 1/32/32
+ TYPE     = c
+ LINE     = 1/1/4/0
+r
+
+ex
+EOF
+
+    gdcntr << EOF
+ GDFILE   = $fmdl2 + $fmdl1
+ GDATTIM  = f${fhr}
+ GLEVEL   = 0  
+ GVCORD   = none 
+ GFUNC    = sub(tmpf+2,tmpf)
+ CINT     = 2 
+ LINE     = 1
+ MAP      = 1
+ WIND     = bk1/0.7/2/122
+ TITLE    = 1//~ SKIN T   NAM - GFS
+ DEVICE   = GIF|skindiff_f0${fhr}.gif | 600;650
+ SATFIL   =
+ RADFIL   =
+ CLEAR    = y
+ PANEL    = 0
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/H/UL/.1;.9/.8;.02/-1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = -20;-16;-12;-8;-4;4;8;12;16;20
+ FLINE    = 30;28;26;27;22;0;5;10;17;2;15
+ CTYPE    = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ex
+EOF
+done
+gpend
+
+CONV=/usrx/local/ImageMagick/6.8.3-3/bin
+for fhr in $times; do
+$CONV/convert -crop 0x0 skinmodels_f0${fhr}.gif skin1.gif
+$CONV/convert -crop 0x0 skindiff_f0${fhr}.gif skin2.gif
+$CONV/montage -geometry 800x850 skin1.gif skin2.gif ${cyc}skin${fhr}.gif
+done
+
+#scp ${cyc}*gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+rm *gif
+exit

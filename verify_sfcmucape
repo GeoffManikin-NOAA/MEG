@@ -1,0 +1,67 @@
+#!/bin/sh
+echo 'into'
+
+ymdh=2022072806
+ymd=`echo $ymdh | cut -c1-8`
+dayoweek=hold
+
+mkdir /lfs/h1/emc/stmp/geoffrey.manikin/meg
+mkdir /lfs/h1/emc/stmp/geoffrey.manikin/meg/cape
+rm /lfs/h1/emc/stmp/geoffrey.manikin/meg/cape/*
+cd /lfs/h1/emc/stmp/geoffrey.manikin/meg/cape
+cp /lfs/h2/emc/vpppg/save/geoffrey.manikin/meg/coltbl.xwp .
+
+#fmdl1=/lfs/h1/nco/ops/com/gfs/prod/gfs.${ymd}/${cyc}/atmos/gempak/gfs_0p25_${y
+mdh}f000
+fmdl1=/lfs/h2/emc/vpppg/noscrub/geoffrey.manikin/floods22/rap32_${ymdh}f000
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f00
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = cape 
+ CINT     = 500 
+ LINE     = 1 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   RAP  SFC-BASED CAPE 
+ DEVICE   = GIF|capeverf_${ymdh}.gif|750;900
+ SATFIL   =
+ RADFIL   =
+# PROJ     = lcc/25;-75;25;/1;1;1;1
+# GAREA    = 21.;-120.;51.;-66. 
+ PROJ     = lcc/25;-85;25;/1;1;1;1
+ GAREA    = 33.;-108.;51.;-84. 
+ GAREA    = 27.;-88.;35.6;-76.
+ GAREA    = ky 
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/V/UL/.01;0.4/0.8;.03/1 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 100;500;1000;1500;2000;2500;3000;3500;4000;4500;5000
+ FLINE    = 0;25;21;22;23;5;10;17;16;2;15;32
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ TITLE    = 1/-1/~  RAP  MOST UNSTABLE CAPE 
+ GVCORD   = pdly
+ GLEVEL   = 180:0
+ PANEL    = b
+ CLRBAR   = 0
+ CLEAR    = n
+r
+
+ex
+EOF
+gpend
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test8/.
+exit

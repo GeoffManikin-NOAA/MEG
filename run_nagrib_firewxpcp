@@ -1,0 +1,66 @@
+#/bin/ksh
+
+set -x
+
+cyc=$1
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+ymdh=2014112006
+ymd=20141120
+
+DAPATH=/com/nam/prod/nam.${ymd}
+#DAPATH2=/meso/noscrub/Eric.Rogers/com/nam/para/nam.${ymd}
+#DAPATH=/ptmp/Geoffrey.Manikin/hold3/
+
+export DAPATH
+. /nwprod/gempak/.gempak
+
+fhrs="01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36"
+
+for fhr in $fhrs
+do
+wgrib ${DAPATH}/nam.t${cyc}z.firewxnest.hiresf${fhr}.tm00 | grep kpds5=61 | wgrib ${DAPATH}/nam.t${cyc}z.firewxnest.hiresf${fhr}.tm00 -i -grib -o pcp.fil
+wgrib ${DAPATH}/nam.t${cyc}z.firewxnest.hiresf${fhr}.tm00 | grep kpds5=2:kpds6=102 | wgrib ${DAPATH}/nam.t${cyc}z.firewxnest.hiresf${fhr}.tm00 -i -grib -o slp.fil
+wgrib ${DAPATH}/nam.t${cyc}z.firewxnest.hiresf${fhr}.tm00 | grep kpds5=33:kpds6=105:kpds7=10 | wgrib ${DAPATH}/nam.t${cyc}z.firewxnest.hiresf${fhr}.tm00 -i -grib -o 10u.fil
+wgrib ${DAPATH}/nam.t${cyc}z.firewxnest.hiresf${fhr}.tm00 | grep kpds5=34:kpds6=105:kpds7=10 | wgrib ${DAPATH}/nam.t${cyc}z.firewxnest.hiresf${fhr}.tm00 -i -grib -o 10v.fil
+wgrib ${DAPATH}/nam.t${cyc}z.firewxnest.hiresf${fhr}.tm00 | grep kpds5=211:kpds6=105 | wgrib ${DAPATH}/nam.t${cyc}z.firewxnest.hiresf${fhr}.tm00 -i -grib -o refd.fil 
+
+  nagrib << EOF
+GBFILE  = pcp.fil 
+INDXFL  =
+GDOUTF  = dummynest.grd 
+PROJ    =
+GRDAREA =
+KXKY    = 
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+GBFILE  = slp.fil
+r
+
+GBFILE  = 10u.fil
+r
+
+GBFILE  = 10v.fil
+r
+
+GBFILE  = refd.fil
+r
+
+exit
+EOF
+
+rm new*.fil
+done
+mv dummynest.grd namfirewxnest_${ymdh}
+gpend
+exit
+

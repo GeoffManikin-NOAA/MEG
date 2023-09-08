@@ -1,0 +1,110 @@
+#!/bin/ksh --login
+#
+#BSUB -oo /ptmpp2/Geoffrey.Manikin/output/nest_nagrib5.out4
+#BSUB -eo /ptmpp2/Geoffrey.Manikin/output/nest_nagrib5.out4
+#BSUB -J nest_nagrib
+#BSUB -n 1 
+#BSUB -R span[ptile=1]
+#BSUB -W 06:00
+#BSUB -q "dev"
+#BSUB -R "affinity[core(16):distribute=balance]"
+#BSUB -P HRRR-T2O
+#BSUB -x
+#BSUB -a poe
+#
+
+set -x
+
+ymd=20200220
+
+mkdir /ptmpp1/Geoffrey.Manikin/nestpcp4
+rm /ptmpp1/Geoffrey.Manikin/nestpcp4/*
+cd /ptmpp1/Geoffrey.Manikin/nestpcp4/
+
+DAPATH2=/meso2/noscrub/Eric.Rogers/com/nam/para/nam.${ymd}
+DAPATH2=/com2/nam/para/nam.${ymd}
+DAPATH=/ptmpp1/Geoffrey.Manikin/nest2
+DAPATH=/gpfs/dell1/nco/ops/com/nam/prod/nam.${ymd}
+#DAPATH2=/ptmp/Geoffrey.Manikin/hold
+
+export DAPATH
+. /nwprod/gempak/.gempak
+
+cycles="00 06 12 18"
+cycles="00 12"
+fhrs="03 06 09 12 15 18 21 24 27 30 33 36 39 42 45 48 51 54 57 60"
+#fhrs="03 06 09 12 15 18 21 24"
+for cyc in $cycles
+do
+for fhr in $fhrs
+do
+
+cp ${DAPATH}/nam.t${cyc}z.conusnest.hiresf${fhr}.tm00.grib2 .
+/nwprod/util/exec/cnvgrib -g21 nam.t${cyc}z.conusnest.hiresf${fhr}.tm00.grib2 nam.t${cyc}z.conusnest.hiresf${fhr}.tm00
+
+wgrib -i -d 874 nam.t${cyc}z.conusnest.hiresf${fhr}.tm00 -grib -o new.fil
+
+  nagrib << EOF
+GBFILE  = new.fil 
+INDXFL  =
+GDOUTF  = dummynest.grd 
+PROJ    =
+GRDAREA =
+KXKY    = 
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+exit
+EOF
+
+rm new*.fil
+rm *grib2
+done
+#mv dummynest.grd /meso/save/Geoffrey.Manikin/meg/namnestpcp_${ymd}${cyc}
+mv dummynest.grd /meso/noscrub/Geoffrey.Manikin/feb20ncstorm/namnestpcp_${ymd}${cyc}
+done
+gpend
+exit
+
+for cyc in $cycles
+do
+for fhr in $fhrs
+do
+
+cp ${DAPATH2}/nam.t${cyc}z.conusnest.hiresf${fhr}.tm00.grib2 .
+/nwprod/util/exec/cnvgrib -g21 nam.t${cyc}z.conusnest.hiresf${fhr}.tm00.grib2 nam.t${cyc}z.conusnest.hiresf${fhr}.tm00
+wgrib -i -d 869 nam.t${cyc}z.conusnest.hiresf${fhr}.tm00 -grib -o new.fil
+wgrib -i -d 870 nam.t${cyc}z.conusnest.hiresf${fhr}.tm00 -grib -o newc.fil
+
+  nagrib << EOF
+GBFILE  = new.fil
+INDXFL  =
+GDOUTF  = dummynest2.grd
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+GBFILE  = newc.fil
+r
+
+exit
+EOF
+rm new*.fil
+done
+mv dummynest2.grd /meso/save/Geoffrey.Manikin/meg/namnestpcp_${ymd}${cyc}
+done
+gpend
+exit
+

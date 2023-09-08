@@ -1,0 +1,63 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /stmp/Geoffrey.Manikin/meg
+mkdir /stmp/Geoffrey.Manikin/meg/nestpcp
+rm /stmp/Geoffrey.Manikin/meg/nestpcp/*
+cd /stmp/Geoffrey.Manikin/meg/nestpcp
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=2013091121
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+dayoweek=Wed
+
+hours="18"
+for fhr in $hours; do
+fmdl1=/com/nawips/prod/rap.${ymd}/rap13_${ymdh}f0${fhr}
+fmdl1=/ptmp/Geoffrey.Manikin/pcp/rap13_${ymdh}f0${fhr}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0
+ GVCORD   = none
+ GDPFUN   = p18i
+ CINT     = 4
+ LINE     = 1
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   RAP 18-HR TOTAL PCP
+ DEVICE   = GIF|${ymdh}pcp18rapf${fhr}.gif|750;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-105;25;/1;1;1;1
+ GAREA    = 33.9;-111.4;42.9;-98.
+ \$MAPFIL = county
+ MAP      = 1/1/2;1
+ CLEAR    = y
+ PANEL    = 0 
+ TEXT     = 0.8/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/H/UL/.05;0.95/0.9;.03/1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = .01;.1;.25;.5;.75;1;1.5;2;2.5;3;4;5;6;8
+ FLINE    = 0;21;22;23;4;25;27;28;29;30;2;15;17;10;5
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ex
+EOF
+done
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/cases/coflood/$dayoweek/.
+exit

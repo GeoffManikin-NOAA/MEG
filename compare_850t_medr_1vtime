@@ -1,0 +1,192 @@
+#!/bin/ksh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/850tmr
+rm /stmpp1/Geoffrey.Manikin/meg/850tmr/*
+cd /stmpp1/Geoffrey.Manikin/meg/850tmr
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+dayoweek=hold2
+vtime=2015021512
+fhr1=240
+fhr2=`expr $fhr1 - 24`
+fhr3=`expr $fhr1 - 48`
+fhr4=`expr $fhr1 - 72`
+fhr5=`expr $fhr1 - 96`
+fhr6=`expr $fhr1 - 120`
+fhr7=`expr $fhr1 - 144`
+fhr8=`expr $fhr1 - 168`
+fhr9=`expr $fhr1 - 192`
+fhr10=`expr $fhr1 - 216`
+
+typeset -Z2 fhr2
+
+ymdh1="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${vtime} -${fhr1} -1`"
+ymdh2="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${vtime} -${fhr2} -1`"
+ymdh3="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${vtime} -${fhr3} -1`"
+ymdh4="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${vtime} -${fhr4} -1`"
+ymdh5="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${vtime} -${fhr5} -1`"
+ymdh6="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${vtime} -${fhr6} -1`"
+ymdh7="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${vtime} -${fhr7} -1`"
+ymdh8="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${vtime} -${fhr8} -1`"
+ymdh9="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${vtime} -${fhr9} -1`"
+ymdh10="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${vtime} -${fhr10} -1`"
+
+ymd1=`echo $ymdh1 | cut -c1-8`
+ymd2=`echo $ymdh2 | cut -c1-8`
+ymd3=`echo $ymdh3 | cut -c1-8`
+ymd4=`echo $ymdh4 | cut -c1-8`
+ymd5=`echo $ymdh5 | cut -c1-8`
+ymd6=`echo $ymdh6 | cut -c1-8`
+ymd7=`echo $ymdh7 | cut -c1-8`
+ymd8=`echo $ymdh8 | cut -c1-8`
+ymd9=`echo $ymdh9 | cut -c1-8`
+ymd10=`echo $ymdh10 | cut -c1-8`
+
+cyc1=`echo $ymdh1 | cut -c9-10`
+cyc2=`echo $ymdh2 | cut -c9-10`
+cyc3=`echo $ymdh3 | cut -c9-10`
+cyc4=`echo $ymdh4 | cut -c9-10`
+cyc5=`echo $ymdh5 | cut -c9-10`
+cyc6=`echo $ymdh6 | cut -c9-10`
+cyc7=`echo $ymdh7 | cut -c9-10`
+cyc8=`echo $ymdh8 | cut -c9-10`
+cyc9=`echo $ymdh9 | cut -c9-10`
+cyc10=`echo $ymdh10 | cut -c9-10`
+
+fmdl1=/com/nawips/prod/gfs.${ymd1}/gfs40_${ymdh1}f0${fhr1}
+fmdl2=/com/nawips/prod/gfs.${ymd2}/gfs40_${ymdh2}f0${fhr2}
+fmdl3=/com/nawips/prod/gfs.${ymd3}/gfs40_${ymdh3}f0${fhr3}
+fmdl4=/com/nawips/prod/gfs.${ymd4}/gfs40_${ymdh4}f0${fhr4}
+fmdl5=/com/nawips/prod/gfs.${ymd1}/gfs40_${ymdh5}f0${fhr5}
+fmdl6=/com/nawips/prod/gfs.${ymd2}/gfs40_${ymdh6}f0${fhr6}
+fmdl7=/com/nawips/prod/gfs.${ymd3}/gfs40_${ymdh7}f0${fhr7}
+fmdl8=/com/nawips/prod/gfs.${ymd4}/gfs40_${ymdh8}f0${fhr8}
+fmdl9=/com/nawips/prod/gfs.${ymd3}/gfs40_${ymdh9}f0${fhr9}
+fmdl10=/com/nawips/prod/gfs.${ymd4}/gfs40_${ymdh10}f0${fhr10}
+
+fmdl1=/com/nawips/prod/ecmf.${ymd1}/ecwmf_hr_${ymdh1}f0${fhr1}
+fmdl2=/com/nawips/prod/ecmf.${ymd2}/ecwmf_hr_${ymdh2}f0${fhr2}
+fmdl3=/com/nawips/prod/ecmf.${ymd3}/ecwmf_hr_${ymdh3}f0${fhr3}
+fmdl4=/com/nawips/prod/ecmf.${ymd4}/ecwmf_hr_${ymdh4}f0${fhr4}
+fmdl5=/com/nawips/prod/ecmf.${ymd1}/ecwmf_hr_${ymdh5}f0${fhr5}
+fmdl6=/com/nawips/prod/ecmf.${ymd2}/ecwmf_hr_${ymdh6}f0${fhr6}
+fmdl7=/com/nawips/prod/ecmf.${ymd3}/ecwmf_hr_${ymdh7}f0${fhr7}
+fmdl8=/com/nawips/prod/ecmf.${ymd4}/ecwmf_hr_${ymdh8}f0${fhr8}
+fmdl9=/com/nawips/prod/ecmf.${ymd3}/ecwmf_hr_${ymdh9}f0${fhr9}
+fmdl10=/com/nawips/prod/ecmf.${ymd4}/ecwmf_hr_${ymdh10}f0${fhr10}
+
+
+
+times="24 48 72 96 108 120 132 144 156 168 180 192 216 240"
+times="24 48 72 96 120 144"
+for fhr in $times; do
+
+typeset -Z3 fhr
+ymdh1="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${vtime} -${fhr} -1`"
+ymd1=`echo $ymdh1 | cut -c1-8`
+cyc1=`echo $ymdh1 | cut -c9-10`
+typeset -Z3 fhr
+fmdl1=/com/nawips/prod/ecmwf.${ymd1}/ecmwf_hr_${ymdh1}f${fhr}
+fmdl2=/com/nawips/prod/gfs.${ymd1}/gfs40_${ymdh1}f${fhr}
+
+echo $fmdl1
+echo $fmdl2
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 850 
+ GVCORD   = pres 
+ GDPFUN   = tmpc 
+ CINT     = 5
+ LINE     = 0 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   ECMWF 850 mb TMPC 
+ DEVICE   = GIF|850tmodels_f${fhr}.gif|900;950
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-85;25;/1;1;1;1
+# GAREA    = 13.;-146.;69.;-40. 
+ GAREA    = 32;-104.;58.;-52.
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/V/UL/.1;0.4/0.8;.03/2
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = -36;-32;-28;-24;-20;-16;-12;-8;-4;0;4;8;12;16;20;24;28
+ FLINE    = 0;12;30;29;28;4;25;27;24;23;21;5;20;10;17;16;2;15;32
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhr
+ TITLE    = 1/-1/~   GFS 850 mb TMPC
+ PANEL    = b
+ CLEAR    = n
+ CLRBAR   = 0
+ TYPE     = f 
+r
+
+ex
+EOF
+
+    gdcntr << EOF
+
+ GDFILE   = $fmdl1 + $fmdl2
+ GDATTIM  = f${fhr}
+ GFUNC    = sub(tmpc+2,tmpc)
+ CINT     = 10
+ LINE     = 1
+ MAP      = 1
+ WIND     = bk1/0.7/2/122
+ TITLE    = 1//~ 850 mb TMPCF   GFS - ECMWF
+ DEVICE   = GIF|850tdiff_f${fhr}.gif | 600;650
+ SATFIL   =
+ RADFIL   =
+ CLEAR    = y
+ PANEL    = 0
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/H/UL/.08;.94/.75;.02/-1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = -25;-20;-15;-10;-5;5;10;15;20;25
+ FLINE    = 30;28;26;27;22;0;5;10;17;2;15
+ CTYPE    = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ex
+EOF
+
+done
+gpend
+
+for fhr in $times; do
+CONV=/usrx/local/ImageMagick/6.8.3-3/bin
+$CONV/convert -crop 0x0 850tmodels_f${fhr}.gif 850t1.gif
+$CONV/convert -crop 0x0 850tdiff_f${fhr}.gif 850t2.gif
+$CONV/montage -geometry 800x850 850t1.gif 850t2.gif ${vtime}850t${fhr}.gif
+#rm 850t*
+done
+
+scp ${vtime}*gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

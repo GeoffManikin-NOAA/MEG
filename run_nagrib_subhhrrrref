@@ -1,0 +1,53 @@
+#!/bin/ksh
+
+set -x
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/nagribref
+rm /stmpp1/Geoffrey.Manikin/nagribref/*
+cd /stmpp1/Geoffrey.Manikin/nagribref
+cp /meso/save/Geoffrey.Manikin/gempak/nagrib/*129*l .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymdh=2015020100
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+DAPATH=/ptmpp2/Geoffrey.Manikin/hold
+
+export DAPATH
+. /nwprod/gempak/.gempak
+
+fhrs="00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15"
+for fhr in $fhrs
+do
+
+wgrib ${DAPATH}/hrrr.t${cyc}z.wrfsubhf${fhr}.grib2 | grep kpds5=211 | wgrib ${DAPATH}/hrrr.t${cyc}z.wrfsubhf${fhr}.grib2 -i -grib -o new${fhr}.fil
+wgrib ${DAPATH}/hrrr.t${cyc}z.wrfsubhf${fhr}.grib2 | grep kpds5=212 | wgrib ${DAPATH}/hrrr.t${cyc}z.wrfsubhf${fhr}.grib2 -i -grib -o new2${fhr}.fil
+cat new${fhr}.fil new2${fhr}.fil > ref.grd
+mv ref.grd new2.fil
+
+   nagrib << EOF
+GBFILE  = new2.fil
+INDXFL  =
+GDOUTF  = dummy.grd
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+exit
+EOF
+rm new*.fil
+done
+
+mv dummy.grd hrrrsubh_${ymdh}
+mv hrrr* /ptmpd2/Geoffrey.Manikin/com/nawips/prod/hrrr.${ymd}/
+exit

@@ -1,0 +1,77 @@
+#!/bin/ksh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/capemr
+rm /stmpp1/Geoffrey.Manikin/meg/capemr/*
+cd /stmpp1/Geoffrey.Manikin/meg/capemr
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=2016061200
+ymd=`echo $ymdh | cut -c1-8`
+dayoweek=hold4
+
+times="24 36 48 60 72 84 96 108 120 132 144 156 168 180 192"
+times="96"
+for fhr in $times; do
+
+typeset -Z3 fhr
+fmdl1=/com2/nawips/prod/gfs.${ymd}/gfs_0p25_${ymdh}f${fhr}
+fmdl2=/com2/nawips/prod/gfs.${ymd}/gfs_${ymdh}f${fhr}
+
+    gdplot2 << EOF
+
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = cape 
+ CINT     = 500
+ LINE     = 0 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   GFS 0.25 SFC-BASED CAPE 
+ DEVICE   = GIF|gfscape_resolution_${ymdh}f0${fhr}.gif|900;950
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-95;25;/1;1;1;1
+ GAREA    = ok+
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/V/UL/.1;0.6/1.2;.03/1
+ CONTUR   = 0
+ SKIP     = 0
+# FINT     = 50;500;1000;1500;2000;2500;3000;3500;4000;4500;5000
+ FINT     = 500;1000;1500;2000;2500;3000;3500;4000;4500;5000;7500
+ FLINE    = 0;25;21;22;23;5;10;17;16;2;15;32
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhr
+ TITLE    = 1/-1/~   GFS 1.00  SFC-BASED CAPE 
+ PANEL    = b
+ CLEAR    = n
+ CLRBAR   = 0
+ TYPE     = f 
+r
+
+ex
+EOF
+
+done
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

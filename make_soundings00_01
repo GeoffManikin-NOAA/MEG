@@ -1,0 +1,105 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+ymdh=$1
+ymd=`echo $ymdh | cut -c1-8`
+month=`echo $ymdh | cut -c5-6`
+day=`echo $ymdh | cut -c7-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+stations="722010 722150 724030 725010 722500 723630 723570 724560 726320 745600 727470 726620 723870 725720 727970 722740"
+
+mkdir /stmpp1/Geoffrey.Manikin/gempak.rap13/launch14/snd0001
+cd /stmpp1/Geoffrey.Manikin/gempak.rap13/launch14/snd0001
+cp /meso/save/Geoffrey.Manikin/gempak.rap13/coltbl.xwp .
+
+times="00"
+counter=0
+for fhr in $times; do
+
+validtime="`/meso/save/wx20mg/board/advtime ${da00}${hr00} $fhr -1 x`"
+dattim=`echo $validtime | cut -c5-11`
+
+fmdl=/ptmpp1/Geoffrey.Manikin/com/nawips/prod/rap.${ymd}/rap_${ymd}${cyc}f0${fhr}.snd
+if [ $length -eq 12 ]
+then
+times="00"
+else
+times="00"
+fi
+
+counter=0
+for fhr in $times; do
+
+validtime="`/meso/save/wx20mg/board/advtime ${da00}${hr00} 0 -1 x`"
+hrback="`/meso/save/wx20mg/board/advtime ${da00}${hr00} -1 -1 x`"
+dattim=`echo $validtime | cut -c5-11`
+backday=`echo $hrback | cut -c1-8`
+backhr=`echo $hrback | cut -c10-11`
+for stnm in $stations; do
+
+fmdl=/com/nawips/prod/ruc2.${da00}/ruc2_${da00}${hr00}.snd
+fmdl2=/com/nawips/prod/ruc2.${backday}/ruc2_${backday}${backhr}.snd
+fmdl3=/ptmpp1/wx20mg/rap13gem/rap.${da00}/rap_${da00}${hr00}.snd
+fmdl4=/ptmpp1/wx20mg/rap13gem/rap.${backday}/rap_${backday}${backhr}.snd
+
+    snprof << EOF
+ SNFILE   = $fmdl
+ DATTIM   = $dattim
+ AREA     = @${stnm}
+ SNPARM   = tmpc;dwpc
+ LINE     = 2;4/1/5
+ PTYPE    = skewt
+ VCOORD   = PRES
+ STNDEX   = lift;cape;cins
+ STNCOL   = 24
+ WIND     = bk1
+ WINPOS   = 1
+ MARKER   = 0
+ BORDER   = 1//2
+ TITLE    = 1// $stnm  RUC2  SOLID-ANL  DASHED-GUESS
+ DEVICE   = GIF|rapsnd00_01_${cyc}f${counter}.gif|850;850
+ YAXIS    = 1050/450/100/1;1;1
+ XAXIS    = -25/35/10/;1
+ FILTER   = 0.6
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1.0
+ THTALN   = 8/3/1/250/500/5
+ THTELN   = 23/1/1/250/500/5
+ MIXRLN   = 17/10/2/0/40./1.
+r
+
+ SNFILE   = $fmdl2
+ LINE     = 2;4/2/4
+ CLEAR    = n
+ WINPOS   = 2
+ TITLE    = 0
+r 
+
+ SNFILE   = $fmdl3
+ LINE     = 2;4/1/5 
+ PANEL    = b 
+ WINPOS   = 1
+ TITLE    = 1// $stnm   RAP  SOLID-ANL  DASHED-GUESS 
+r
+
+ SNFILE   = $fmdl4
+ LINE     = 2;4/2/4
+ WINPOS   = 2
+ TITLE    = 0 
+r
+ 
+ex
+EOF
+
+gpend
+counter=`expr $counter + 1`
+done
+done
+
+mv *gif ../../ftphold/.
+echo abouttoexitsnd00_01
+exit

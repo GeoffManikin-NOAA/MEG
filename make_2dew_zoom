@@ -1,0 +1,78 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmp/Geoffrey.Manikin/meg
+mkdir /stmp/Geoffrey.Manikin/meg/2dew
+rm /stmp/Geoffrey.Manikin/meg/2dew/*
+cd /stmp/Geoffrey.Manikin/meg/2dew
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`cut -c 7-14 /com/date/t${cyc}z`
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+
+ymdh=2013120612
+ymd=20131206
+dayoweek=Fri
+
+times="00"
+for fhr in $times; do
+
+fmdl1=/com/nawips/prod/nam.${ymd}/nam12_${ymdh}f0${fhr}
+fmdl1=/ptmp/Geoffrey.Manikin/hold3/rap13_${ymdh}f0${fhr}
+#fmdl1=/meso/save/Geoffrey.Manikin/meg/namb12_${ymdh}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 2 
+ GVCORD   = hght 
+ GDPFUN   = dwpf 
+ CINT     = 4 
+ LINE     = 1 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   RAP 2-M  DWPF 
+ DEVICE   = GIF|${cyc}2dewzzoomrap_f0${fhr}.gif|850;950
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-90;25;/1;1;1;1
+# GAREA    = 32.;-105.;46.;-87. 
+ GAREA    = il 
+ CLEAR    = y
+ PANEL    = 0
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/H/UL/.1;0.96/0.8;.03/2 
+ CONTUR   = 0
+ SKIP     = 0
+#FINT     = -12;-8;-4;0;4;8;12;16;20;24;28;32;36;40;44;48;52;56;60;64;68;72;76;80
+#FINT     = -86;-76;-66;-56;-46;-40;-36;-32;-28;-24;-20;-16;-12;-8;-4;0;4;8;12;16;20;24;28;32
+ FINT     = -12;-8;-4;0;4;8;12;16;20;24;28;32;36;40;44;48;52;56;60;64;68;72;76;80
+#FINT     = -72;-68;-64;-60;-56;-52;-48;-44;-40;-36;-32;-28;-24;-20;-16;-12;-8;-4;0;4;8;12;16;20
+ FINT     = -28;-24;-20;-16;-12;-8;-4;0;4;8;12;16;20;24;28;32;36;40;44;48;52;56;60
+ FLINE    = 0;11;9;12;7;30;29;28;4;25;26;27;24;23;22;21;5;20;10;17;16;2;15;14;1
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ex
+EOF
+gpend
+done
+
+scp ${cyc}*gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+#mv ${cyc}*gif /stmp/Geoffrey.Manikin/meg/holdshort/.
+rm *gif
+exit

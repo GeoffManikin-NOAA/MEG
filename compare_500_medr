@@ -1,0 +1,126 @@
+#!/bin/ksh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/500mr
+rm /stmpp1/Geoffrey.Manikin/meg/500mr/*
+cd /stmpp1/Geoffrey.Manikin/meg/500mr
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`cut -c 7-14 /com/date/t${cyc}z`
+
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+
+#ymdh=2014112012
+#ymd=20141120
+#dayoweek=hold2
+
+times="00 24 48 72 96 108 120 132 144 156 168 180 192"
+for fhr in $times; do
+
+typeset -Z3 fhr
+fmdl1=/com2/nawips/prod/ecmwf.${ymd}/ecmwf_hr_${ymdh}f${fhr}
+#fmdl2=/com2/nawips/prod/gfs.${ymd}/gfs_${ymdh}f${fhr}
+cp /gpfs/dell1/nco/ops/com/gfs/prod/gfs.${ymd}/${cyc}/gempak/gfs_0p25_${ymdh}f0${fhr} fmdl2
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 500
+ GVCORD   = pres
+ GDPFUN   = quo(hght,10) 
+ CINT     = 6
+ LINE     = 4/1/4/2 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   ECMWF 500 mb  Z/AVOR
+ DEVICE   = GIF|500models_f${fhr}.gif|900;950
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-105;25;/1;1;1;1
+ GAREA    = 10.;-144.;72.;-32. 
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 0 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 0 
+ FLINE    = 0;23;21;5;19;17;16
+ TYPE     = c
+ LUTFIL   =
+r
+
+ GDFILE   = fmdl2
+ GDATTIM  = f$fhr
+ TITLE    = 1/-1/~   GFS 500 mb HGT 
+ PANEL    = b
+ CLEAR    = n
+r
+
+ex
+EOF
+
+    gdcntr << EOF
+
+ GDFILE   = $fmdl1 + fmdl2
+ GDATTIM  = f${fhr}
+ GLEVEL   = 500
+ GVCORD   = pres
+ GFUNC    = sub(hght+2,hght)
+ CINT     = 10
+ LINE     = 1
+ MAP      = 1
+ WIND     = bk1/0.7/2/122
+ TITLE    = 1//~ 500 Z   GFS - ECMWF
+ DEVICE   = GIF|500diff_f${fhr}.gif | 600;650
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-105;25;/1;1;1;1
+ GAREA    = 10.;-144.;72.;-32.
+ CLEAR    = y
+ PANEL    = 0
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/V/UL/.06;.6/.55;.02/-1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = -250;-200;-150;-100;-50;50;100;150;200;250
+ FLINE    = 30;28;26;27;22;0;5;10;17;2;15
+ CTYPE    = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ex
+EOF
+
+done
+gpend
+
+for fhr in $times; do
+CONV=/usrx/local/ImageMagick/6.8.3-3/bin
+$CONV/convert -crop 0x0 500models_f${fhr}.gif 5001.gif
+$CONV/convert -crop 0x0 500diff_f${fhr}.gif 5002.gif
+$CONV/montage -geometry 800x850 5001.gif 5002.gif ${cyc}500${fhr}.gif
+done
+
+#scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/today
+#scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+mv ${cyc}*gif /stmpp1/Geoffrey.Manikin/meg/holdmedr/.
+exit

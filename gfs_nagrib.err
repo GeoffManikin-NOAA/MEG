@@ -1,0 +1,61 @@
++ ymd=20220925
++ version=v16.2
++ DAPATH=/lfs/h1/ops/prod/com/gfs/v16.2/gfs.20220925
++ WGRIB=/apps/ops/prod/libs/intel/19.1.3.304/grib_util/1.2.2/bin/wgrib
++ mkdir /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib2
+mkdir: cannot create directory ‘/lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib2’: File exists
++ rm /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib2/dummygfs072.grd /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib2/dummygfs078.grd /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib2/dummygfs084.grd /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib2/dummygfs090.grd /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib2/dummygfs096.grd /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib2/dummygfs102.grd /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib2/dummygfs108.grd /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib2/dummygfs114.grd /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib2/dummygfs120.grd /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib2/dummygfs126.grd /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib2/dummygfs132.grd /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib2/dummygfs138.grd /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib2/dummygfs150.grd /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib2/gemglb.nts /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib2/gfs.t00z.pgrb2.0p25.f120 /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib2/gfs.t00z.pgrb2.0p25.f126 /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib2/gfs.t00z.pgrb2.0p25.f132 /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib2/gfs.t00z.pgrb2.0p25.f138 /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib2/gfs.t00z.pgrb2.0p25.f144 /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib2/gfs.t00z.pgrb2.0p25.f150 /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib2/gfs.t00z.pgrb2.0p25.f156 /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib2/gfs.t12z.pgrb2.0p25.f072 /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib2/gfs.t12z.pgrb2.0p25.f078 /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib2/gfs.t12z.pgrb2.0p25.f084 /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib2/gfs.t12z.pgrb2.0p25.f090 /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib2/gfs.t12z.pgrb2.0p25.f096 /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib2/gfs.t12z.pgrb2.0p25.f102 /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib2/gfs.t12z.pgrb2.0p25.f108 /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib2/gfs.t12z.pgrb2.0p25.f114 /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib2/gfs.t12z.pgrb2.0p25.f120 /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib2/gfs.t12z.pgrb2.0p25.f126 /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib2/gfs.t12z.pgrb2.0p25.f132 /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib2/gfs.t12z.pgrb2.0p25.f138 /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib2/gfs.t12z.pgrb2.0p25.f144 /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib2/last.nts
++ cd /lfs/h2/emc/stmp/geoffrey.manikin/gfsnagrib2/
++ export DAPATH
++ cycles='00 06 12 18'
++ cycles='00 12'
++ cycles=00
++ fhrs='06 12 18 24 30 36 42 48 54 60 66 72 78 84 90 96 102 108 114 120 126 132'
++ fhrs='06 12 18 24 30 36 42 48 54 60 66 72 78 84 90 96 102 108 114 120 126 132 138 144 150 156 162 168 174 180 186 192 198 204 210 216 222 228 234 240'
++ fhrs='60 66 72 78 84 90 96 102 108 114 120 126 132'
++ typeset -Z3 fhr
++ cp /lfs/h1/ops/prod/com/gfs/v16.2/gfs.20220925/00/atmos/gfs.t00z.pgrb2.0p25.f060 .
++ nagrib2
++ 0<< \EOF
+EOF
+GBFILE  = gfs.t00z.pgrb2.0p25.f060 
+INDXFL  =
+GDOUTF  = dummygfs060.grd 
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+exit
+=>> PBS: job killed: walltime 62 exceeded limit 30
+forrtl: error (78): process killed (SIGTERM)
+Image              PC                Routine            Line        Source             
+gplt               0000000000496D6B  Unknown               Unknown  Unknown
+libpthread-2.31.s  000014EF7E75F8C0  Unknown               Unknown  Unknown
+libc-2.31.so       000014EF7E122A06  msgrcv                Unknown  Unknown
+gplt               0000000000475561  Unknown               Unknown  Unknown
+gplt               0000000000474395  Unknown               Unknown  Unknown
+gplt               0000000000474D4B  Unknown               Unknown  Unknown
+gplt               0000000000405074  Unknown               Unknown  Unknown
+gplt               00000000004E0FF6  Unknown               Unknown  Unknown
+libc-2.31.so       000014EF7E03E2BD  __libc_start_main     Unknown  Unknown
+gplt               0000000000404DEA  Unknown               Unknown  Unknown
+forrtl: error (78): process killed (SIGTERM)
+Image              PC                Routine            Line        Source             
+GN                 000000000045A9CB  Unknown               Unknown  Unknown
+libpthread-2.31.s  000014EFD08BF8C0  Unknown               Unknown  Unknown
+libc-2.31.so       000014EFD05CDA06  msgrcv                Unknown  Unknown
+GN                 000000000044BEA9  Unknown               Unknown  Unknown
+GN                 000000000044B79D  Unknown               Unknown  Unknown
+GN                 000000000044AEBD  Unknown               Unknown  Unknown
+GN                 000000000040B5F0  Unknown               Unknown  Unknown
+GN                 000000000040498E  Unknown               Unknown  Unknown
+GN                 000000000049F806  Unknown               Unknown  Unknown
+libc-2.31.so       000014EFD04E92BD  __libc_start_main     Unknown  Unknown
+GN                 000000000040482A  Unknown               Unknown  Unknown

@@ -1,0 +1,134 @@
+#!/bin/ksh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/srefx24pcp
+rm /stmpp1/Geoffrey.Manikin/meg/srefx24pcp/*
+cd /stmpp1/Geoffrey.Manikin/meg/srefx24pcp
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`cut -c 7-14 /com/date/t${cyc}z`
+#ymdh=2015041712
+
+ymdhs="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -3 -1`"
+ymds=`echo $ymdhs | cut -c1-8`
+cycs=`echo $ymdhs | cut -c9-10`
+pcpymdhs="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -3 -1 x`"
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+#dayoweek=hold2
+
+if [ $cyc -eq 00 ]; then
+ hours="39 63 87"
+elif [ $cyc -eq 06 ]; then
+ hours="33 57 81"
+elif [ $cyc -eq 12 ]; then
+ hours="27 51 75"
+else
+ hours="45 69"
+fi
+
+for fhrs in $hours; do
+
+fmdl1=/com/nawips/prod/sref.${ymds}/sref212_${ymdhs}_mean
+fmdl2=/meso/save/Geoffrey.Manikin/meg/srefx212_${ymdhs}_mean
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhrs
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = quo(p24menmw,25.4) 
+ CINT     = 4 
+ LINE     = 4/1/2/3 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   SREF MEAN 24-HR PCP  
+ DEVICE   = GIF|srefx24pcp_f0${fhrs}.gif|850;950
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-95;25;/1;1;1;1
+ GAREA    = 18.;-128.;58.;-62. 
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1.0/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0
+ CLRBAR   = 1/V/UL/.1;.6/1.2;.02/-1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = .01;.1;.25;.5;.75;1;1.5;2;2.5;3;3.5
+ FLINE    = 0;21;22;23;4;25;27;28;29;30;2;15
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl2
+ CLEAR    = n
+ PANEL    = b
+ TITLE    = 1/-1/~   SREFX MEAN 24-HR PCP 
+ CLRBAR   = 0
+r
+
+ex
+EOF
+
+    gdcntr << EOF
+ GDFILE   = $fmdl2 + $fmdl1
+ GDATTIM  = f${fhrs}
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GFUNC    = sub(quo(p24menmw^${ymds}/${cycs}f${fhrs}+2,25.4),quo(p24menmw,25.4))
+ CINT     = 2 
+ LINE     = 1
+ MAP      = 1
+ WIND     = bk1/0.7/2/122
+ TITLE    = 1//24-HR PCP  ${cycs}z SREF f${fhrs}   -   SREFX f${fhrs}
+ DEVICE   = GIF|srefx24pcpdiff_f0${fhrs}.gif | 600;650
+ SATFIL   =
+ RADFIL   =
+ CLEAR    = y
+ PANEL    = 0
+ TEXT     = 1./11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/H/UL/.02;.95/.96;.02/-1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = -1.5;-1.;-0.75;-0.5;-0.25;0.25;0.5;0.75;1.;1.5
+ FLINE    = 30;28;26;27;22;0;5;10;17;2;15
+ CTYPE    = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ex
+EOF
+done
+gpend
+
+for fhrs in $hours; do
+typeset -Z2 fhrs
+
+CONV=/usrx/local/ImageMagick/6.8.3-3/bin
+$CONV/convert -crop 0x0 srefx24pcp_f0${fhrs}.gif srefx24pcp1.gif
+$CONV/convert -crop 0x0 srefx24pcpdiff_f0${fhrs}.gif srefx24pcp2.gif
+$CONV/montage -geometry 800x850 srefx24pcp1.gif srefx24pcp2.gif ${cycs}24pcpsrefx${fhrs}.gif
+done
+
+#scp ${cycs}*gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+mv ${cycs}*gif /stmpp1/Geoffrey.Manikin/meg/holdshortx/.
+#rm *gif
+exit

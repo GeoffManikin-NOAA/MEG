@@ -1,0 +1,90 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+ymdh=$1
+ymd=`echo $ymdh | cut -c1-8`
+month=`echo $ymdh | cut -c5-6`
+day=`echo $ymdh | cut -c7-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+mkdir /stmpp1/Geoffrey.Manikin/gempak.rap13/launch18/sndmf
+cd /stmpp1/Geoffrey.Manikin/gempak.rap13/launch18/sndmf
+cp /meso/save/Geoffrey.Manikin/gempak.rap13/coltbl.xwp .
+
+times="00 01 02 03 06 09 12 15 18"
+counter=0
+for fhr in $times; do
+
+fmdl=/com/nawips/prod/rap.${ymd}/rap32_${ymd}${cyc}f0${fhr}
+fmdl2=/ptmpp1/Geoffrey.Manikin/com/nawips/para/rap.${ymd}/rap32_${ymd}${cyc}f0${fhr}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = quo(mul(sndm,100),2.54) 
+ CINT     = 2 
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 0
+ DEVICE   = GIF|comparesndmf_${cyc}f${counter}.gif|900;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/50.;-107.;50./2;2;1;1
+ GAREA    = grid
+ CLEAR    = y
+ PANEL    = 0.;.51;1.;1.
+ TEXT     = 1.2/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/V/UL/.15;0.5/.8;.03/-1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 0.1;1;5;10;15;20;25;50;75;100;125
+ FLINE    = 0;28;26;4;21;23;20;5;10;17;2;15;32
+ TYPE     = f/c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ TITLE    = 1/1/ ${fhr}-HR RAP SNOW COVER (IN)
+ TEXT     = 1.2/11/2
+ CLEAR    = n
+ GDPFUN   = blurk
+ CINT     = -2000/-2000/-2000
+ CLRBAR   = 0
+r
+
+ TITLE    = 7/-1/ FCST MADE ${cyc}Z  ${month}/$day
+ TEXT     = 1.1/11/1/SW
+r
+
+ TITLE    = 1/1/ ${fhr}-HR RAPX  SNOW COVER
+ GDFILE   = $fmdl2 
+ TEXT     = 1.2/11/2
+ GAREA    = grid 
+ PANEL    = 0;0;1;.49
+r
+
+ GDFILE   = $fmdl2
+ GDPFUN   = quo(mul(sndm,100),2.54) 
+ TITLE    = 0
+ CINT     = 2 
+r
+
+ex
+EOF
+
+counter=`expr $counter + 1`
+gpend
+done
+
+mv *gif ../../ftphold/.
+echo abouttoexitsndm
+exit

@@ -1,0 +1,40 @@
+GDFILE  /lfs/h1/nco/ops/com/gfs/prod/gfs.20230625/12/atmos/gempak/gfs_0p25_2023062512f000                                               
+GDATTIM f00                                                                                                                             
+GLEVEL  500                                                                                                                             
+GVCORD  pres                                                                                                                            
+PANEL   0                                                                                                                               
+SKIP    /7;7                                                                                                                            
+SCALE   0                                                                                                                               
+GDPFUN  kntv(wnd)                                                                                                                       
+TYPE    b                                                                                                                               
+CONTUR  0                                                                                                                               
+CINT    6                                                                                                                               
+LINE    4/1/3/1                                                                                                                         
+FINT                                                                                                                                    
+FLINE   0                                                                                                                               
+HILO                                                                                                                                    
+HLSYM   1//21;//HW                                                                                                                      
+CLRBAR  0                                                                                                                               
+WIND    BK1/0.8/2/122                                                                                                                   
+REFVEC                                                                                                                                  
+TITLE   1/-1/~   GFS 500 mb  HGT/WND                                                                                                    
+TEXT    1.1/11/2/SW                                                                                                                     
+CLEAR   y                                                                                                                               
+GAREA   25.;-100.;57.;-54.                                                                                                              
+IJSKIP                                                                                                                                  
+PROJ    lcc/25.;-85.;25./2;2;1;1                                                                                                        
+MAP     1                                                                                                                               
+MSCALE  0                                                                                                                               
+LATLON  0                                                                                                                               
+DEVICE  GIF|500verf_2023062512.gif | 800;850                                                                                            
+STNPLT                                                                                                                                  
+SATFIL                                                                                                                                  
+RADFIL                                                                                                                                  
+IMCBAR                                                                                                                                  
+LUTFIL                                                                                                                                  
+STREAM                                                                                                                                  
+POSN    0                                                                                                                               
+COLORS  1                                                                                                                               
+MARKER  0                                                                                                                               
+GRDLBL  0                                                                                                                               
+FILTER  YES                                                                                                                             

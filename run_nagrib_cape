@@ -1,0 +1,71 @@
+#!/bin/ksh
+
+set -x
+
+# @ step_name = nagrib
+# @ output = /nfsuser/g01/wx20mg/gempak/nagrib_dewpt/nagrib.out
+# @ error = /nfsuser/g01/wx20mg/gempak/nagrib_dewpt/nagrib.out
+# @ class = dev
+# @ queue
+
+. /nwprod/gempak/.gempak
+
+export cyc=$1
+export PS4='PRDGEN${fhr}_T$SECONDS + '
+export XLFRTEOPTS="unit_vars=yes"
+
+
+da00=`cut -c 7-14 /com/date/t${cyc}z`
+hr=`cut -c 15-16 /com/date/t${cyc}z`
+
+#da00=`cut -c 7-14 t${cyc}z`
+#hr=`cut -c 15-16 t${cyc}z`
+
+#da00=20010611
+#hr=12
+
+echo $da00
+echo $hr
+echo $cyc
+
+if [ ! -s /emc2/etapll/etax.$da00$hr/AWIP3D48.tm00 ]
+then 
+  echo exiting
+  exit
+fi
+
+cd /nfsuser/g01/wx20mg/gempak/nagrib_dewpt
+rm etaret*
+
+fhrs="00 06 12 18 24 30 36 42 48 54 60"
+
+for hh in $fhrs
+do
+
+nagrib << EOF > /dev/null
+ GBFILE   = /emc2/etapll/etax.$da00$hr/AWIP3D${hh}.tm00
+ INDXFL   =
+ GDOUTF   = dummy.grd
+ PROJ     = MER
+ GRDAREA  =
+ KXKY     = 10;10
+ MAXGRD   = 4000
+ CPYFIL   = gds 
+ GAREA    = grid
+ OUTPUT   = T
+ GBTBLS   =
+ GBDIAG   =
+
+r
+exit
+EOF
+
+done
+
+gpend
+chmod 777 dum*
+mv dummy.grd etareturn_${da00}${hr}.grd 
+cp /com/date/t${cyc}z .
+
+chmod 777 etaret*
+exit

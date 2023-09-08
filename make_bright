@@ -1,0 +1,90 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+ymdh=$1
+ymd=`echo $ymdh | cut -c1-8`
+month=`echo $ymdh | cut -c5-6`
+day=`echo $ymdh | cut -c7-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+mkdir /stmpp1p1/Geoffrey.Manikin/gempak.rap13/launch3/bright
+rm /stmpp1p1/Geoffrey.Manikin/gempak.rap13/launch3/bright/*
+cd /stmpp1p1/Geoffrey.Manikin/gempak.rap13/launch3/bright
+cp /meso/save/Geoffrey.Manikin/gempak.rap13/coltbl.xwp .
+
+times="00 01 02 03 06 09 12 15 18"
+times="12"
+counter=0
+for fhr in $times; do
+
+#fmdl=/com/nawips/prod/rap.${ymd}/rap13_${ymd}${cyc}f0${fhr}
+#fmdl=/ptmpp1/Geoffrey.Manikin/com/nawips/para/rap.${ymd}/rap32_${ymd}${cyc}f0${fhr}
+fmdl=/ptmpp1p1/Geoffrey.Manikin/hold/rapprstest_${ymd}${cyc}f0${fhr}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl
+ GDATTIM  = f$fhr
+ GLEVEL   = 0
+ GVCORD   = topa 
+ GDPFUN   = sb123 
+ CINT     = 5 
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 0
+ DEVICE   = GIF|comparesbttest_${cyc}f${counter}.gif|900;900
+ SATFIL   =
+ RADFIL   =
+# PROJ     = lcc/50.;-107.;50./2;2;1;1
+ PROJ     = lcc/35.;-105.;25./2;2;1;1
+ GAREA    = grid
+ CLEAR    = y
+ PANEL    = 0.;.51;1.;1.
+ TEXT     = 1.2/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/V/UL/.15;0.5/.8;.03/-2
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 170;180;190;200;210;220;230;240;250;260;270;280;290;300
+ FLINE    = 0;11;12;30;28;4;25;27;24;23;21;5;10;17;2;15;14;0
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ TITLE    = 1/1/ ${fhr}-HR NEW RAP SIM BR T  GOES 12 CH 3 
+ TEXT     = 1.2/11/2
+ CLEAR    = n
+ GDPFUN   = blurk
+ CINT     = -2000/-2000/-2000
+ CLRBAR   = 0
+r
+
+ TITLE    = 7/-1/ FCST MADE ${cyc}Z  ${month}/$day
+ TEXT     = 1.1/11/1/SW
+r
+
+ TITLE    = 1/1/ ${fhr}-HR NEW RAP SIM BR T  GOES 12 CH 4
+ TEXT     = 1.2/11/2
+ PANEL    = 0;0;1;.49
+ GDPFUN   = sb124
+r
+
+ GDFILE   = $fmdl2 
+ TITLE    = 0
+ CINT     = 10 
+r
+
+ex
+EOF
+
+counter=`expr $counter + 1`
+gpend
+done
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test2
+exit

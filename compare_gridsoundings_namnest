@@ -1,0 +1,79 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/925w
+rm /stmpp1/Geoffrey.Manikin/meg/925w/*
+cd /stmpp1/Geoffrey.Manikin/meg/925w
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=2015091200
+ymd=`echo $ymdh | cut -c1-8`
+dayoweek=hold3
+
+times="00 06 12 18 24 30 36 42 48 54 60 66 72 78 84"
+times="15 18"
+for fhr in $times; do
+
+DAPATH=/com/nawips/prod/nam.${ymd}/
+DAPATH=/ptmpd2/Geoffrey.Manikin/com2/nawips/prod/nam.${ymd}/
+fmdl1=${DAPATH}/nam12_${ymdh}f0${fhr}
+fmdl2=${DAPATH}/nam_conusnest_${ymdh}f0${fhr}
+stid=cle
+
+    gdprof << EOF
+ GPOINT   = $stid 
+ GDATTIM  = f${fhr}
+ GVCORD   = pres 
+ GFUNC    = tmpc 
+ GVECT    = none 
+ GDFILE   = $fmdl1
+ LINE     = 2/1/6
+ MARKER   = 0
+ BORDER   = 1
+ PTYPE    = skewt 
+ SCALE    = 0
+ YAXIS    = 1050/400/50/1;1;1
+ XAXIS    = -15/30/5/;1
+ WIND     = 0
+ REFVEC   =  
+ WINPOS   = 0
+ FILTER   = YES
+ TITLE    = 1/-1/~   NAM 
+ PANEL    = t
+ CLEAR    = y
+ TEXT     = 1.1/11/2/SW
+ DEVICE   = GIF|${stid}nest_${ymdh}f0${fhr}.gif | 750;900
+ OUTPUT   = t
+ THTALN   = 8/3/1/250/500/5
+ THTELN   = 23/1/1/250/500/5
+ MIXRLN   = 17/10/2/0/40./1.
+r
+
+ CLEAR    = n
+ GFUNC    = dwpc
+ LINE     = 3/1/6
+r
+
+ GDFILE   = $fmdl2
+ GFUNC    = tmpc 
+ LINE     = 2/1/6
+ PANEL    = b
+ TITLE    = 1/-1/~    NAM4 
+r
+
+ GFUNC    = dwpc
+ LINE     = 3/1/6
+r
+
+ex
+EOF
+
+gpend
+done
+
+gpend
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

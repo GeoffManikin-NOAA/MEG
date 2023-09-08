@@ -1,0 +1,124 @@
+#!/bin/ksh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/24pcptrgfsdiff
+rm /stmpp1/Geoffrey.Manikin/meg/24pcptrgfsdiff/*
+cd /stmpp1/Geoffrey.Manikin/meg/24pcptrgfsdiff
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd1=`echo $ymdh | cut -c1-8`
+ymdh2="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -6 -1`"
+ymdh3="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -12 -1`"
+ymdh4="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -18 -1`"
+ymdh5="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -24 -1`"
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+
+ymd2=`echo $ymdh2 | cut -c1-8`
+ymd3=`echo $ymdh3 | cut -c1-8`
+ymd4=`echo $ymdh4 | cut -c1-8`
+ymd5=`echo $ymdh5 | cut -c1-8`
+cyc2=`echo $ymdh2 | cut -c9-10`
+cyc3=`echo $ymdh3 | cut -c9-10`
+cyc4=`echo $ymdh4 | cut -c9-10`
+cyc5=`echo $ymdh5 | cut -c9-10`
+counter=1
+
+if [ $cyc -eq 00 ]; then
+ hours="36 60 84"
+elif [ $cyc -eq 06 ]; then
+ hours="30 54 78"
+elif [ $cyc -eq 12 ]; then
+ hours="24 48 72"
+else
+ hours="42 66 90"
+fi
+
+for fhr1 in $hours; do
+
+fhr2=`expr $fhr1 + 6`
+fhr3=`expr $fhr1 + 12`
+fhr4=`expr $fhr1 + 18`
+fhr5=`expr $fhr1 + 24`
+typeset -Z2 fhr2 fhr3 fhr4 fhr5
+
+fmdl1=/meso/save/Geoffrey.Manikin/meg/gfspcp_${ymdh}
+fmdl2=/meso/save/Geoffrey.Manikin/meg/gfspcp_${ymdh2}
+fmdl3=/meso/save/Geoffrey.Manikin/meg/gfspcp_${ymdh3}
+fmdl4=/meso/save/Geoffrey.Manikin/meg/gfspcp_${ymdh4}
+fmdl5=/meso/save/Geoffrey.Manikin/meg/gfspcp_${ymdh5}
+
+    gdcntr << EOF
+ GDFILE   = $fmdl2 + $fmdl1
+ GDATTIM  = f${fhr1} 
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GFUNC    = sub(p24i^${ymd1}/${cyc1}f${fhr1}+2,p24i^${ymd2}/${cyc2}f${fhr2})
+ CINT     = 0 
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1// GFS 24H PCP  $ymd1${cyc} F${fhr1}  -  $ymd2${cyc2} F${fhr2}
+ DEVICE   = GIF|gfs24pcptrdiff${counter}.gif | 800;850
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-95;25;/1;1;1;1
+ GAREA    = 16.;-121.;52.;-65.
+ CLEAR    = y
+ PANEL    = 0.;0.42;0.48;1.
+ TEXT     = 0.8/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0 
+ CLRBAR   = 0
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = -1.5;-1.;-0.75;-0.5;-0.25;0.25;0.5;0.75;1.;1.5
+ FLINE    = 30;28;26;27;22;0;5;10;17;2;15
+ CTYPE    = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ CLEAR    = n
+ GDFILE   = $fmdl3+$fmdl2
+ GDATTIM  = f${fhr2}
+ GFUNC    = sub(p24i^${ymd2}/${cyc2}f${fhr2}+2,p24i^${ymd3}/${cyc3}f${fhr3})
+ TITLE    = 1// GFS 24H PCP  $ymd2${cyc2} F${fhr2}  -  $ymd3${cyc3} F${fhr3}
+ PANEL    = 0.52;0.42;1.;1.
+ CLEAR    = n
+r
+
+ GDFILE   = $fmdl4+$fmdl3
+ GDATTIM  = f${fhr3}
+ GFUNC    = sub(p24i^${ymd3}/${cyc3}f${fhr3}+2,p24i^${ymd4}/${cyc4}f${fhr4})
+ TITLE    = 1// GFS 24H PCP  $ymd3${cyc3} F${fhr3}  -  $ymd4${cyc4} F${fhr4}
+ PANEL    = 0;0;0.48;0.58
+
+r
+
+ GDFILE   = $fmdl5+$fmdl4
+ GDATTIM  = f${fhr4}
+ GFUNC    = sub(p24i^${ymd4}/${cyc4}f${fhr4}+2,p24i^${ymd5}/${cyc5}f${fhr5})
+ TITLE    = 1// GFS 24H PCP  $ymd4${cyc4} F${fhr4}  -  $ymd5${cyc5} F${fhr5}
+ PANEL    = 0.52;0;1.;0.58
+
+r
+
+ex
+EOF
+gpend
+counter=`expr $counter + 1`
+done
+
+mv *gif /stmpp1/Geoffrey.Manikin/meg/holdshort/.
+exit

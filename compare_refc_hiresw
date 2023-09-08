@@ -1,0 +1,129 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+ymdh=2018031312
+ymd=`echo $ymdh | cut -c1-8`
+month=`echo $ymdh | cut -c5-6`
+day=`echo $ymdh | cut -c7-8`
+cyc=`echo $ymdh | cut -c9-10`
+dayoweek=hold10
+
+mkdir /stmpp1/Geoffrey.Manikin/refc
+rm /stmpp1/Geoffrey.Manikin/refc/*
+cd /stmpp1/Geoffrey.Manikin/refc
+cp /meso/save/Geoffrey.Manikin/gempak.rap13/coltbl.xwp .
+
+times="12 15 18 21"
+times="01 03 06 09 12"
+for fhr in $times; do
+
+fmdl1=/gpfs/hps/nco/ops/com/nawips/prod/hiresw.${ymd}/hiresw_conusarw_${ymd}${cyc}f0${fhr}
+fmdl2=/gpfs/hps/nco/ops/com/nawips/prod/hiresw.${ymd}/hiresw_conusnmmb_${ymd}${cyc}f0${fhr}
+fmdl3=/gpfs/hps/nco/ops/com/nawips/prod/hiresw.${ymd}/hiresw_conusmem2arw_${ymd}${cyc}f0${fhr}
+fmdl4=/com2/nawips/prod/nam.${ymd}/nam_conusnest_${ymd}${cyc}f0${fhr}
+
+    gdcntr << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GFUNC    = refc 
+ CINT     = 5 
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 0
+ DEVICE   = GIF|comparehireswrefc_${ymdh}f${fhr}.gif|900;900
+ SATFIL   =
+ RADFIL   =
+ GAREA    = 33.;-105.;41.;-93.
+ GAREA    = ma+
+ PROJ     = lcc/25.;-70.;25./2;2;1;1
+ MAP      = 1/1/2;1
+ CLEAR    = y
+ PANEL    = 0.;.51;1.;1.
+ TEXT     = 1.2/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/V/UL/.15;.45/.8;.03/-2
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 5;10;15;20;25;30;35;40;45;50;55;60;65 
+ FLINE    = 0;24;4;26;23;22;21;20;5;10;17;2;15;29 
+ CTYPE    = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ CINT     = 100/100/100
+ LINE     = 1/1/2/0
+ CTYPE    = c
+ CLEAR    = n
+r
+
+ TITLE    = 1/1/ ${fhr}-HR ARW COMPOSITE REFLECTIVITY
+ TEXT     = 1.2/11/2
+ GDPFUN     = blurk
+ CINT     = -2000/-2000/-2000
+ TYPE     = f/c
+ CLRBAR   = 0
+r
+
+ TITLE    = 29/-1/ FCST MADE ${cyc}Z  ${month}/$day
+ TEXT     = 1.1/11/1/SW
+r
+
+ GDFILE   = $fmdl3
+ PANEL    = 0;0;1;.49
+ CINT     = 5
+ TITLE    = 1/-1/ ${fhr}-HR ARW MEM2 COMPOSITE REFLECTIVITY 
+ PANEL    = 0;0;1;.49
+ TEXT     = 1.2/11/2/SW
+ CTYPE    = f
+r
+
+ GDFILE   = $fmdl2
+ CINT     = 5
+ PANEL    = 0.;.51;1.;1.
+ TEXT     = 1.2/11/2/SW
+ TITLE    = 0
+ DEVICE   = GIF|comparehiresrefc_${ymdh}f${fhr}.gif|900;900
+ CLEAR    = y
+ CTYPE    = f
+r
+
+ TITLE    = 1/1/ ${fhr}-HR NMMB COMPOSITE REFLECTIVITY
+ TEXT     = 1.2/11/2
+ GDPFUN     = blurk
+ CINT     = -2000/-2000/-2000
+ TYPE     = f/c
+ CLEAR    = n
+ CLRBAR   = 0
+r
+
+ TITLE    = 29/-1/ FCST MADE ${cyc}Z  ${month}/$day
+ TEXT     = 1.1/11/1/SW
+r
+
+ GDFILE   = $fmdl4
+ PANEL    = 0;0;1;.49
+ CINT     = 5
+ TITLE    = 1/-1/ ${fhr}-HR NAM NEST COMPOSITE REFLECTIVITY 
+ PANEL    = 0;0;1;.49
+ TEXT     = 1.2/11/2/SW
+ CTYPE    = f
+r
+
+ex
+EOF
+
+gpend
+done
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/. 
+echo abouttoexitrefc
+exit

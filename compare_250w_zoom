@@ -1,0 +1,139 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/250wz
+rm /stmpp1/Geoffrey.Manikin/meg/250wz/*
+cd /stmpp1/Geoffrey.Manikin/meg/250wz
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=2015090800
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+dayoweek=hold2
+
+times="00 06 12 18 24 30 36 42 48 54 60 66 72 78 84"
+times="06 12"
+for fhr in $times; do
+
+fmdl1=/com2/nawips/prod/nam.${ymd}/nam40_${ymdh}f0${fhr}
+fmdl2=/com/nawips/prod/gfs.${ymd}/gfs40_${ymdh}f0${fhr}
+
+    gdplot2 << EOF
+
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 250
+ GVCORD   = pres
+ GDPFUN   = knts(sped)
+ CINT     = 10 
+ LINE     = 0 
+ DEVICE   = GIF|250models_f0${fhr}.gif | 800;850
+ PROJ     = lcc/25.;-90.;25./2;2;1;1
+ GAREA    = mn
+ TITLE    = 1//~  NAM  250 MB  WIND (KT) 
+ CLEAR    = y
+ SCALE    = 0
+ PANEL    = t
+ HILO     = 0
+ HLSYM    = 0 
+ CLRBAR   = 1/V/UL/.04;0.4/0.8;.03/2
+ TEXT     = 1.1/11/2
+ FINT     = 50;60;70;80;90;100;110;120;130;140;150;160
+ FLINE    = 0;30;28;27;25;23;21;5;10;17;11;2;15
+ TYPE     = f 
+r
+
+ CINT     = 
+ WIND     = BK1/0.8/2/122
+ GDPFUN   = kntv(wnd)
+ SKIP     = /8;8
+ TYPE     = b
+ TITLE    = 0
+ CLRBAR   = 0
+ CLEAR    = n
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhr
+ GLEVEL   = 250
+ GVCORD   = pres
+ GDPFUN   = knts(sped)
+ CINT     = 5
+ LINE     = 0
+ TITLE    = 1//~  GFS  250 MB  WIND (KT)
+ CLEAR    = n
+ PANEL    = b
+ SCALE    = 0
+ HILO     = 0
+ HLSYM    = 0 
+ CLRBAR   = 0
+ TEXT     = 1.1/11/2
+ TYPE     = f
+r
+
+ CINT     =
+ WIND     = BK1/0.8/2/122
+ GDPFUN   = kntv(wnd)
+ TYPE     = b
+ TITLE    = 0
+ CLRBAR   = 0
+ CLEAR    = n
+r
+
+ex
+EOF
+
+    gdcntr << EOF
+
+ GDFILE   = $fmdl1 + $fmdl2
+ GDATTIM  = f${fhr}
+ GLEVEL   = 250
+ GVCORD   = pres
+ GFUNC    = knts(sub(sped+2,sped))
+ CINT     = 10
+ LINE     = 1
+ MAP      = 1
+ WIND     = bk1/0.7/2/122
+ TITLE    = 1//~ 250 WIND SPEED (KT)   NAM - GFS
+ DEVICE   = GIF|250diff_f0${fhr}.gif | 600;650
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-95.;25./2;2;1;1
+ GAREA    = grid
+ CLEAR    = y
+ PANEL    = 0
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/H/UL/.1;.92/.8;.02/-1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = -60;-50;-40;-30;-20;20;30;40;50;60
+ FLINE    = 30;28;26;27;22;0;5;10;17;2;15
+ CTYPE    = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ex
+EOF
+
+done
+gpend
+
+for fhr in $times; do
+
+CONV=/usrx/local/ImageMagick/6.8.3-3/bin
+$CONV/convert -crop 0x0 250models_f0${fhr}.gif 2501.gif
+$CONV/convert -crop 0x0 250diff_f0${fhr}.gif 2502.gif
+$CONV/montage -geometry 800x850 2501.gif 2502.gif ${cyc}250z${fhr}.gif
+done
+
+scp ${cyc}*gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+
+exit

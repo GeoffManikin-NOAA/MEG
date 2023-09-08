@@ -1,0 +1,146 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/shfx
+rm /stmpp1/Geoffrey.Manikin/meg/shfx/*
+cd /stmpp1/Geoffrey.Manikin/meg/shfx
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`cut -c 7-14 /com/date/t${cyc}z`
+
+ymdh=2012061912
+ymd=20120619
+
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+mon=`cut -c 5-7 holddate`
+day=`cut -c 9-10 holddate`
+gtime=`cut -c 12-24 holddate`
+gdate=`cut -c 1-10 holddate`
+gcent=`cut -c 25-28 holddate`
+echo $dayoweek
+
+dayoweek=Tue
+times="00 06 12 18 24 30 36 42 48 54 60 66 72 78 84"
+times="36"
+for fhr in $times; do
+
+fmdl1=/ptmpp1p1/Geoffrey.Manikin/gfs/gfsctl_${ymdh}f0${fhr}
+fmdl2=/ptmpp1p1/Geoffrey.Manikin/gfs/gfsexp_${ymdh}f0${fhr}
+
+    gdplot2 << EOF
+
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = fxsh06 
+ CINT     = 4 
+ LINE     = 1 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   GFS CTL AVG SENS HT FLX 
+ DEVICE   = GIF|shfxmodels_f0${fhr}.gif|850;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-95;25;/1;1;1;1
+ GAREA    = 21.;-121.;51.;-65. 
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/V/UL/.01;0.4/0.8;.03/1 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = -200;-100;100;200;300;400;500
+ FLINE    = 23;21;0;5;10;17;2;15
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhr
+ TITLE    = 1/-1/~  GFS  EXP AVG SENS HT FLX
+ PANEL    = b
+ CLRBAR   = 0
+ CLEAR    = n
+r
+
+ex
+EOF
+
+    gdcntr << EOF
+
+ GDFILE   = $fmdl2 + $fmdl1
+ GDATTIM  = f${fhr}
+ GLEVEL   = 0  
+ GVCORD   = none  
+ GFUNC    = sub(fxsh06+2,fxsh06)
+ CINT     = 2 
+ LINE     = 1
+ MAP      = 1
+ WIND     = bk1/0.7/2/122
+ TITLE    = 1//~ SENS HT FLX   CTL - EXP 
+ DEVICE   = GIF|shfxdiff_f0${fhr}.gif | 600;650
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-95.;25./2;2;1;1
+ GAREA    = 21.;-121.;51.;-65. 
+ CLEAR    = y
+ PANEL    = 0
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/H/UL/.1;.9/.8;.02/-1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = -250;-200;-150;-100;-50;50;100;150;200;250 
+ FLINE    = 30;28;26;27;22;0;5;10;17;2;15
+ CTYPE    = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ex
+EOF
+done
+gpend
+
+for fhr in $times; do
+
+/usrx/local/im_beta/bin/convert -crop 0x0 shfxmodels_f0${fhr}.gif shfx1.gif
+/usrx/local/im_beta/bin/convert -crop 0x0 shfxdiff_f0${fhr}.gif shfx2.gif
+
+CONV=/usrx/local/imajik/bin
+$CONV/montage -geometry 800x850 shfx1.gif shfx2.gif gfsshfx_${ymdh}f0${fhr}.gif
+done
+
+. /u/Geoffrey.Manikin/.Utils
+export w1=wd20mg
+export w2=$rzdm
+
+ftp -n -v << EOF > /meso/save/Geoffrey.Manikin/casework/rzftp.out
+open emcrzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/${dayoweek}
+mput gfs*gif
+bye
+EOF
+
+rm *gif
+exit

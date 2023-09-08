@@ -1,0 +1,66 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/2mtnestx
+rm /stmpp1/Geoffrey.Manikin/meg/2mtnestx/*
+cd /stmpp1/Geoffrey.Manikin/meg/2mtnestx
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=2014010612
+ymd=`echo $ymdh | cut -c1-8`
+dayoweek=Mon
+counter=0
+
+hours="00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30"
+hours="12"
+for fhr in $hours; do
+
+fmdl1=/com/nawips/prod/nam.${ymd}/nam_conusnest_${ymdh}f0${fhr}
+fmdl2=/meso/noscrub/Eric.Rogers/com/nawips/para/nam.${ymd}/nam_conusnest_${ymdh}f0${fhr}
+
+    gdplot2 << EOF
+
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 2
+ GVCORD   = hght 
+ GDPFUN   = tmpf 
+ CINT     = 5 
+ LINE     = 0 
+ DEVICE   = GIF|conusnestx2mt_${ymdh}f${fhr}.gif | 800;850
+ PROJ     = lcc/25;-95;25;/1;1;1;1
+ GAREA    = 21.;-121.;51.;-65. 
+ TITLE    = 1//~  NAM CONUS NEST 2-M TMPF 
+ CLEAR    = y
+ SCALE    = 0
+ PANEL    = t
+ HILO     = 0
+ HLSYM    = 0 
+ CLRBAR   = 1/H/UL/.06;0.94/0.8;.03/1
+ TEXT     = 1.1/11/2
+ FINT     = -36;-30;-24;-18;-12;-6;0;6;12;18;24;30;36;42;48;54;60;66;72;78;84
+ FLINE    = 0;12;30;29;28;4;25;26;27;24;23;22;21;5;20;10;17;16;2;15;14;32
+ TYPE     = f 
+r
+
+ GDFILE   = $fmdl2
+ PANEL    = b
+ CLRBAR   = 0
+ CLEAR    = n
+ TITLE    = 1//~  NAM CONUS NESTX 2-M TMPF
+r
+
+ex
+EOF
+
+done
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+#scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/today/.
+exit

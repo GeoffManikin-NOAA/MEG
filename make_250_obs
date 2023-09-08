@@ -1,0 +1,177 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+fhr=$2
+
+da00=`cut -c 7-14 /com/date/t${cyc}z`
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+month=`cut -c 11-12 /com/date/t${cyc}z`
+day=`cut -c 13-14 /com/date/t${cyc}z`
+echo $ymdh
+
+mkdir /stmpp1/wx20mg/gempakruc
+mkdir /stmpp1/wx20mg/gempakruc/250
+rm /stmpp1/wx20mg/gempakruc/250/*
+mkdir /ptmpp1/wx20mg/rucfiles/
+cd /stmpp1/wx20mg/gempakruc/250
+
+/nwprod/util/ush/startxvfb.sh /bin/sh
+. ./STARTXVFB
+
+  nagrib << EOF
+ GBFILE   = /ptmpp1/wx20mg/ruc2/ruc2a.${da00}/ruc2.t${cyc}z.pgrb20f${fhr}
+ INDXFL   =
+ GDOUTF   = /ptmpp1/wx20mg/rucfiles/ruc2x_${ymdh}f0${fhr} 
+ PROJ     = MER
+ GRDAREA  =
+ KXKY     = 10;10
+ MAXGRD   = 3000
+ CPYFIL   = gds
+ GAREA    = grid
+ OUTPUT   = T
+ GBTBLS   =
+ GBDIAG   =
+
+r
+exit
+EOF
+
+
+fmdl=/com/nawips/prod/ruc2.${da00}/ruc2_${ymdh}f0${fhr}
+fmdl2=/ptmpp1/wx20mg/rucfiles/ruc2x_${ymdh}f0${fhr}
+area="ne-"
+proj="lcc/25.;-95.;25./2;2;1;1"
+
+echo $fmdl
+echo $fmdl2
+
+# negate the colors ahead of time except white and black
+gpcolor << EOFC
+COLORS=0=255:255:255?
+COLORS=101=255:255:255;1=0:0:0
+DEVICE   = GIF
+r
+
+ex
+EOFC
+
+    gdplot2 << EOF
+
+ GDFILE   = $fmdl
+ GDATTIM  = f$fhr
+ GLEVEL   = 250 
+ GVCORD   = pres 
+ GDPFUN   = knts(sped) 
+ CINT     = 10 
+ LINE     = 0 
+ MAP      = 1
+ WIND     = BK1/0.7/2/122 
+ TITLE    = 0 
+ DEVICE    = GIF|${ymdh}${fhr}_250obs.gif
+ SATFIL   =
+ RADFIL   =
+ PROJ     = $proj 
+ GAREA    = $area 
+ CLEAR    = y
+ PANEL    = 0.;.51;1.;1.
+ TEXT     = 0.9/11/1/SW 
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/V/UL/.15;0.5/.8;.03/-2
+ CONTUR   = 0
+ SKIP     = /7;7 
+ FINT     = 10;20;30;40;50;60;70;80;90;100;110;120
+ FLINE    = 0;30;28;27;25;23;21;5;10;17;11;2;15
+ TYPE     = f/c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDPFUN   = kntv(wnd) 
+ TYPE     = b 
+ TITLE    = 1/1/ ${fhr}-HR RUC2 250 MB WINDS (KT)
+ CLEAR    = n
+r
+
+
+ TITLE    = 7/-1/ FCST MADE ${cyc}Z  ${month}/$day
+ TEXT     = 1.0/11/1/SW
+r
+
+ GDFILE   = $fmdl2
+ GDPFUN   = knts(sped)
+ TITLE    = 1/1/ RUCX  ${fhr}-HR FCST 250 MB WINDS (kt)
+ PANEL    = 0;0;1;.49
+ CLEAR    = n
+ CLRBAR   = 0
+ TEXT     = 0.9/11/1/SW
+ TYPE     = f/c
+r
+
+ GDPFUN   = kntv(wnd) 
+ TYPE     = b
+ TITLE    = 0
+ CLEAR    = n
+r
+
+exit
+EOF
+
+obsfile=/ptmpp1/hpcops/obs/${da00}.snd
+validtime="`/meso/save/wx20mg/meteograms.nam/advtime ${ymdh} ${fhr} -1`"
+hr=`echo $validtime | cut -c9-10`
+date=`echo $validtime | cut -c7-8`
+
+   snmap << EOF
+ AREA      = $area 
+ GAREA     = $area 
+ SATFIL    =
+ RADFIL    =
+ SNPARM    = sknt 
+ LEVELS    = 250
+ VCOORD    = PRES
+ DATTIM    = ${date}/${hr}
+ SNFILE    = $obsfile
+ DEVICE    = GF|${ymdh}${fhr}_250obs.gif
+ COLORS    = 1 
+ MAP       = 1
+ LATLON    = 0
+ TITLE     = 0
+ CLEAR     = n
+ PANEL     = 0.;.51;1.;1.
+ PROJ      = $proj 
+ FILTER    = no
+ TEXT      = 1.1/31/1/HW
+ LUTFIL    =
+ STNPLT    =
+ CLRBAR    =
+r
+
+ PANEL     = 0;0;1;.49
+r
+
+ex
+EOF
+gpend
+
+/nwprod/util/ush/stopxvfb.sh /bin/sh
+
+. /u/wx20mg/.Utils
+export w1=wd20mg
+export w2=$rzdm
+
+ftp -n -v << EOF > /meso/save/wx20mg/gempak.ruc20/rzftp.out
+open rzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/ruc2/test
+mput *gif
+bye
+EOF
+
+exit

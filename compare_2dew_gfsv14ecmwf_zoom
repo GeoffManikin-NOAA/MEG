@@ -1,0 +1,125 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/2dewz
+rm /stmpp1/Geoffrey.Manikin/meg/2dewz/*
+cd /stmpp1/Geoffrey.Manikin/meg/2dewz
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=2019071512
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+dayoweek=hold10
+
+times="00 03 06 09 12 15 18 21 24"
+times="00 03 06 09 12"
+times="30 31 32 33 34 35 36"
+times="06 09 10 11 12 13 14 15"
+times="78 84"
+#times="00 06 09 12"
+for fhr in $times; do
+
+fmdl1=/com2/nawips/prod/ecmwf.${ymd}/ecmwf_hr_${ymdh}f0${fhr}
+fmdl2=/gpfs/hps/nco/ops/com/nawips/para/gfs.${ymd}/gfs_0p25_${ymdh}f0${fhr}
+
+     gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = dwpf 
+ CINT     = 4 
+ LINE     = 1 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   ECMWF 2-M  DWPF 
+ DEVICE   = GIF|2dewmodels_f0${fhr}.gif|850;950
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-91;25;/1;1;1;1
+# GAREA    = 30.;-104.;40.;-88.
+ GAREA    = 33.;-103;49.;-81.
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/V/UL/.01;0.4/0.8;.03/2 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = -12;-8;-4;0;4;8;12;16;20;24;28;32;36;40;44;48;52;56;60;64;68;72;76;80
+ FINT     = -24;-18;-12;-6;0;6;12;18;24;28;32;36;40;44;48;52;56;60;64;68;72;76;80;84
+# FINT     = -72;-68;-64;-60;-56;-52;-48;-44;-40;-36;-32;-28;-24;-20;-16;-12;-8;-4;0;4;8;12;16;20
+# FINT     = -28;-24;-20;-16;-12;-8;-4;0;4;8;12;16;20;24;28;32;36;40;44;48;52;56;60;64
+ FLINE    = 0;11;9;12;7;30;29;28;4;25;26;27;24;23;22;21;5;20;10;17;16;2;15;14;1
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl2
+ GLEVEL   = 2
+ GVCORD   = hght
+ GDATTIM  = f$fhr
+ TITLE    = 1/-1/~  GFSv14 2-M DWPF 
+ PANEL    = b
+ CLRBAR   = 0
+ CLEAR    = n
+r
+
+ex
+EOF
+
+    gdcntr << EOF
+ GDFILE   = $fmdl2 + $fmdl1
+ GDATTIM  = f${fhr}
+ GLEVEL   = 2  
+ GVCORD   = hght 
+ GFUNC    = sub(dwpf+2,dwpf)
+ CINT     = 2 
+ LINE     = 1
+ MAP      = 1
+ WIND     = bk1/0.7/2/122
+ TITLE    = 1//~ 2-M DWPF (F)   NAM - GFS
+ DEVICE   = GIF|2dewdiff_f0${fhr}.gif | 500;550
+ SATFIL   =
+ RADFIL   =
+ CLEAR    = y
+ PANEL    = 0
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/H/UL/.1;.96/.8;.02/-1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = -20;-16;-12;-8;-4;4;8;12;16;20
+ FLINE    = 30;28;26;27;22;0;5;10;17;2;15
+ CTYPE    = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ex
+EOF
+gpend
+done
+
+for fhr in $times; do
+
+CONV=/usrx/local/ImageMagick/6.8.3-3/bin
+$CONV/convert -crop 0x0 2dewmodels_f0${fhr}.gif 2dew1.gif
+$CONV/convert -crop 0x0 2dewdiff_f0${fhr}.gif 2dew2.gif
+$CONV/montage -geometry 800x850 2dew1.gif 2dew2.gif ${ymdh}_2dew14z${fhr}.gif
+done
+
+scp ${ymdh}*gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+#mv ${cyc}*gif /stmpp1/Geoffrey.Manikin/meg/holdshort/.
+rm *gif
+exit

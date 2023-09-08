@@ -1,0 +1,171 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+ymdh=$1
+ymd=`echo $ymdh | cut -c1-8`
+month=`echo $ymdh | cut -c5-6`
+day=`echo $ymdh | cut -c7-8`
+cyc=`echo $ymdh | cut -c9-10`
+dayoweek=hold2
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/type
+cd /stmpp1/Geoffrey.Manikin/meg/type
+cp /meso/save/Geoffrey.Manikin/meg/coltbl.xwp .
+
+times="15"
+for fhr in $times; do
+
+fmdl1=/com/nawips/prod/rap.${ymd}/rap13_${ymd}${cyc}f0${fhr}
+fmdl2=/ptmpd1/Geoffrey.Manikin/com/nawips/para/rap.${ymd}/rap13_${ymd}${cyc}f0${fhr}
+fmdl1=/ptmpd1/Geoffrey.Manikin/hold4/rap13_${ymd}${cyc}f0${fhr}
+fmdl2=/ptmpd1/Geoffrey.Manikin/hold4/hrrr_${ymd}${cyc}f0${fhr}00
+echo $fmdl1
+echo $fmdl2
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = wxtr 
+ CINT     = .11;10 
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 0
+ DEVICE   = GIF|compareraphrrrtype_${ymdh}f${fhr}.gif|900;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-75.;25./2;2;1;1
+ GAREA    = de 
+ CLEAR    = y
+ PANEL    = 0.;.51;1.;1.
+ TEXT     = 1.2/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 0 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = .11;10 
+ FLINE    = 0;3 
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDPFUN   = wxts
+ CLEAR    = n
+ FLINE    = 0;26
+ r
+
+ GDPFUN   = wxtp
+ FLINE    = 0;29
+ r
+
+ GDPFUN   = wxtz
+ FLINE    = 0;2
+ r
+
+ GDPFUN   = add(wxtr;wxts)
+ FLINE    = 0;0;11
+ FINT     = 0;1.9
+r
+
+ GDPFUN   = add(wxts;wxtp)
+ FLINE    = 0;0;11
+ FINT     = 0;1.9
+r
+
+ GDPFUN   = add(wxtp;wxtz)
+ FLINE    = 0;0;11
+ FINT     = 0;1.9
+r
+
+ GDPFUN   = add(wxts;wxtz)
+ FLINE    = 0;0;11
+ FINT     = 0;1.9
+r
+
+ GDPFUN   = add(wxtr;wxtp)
+ FLINE    = 0;0;11
+ FINT     = 0;1.9
+r
+
+
+ TITLE    = 1/1/ ${fhr}-HR RAP PRECIPITATION TYPE
+ TEXT     = 1.2/11/2
+ CLEAR    = n
+ GDPFUN     = blurk
+ CINT     = -2000/-2000/-2000
+ CLRBAR   = 0
+r
+
+ TITLE    = 17/-1/ FCST MADE ${cyc}Z  ${month}/$day  R(green) S(blue) ZR(red) IP(pur) MIX (pink)
+ TEXT     = 0.8/11/1/SW
+r
+
+ TITLE    = 1/1/ ${fhr}-HR HRRR  PRECIPITATION TYPE 
+ GDFILE   = $fmdl2 
+ TEXT     = 1.2/11/2
+ PANEL    = 0;0;1;.49
+r
+
+ GDFILE   = $fmdl2 
+ GDPFUN   = crain 
+ TITLE    = 0
+ CINT     = .11;10
+ FLINE    = 0;3
+ FINT     = 0.11;10
+ TITLE    = 0
+r
+
+ GDPFUN   = csnow
+ CLEAR    = n
+ FLINE    = 0;26
+ r
+
+ GDPFUN   = cicep 
+ FLINE    = 0;29
+ r
+
+ GDPFUN   = cfrzr
+ FLINE    = 0;2
+ r
+
+ GDPFUN   = add(crain;csnow)
+ FLINE    = 0;0;11
+ FINT     = 0;1.9
+r
+
+ GDPFUN   = add(csnow;cicep)
+ FLINE    = 0;0;11
+ FINT     = 0;1.9
+r
+
+ GDPFUN   = add(cicep;cfrzr)
+ FLINE    = 0;0;11
+ FINT     = 0;1.9
+r
+
+ GDPFUN   = add(csnow;cfrzr)
+ FLINE    = 0;0;11
+ FINT     = 0;1.9
+r
+
+ GDPFUN   = add(crain;cicep)
+ FLINE    = 0;0;11
+ FINT     = 0;1.9
+r
+
+ex
+EOF
+
+gpend
+done
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

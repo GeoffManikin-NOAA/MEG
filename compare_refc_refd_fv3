@@ -1,0 +1,75 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+ymdh=2018053100
+ymd=`echo $ymdh | cut -c1-8`
+month=`echo $ymdh | cut -c5-6`
+day=`echo $ymdh | cut -c7-8`
+cyc=`echo $ymdh | cut -c9-10`
+dayoweek=hold7
+
+mkdir /stmpp1/Geoffrey.Manikin/fv3ref
+cd /stmpp1/Geoffrey.Manikin/fv3ref
+cp /meso/save/Geoffrey.Manikin/gempak.rap13/coltbl.xwp .
+
+times="18"
+counter=0
+for fhr in $times; do
+
+fmdl1=/stmpp1/Geoffrey.Manikin/fv3_${cyc}/fv3_${ymdh}f0${fhr}
+fmdl1=/ptmpp1/Geoffrey.Manikin/hold/fv3_${ymdh}f0${fhr}
+echo $fmdl1
+
+    gdcntr << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GFUNC    = refc 
+ CINT     = 5 
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ DEVICE   = GIF|comparefv3ref_${ymdh}f${fhr}.gif|900;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-96.;25./2;2;1;1
+ GAREA    = 24.;-122.;50.;-62. 
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1.1/11/2/SW
+ TITLE    = 1/1/ ${fhr}-HR FV3 COMPOSITE REFLECTIVITY
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/V/UL/.05;.45/.8;.03/-2
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 5;10;15;20;25;30;35;40;45;50;55;60;65 
+ FLINE    = 0;24;4;26;23;22;21;20;5;10;17;2;15;29 
+ CTYPE    = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GFUNC    = refd
+ GLEVEL   = 1000
+ GVCORD   = hght
+ CINT     = 5
+ TITLE    = 1/-1/ ${fhr}-HR FV3 1-KM REFLECTIVITY 
+ PANEL    = b
+ CLEAR    = n
+ CLRBAR   = 0
+r
+
+ex
+EOF
+
+gpend
+done
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

@@ -1,0 +1,70 @@
+#!/bin/sh
+echo 'into'
+. /nwprod/gempak/.gempak
+
+mkdir /stmpp1/Geoffrey.Manikin/plots
+mkdir /stmpp1/Geoffrey.Manikin/plots/sfc
+rm /stmpp1/Geoffrey.Manikin/plots/sfc/*
+cd /stmpp1/Geoffrey.Manikin/plots/sfc
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=2014111200
+dayoweek=hold
+day=`echo $ymdh | cut -c7-8`
+hr=`echo $ymdh | cut -c9-10`
+ymd=`echo $ymdh | cut -c1-8`
+area="de"
+
+   sfmap << EOF
+ AREA      = $area 
+ GAREA     = $area 
+ SATFIL    =       
+ RADFIL    =         
+ SFPARM    = vsby 
+ DATTIM    = ${day}/${hr}
+ SFFILE    = /ptmpp1/wpc.ops/obs/${ymd}.hrly 
+ DEVICE    = GIF|${ymdh}${hr}_obsvis.gif | 800;850
+ COLORS    = 1 
+ MAP       = 1
+ LATLON    = 0
+ TITLE     = 1/-1/~   OBS VSBY (miles)
+ CLEAR     = y 
+ PANEL     = 0 
+ PROJ      = MER/0;0;0/2;2;0;1
+ FILTER    = n 
+ TEXT      = 0.9/21/1/HW
+ LUTFIL    = 
+ STNPLT    =  
+ CLRBAR    =
+r
+
+ SFPARM   = vsby < 10
+ COLORS   = 28
+ CLEAR    = n
+r 
+
+ SFPARM   = vsby < 5
+ COLORS   = 26
+r
+
+ SFPARM   = vsby < 4 
+ COLORS   = 21
+r
+
+ SFPARM   = vsby < 3
+ COLORS   = 5
+r
+
+ SFPARM   = vsby < 2 
+ COLORS   = 17
+r
+
+ SFPARM   = vsby < 1
+ COLORS   = 2
+r
+
+ex 
+EOF
+gpend
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

@@ -1,0 +1,58 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/10w
+rm /stmpp1/Geoffrey.Manikin/meg/10w/*
+cd /stmpp1/Geoffrey.Manikin/meg/10w
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=2019090600
+ymd=`echo $ymdh | cut -c1-8`
+dayoweek=hold8
+
+hours="00 01 02 03 04 05 06 07 08 09 10 11 12"
+hours="00 06 12 18 24 30 36 42 48 54 60"
+hours="06 12 18 24 30 36 42 48"
+hours="00 03 06 09"
+for fhr in $hours; do
+
+fmdl1=/ptmpp1/Geoffrey.Manikin/gfs/gfs_0p25_${ymdh}f0${fhr}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 10 
+ GVCORD   = hght 
+ GDPFUN   = knts(sped)
+ CINT     = 5 
+ LINE     = 0 
+ DEVICE   = GIF|gfs10w_${ymdh}f0${fhr}.gif | 800;850
+ PROJ     = lcc/25.;-75.;25./2;2;1;1
+ GAREA    = nc+ 
+ TITLE    = 1//~  GFS 10m WIND (KT) 
+ CLEAR    = y
+ SCALE    = 0
+ PANEL    = 0
+ HILO     = 0
+ HLSYM    = 0 
+ CLRBAR   = 1/H/UL/.06;0.94/0.8;.03/1
+ TEXT     = 1.1/11/2
+ FINT     = 20;30;40;50;60;70;80;90;100
+ FINT     = 5;10;15;20;25;30;35;40;50;60
+ FLINE    = 0;29;4;26;22;5;10;17;2;15
+ TYPE     = f 
+r
+
+ex
+EOF
+
+done
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

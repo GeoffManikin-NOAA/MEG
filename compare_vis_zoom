@@ -1,0 +1,72 @@
+#!/bin/sh
+echo 'into'
+
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/meg
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/meg/vis
+rm /lfs/h2/emc/stmp/geoffrey.manikin/meg/vis/*
+cd /lfs/h2/emc/stmp/geoffrey.manikin/meg/vis
+cp /lfs/h2/emc/vpppg/save/geoffrey.manikin/meg/coltbl.xwp .
+
+ymdh=2023060712
+ymd=`echo $ymdh | cut -c1-8`
+day=`echo $ymdh | cut -c7-8`
+namver=v4.2
+hrrrver=v4.1
+
+times="00 03 06 09 12 15"
+times="00 03 06 09 12"
+times="09"
+for fhr in $times; do
+
+cp /lfs/h1/ops/prod/com/nam/${namver}/nam.${ymd}/gempak/nam_conusnest_${ymdh}f0${fhr} fmdl1
+cp /lfs/h1/ops/prod/com/hrrr/${hrrrver}/hrrr.${ymd}/conus/gempak/hrrr_${ymdh}f0${fhr}00 fmdl2
+
+    gdplot2 << EOF
+ GDFILE   = fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = mul(quo(vsby,1000),0.62137) 
+ CINT     = 1;2;3;4;5;10 
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/ ${fhr}-HR  NAM NEST VISIBILITY (miles) 
+ DEVICE   = GIF|vis1_${ymdh}f0${fhr}.gif|900;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-75.;25./2;2;1;1
+ GAREA    = 22.;-123.;54.;-65. 
+ GAREA    = ny
+ CLEAR    = y
+ PANEL    = 0.;.51;1.;1.
+ TEXT     = 1.2/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/V/UL/.15;0.4/.8;.03/-1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 1;2;3;4;5;10 
+ FLINE    = 2;17;5;21;26;28;0 
+ TYPE     = f/c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = fmdl2 
+ TITLE    = 1/-1/ ${fhr}-HR HRRR  VISIBILITY (miles)
+ PANEL    = b
+ CLEAR    = n 
+ CLRBAR   = 0
+r
+
+ex
+EOF
+gpend
+done
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test7/.
+rm *gif
+exit

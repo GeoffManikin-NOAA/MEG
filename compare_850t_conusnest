@@ -1,0 +1,65 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/nest850t
+rm /stmpp1/Geoffrey.Manikin/meg/nest850t/*
+cd /stmpp1/Geoffrey.Manikin/meg/nest850t
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=2013021900
+ymd=`echo $ymdh | cut -c1-8`
+dayoweek=Tue
+
+hours="00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30"
+hours="00 03 06 09 12 15 18 21 24 27 30 33 36 39 42 45 48 51 54 57 60"
+
+for fhr in $hours; do
+
+fmdl1=/com2/nawips/prod/nam.${ymd}/nam_conusnest_${ymdh}f0${fhr}
+fmdl2=/com2/nawips/prod/nam.${ymd}/nam40_${ymdh}f0${fhr}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 850 
+ GVCORD   = pres 
+ GDPFUN   = tmpc 
+ CINT     = 5 
+ LINE     = 0 
+ DEVICE   = GIF|${cyc}850tnest_${ymdh}f${fhr}.gif | 800;850
+ PROJ     = lcc/25.;-100.;25./2;2;1;1
+# GAREA    = 33.;-88.;47.;-60. 
+ GAREA    = mo-
+ TITLE    = 1//~  NAM NEST 850 mb T 
+ CLEAR    = y
+ SCALE    = 0
+ PANEL    = t
+ HILO     = 0
+ HLSYM    = 0 
+ CLRBAR   = 0 
+ TEXT     = 1.1/11/2
+ FINT     = -18;-16;-14;-12;-10;-8;-6;-4;-2;0;2;4;6;8;10;12
+ FLINE    = 12;30;29;28;4;25;27;24;23;22;21;5;20;10;17;16;2;15;32
+ TYPE     = f 
+r
+
+ CLEAR    = n
+ PANEL    = b
+ GDFILE   = $fmdl2
+ TITLE    = 1//~  NAM 850 mb T
+ CLRBAR   = 1/H/UL/.06;0.97/0.8;.03/1
+r
+
+ex
+EOF
+done
+gpend
+
+mv ${cyc}*gif /stmpp1/Geoffrey.Manikin/meg/holdshort/.
+rm *gif
+exit

@@ -1,0 +1,9 @@
+#!/bin/ksh
+
+set -x
+
+cyc=$1
+cd /meso/save/Geoffrey.Manikin/meg/
+ymd=`cut -c 7-14 /com/date/t${cyc}z`
+./runpbmnet2gem_retro.sh /com/rtma/prod/rtma.${ymd}/rtma.t${cyc}z.prepbufr.tm00 inclrestr ${cyc} 
+exit

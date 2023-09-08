@@ -1,0 +1,80 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/2mtskin
+rm /stmpp1/Geoffrey.Manikin/meg/2mtskin/*
+cd /stmpp1/Geoffrey.Manikin/meg/2mtskin
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`cut -c 7-14 /com/date/t${cyc}z`
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+
+ymdh=2014120812
+ymd=20141208
+dayoweek=hold2
+
+times="00 12"
+for fhr in $times; do
+
+fmdl1=/com/nawips/prod/nam.${ymd}/nam40_${ymdh}f0${fhr}
+fmdl2=/com/nawips/prod/gfs.${ymd}/gfs40_${ymdh}f0${fhr}
+#fmdl1=/ptmpp1/Geoffrey.Manikin/hold/nam40_${ymdh}f0${fhr}
+#fmdl2=/ptmpp1/Geoffrey.Manikin/hold/gfs40_${ymdh}f0${fhr}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 2 
+ GVCORD   = hght 
+ GDPFUN   = sub(tmpf@0%none,tmpf) 
+ CINT     = 4 
+ LINE     = 1 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~  NAM TMPF    2M - SKIN 
+ DEVICE   = GIF|2mtskinnamgfs_f0${fhr}.gif|850;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-80;25;/1;1;1;1
+ GAREA    = 32.;-78.;46.;-58.
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/V/UL/.01;0.4/0.8;.03/1 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = -10;-8;-6;-4;-2;0;2
+ FLINE    = 30;28;26;25;23;21;0;5
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl2
+ TITLE    = 1/-1/~  GFS TMPF    2M - SKIN 
+ PANEL    = b
+ CLRBAR   = 0
+ CLEAR    = n
+r
+
+ex
+EOF
+
+done
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

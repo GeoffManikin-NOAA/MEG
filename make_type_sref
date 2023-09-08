@@ -1,0 +1,170 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+ymdh=$1
+ymd=`echo $ymdh | cut -c1-8`
+month=`echo $ymdh | cut -c5-6`
+day=`echo $ymdh | cut -c7-8`
+cyc=`echo $ymdh | cut -c9-10`
+dayoweek=hold2
+
+mkdir /stmpp1/Geoffrey.Manikin/gempak.rap13/type
+cd /stmpp1/Geoffrey.Manikin/gempak.rap13/type
+cp /meso/save/Geoffrey.Manikin/gempak.rap13/coltbl.xwp .
+
+times="27"
+counter=0
+for fhr in $times; do
+
+fmdl1=/ptmpd2/Geoffrey.Manikin/com2/nawips/prod/sref.${ymd}/sref_${ymdh}_mean
+echo $fmdl1
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = wxtr 
+ CINT     = .11;10 
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 0
+ DEVICE   = GIF|comparetype_${cyc}f${counter}.gif|900;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-95.;25./2;2;1;1
+ GAREA    = ks 
+ CLEAR    = y
+ PANEL    = 0.;.51;1.;1.
+ TEXT     = 1.2/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 0 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = .11;10 
+ FLINE    = 0;3 
+ TYPE     = f/c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDPFUN   = wxts
+ CLEAR    = n
+ FLINE    = 0;26
+ r
+
+ GDPFUN   = wxtp
+ FLINE    = 0;29
+ r
+
+ GDPFUN   = wxtz
+ FLINE    = 0;2
+ r
+
+ GDPFUN   = add(wxtr;wxts)
+ FLINE    = 0;0;11
+ FINT     = 0;1.9
+r
+
+ GDPFUN   = add(wxts;wxtp)
+ FLINE    = 0;0;11
+ FINT     = 0;1.9
+r
+
+ GDPFUN   = add(wxtp;wxtz)
+ FLINE    = 0;0;11
+ FINT     = 0;1.9
+r
+
+ GDPFUN   = add(wxts;wxtz)
+ FLINE    = 0;0;11
+ FINT     = 0;1.9
+r
+
+ GDPFUN   = add(wxtr;wxtp)
+ FLINE    = 0;0;11
+ FINT     = 0;1.9
+r
+
+
+ TITLE    = 1/1/ ${fhr}-HR SREF PRECIPITATION TYPE
+ TEXT     = 1.2/11/2
+ CLEAR    = n
+ GDPFUN     = blurk
+ CINT     = -2000/-2000/-2000
+ CLRBAR   = 0
+r
+
+ TITLE    = 17/-1/ FCST MADE ${cyc}Z  ${month}/$day  R(green) S(blue) ZR(red) IP(pur) MIX (pink)
+ TEXT     = 1.1/11/1/SW
+r
+
+ TITLE    = 1/1/ ${fhr}-HR RAPX  PRECIPITATION TYPE 
+ GDFILE   = $fmdl2 
+ GAREA    = 16.;-126.;55.;-57.
+ TEXT     = 1.2/11/2
+ PANEL    = 0;0;1;.49
+r
+
+ GDFILE   = $fmdl2 
+ GDPFUN   = wxtr 
+ TITLE    = 0
+ CINT     = .11;10
+ FLINE    = 0;3
+ FINT     = 0.11;10
+ TITLE    = 0
+r
+
+ GDPFUN   = wxts
+ CLEAR    = n
+ FLINE    = 0;26
+ r
+
+ GDPFUN   = wxtp
+ FLINE    = 0;29
+ r
+
+ GDPFUN   = wxtz
+ FLINE    = 0;2
+ r
+
+ GDPFUN   = add(wxtr;wxts)
+ FLINE    = 0;0;11
+ FINT     = 0;1.9
+r
+
+ GDPFUN   = add(wxts;wxtp)
+ FLINE    = 0;0;11
+ FINT     = 0;1.9
+r
+
+ GDPFUN   = add(wxtp;wxtz)
+ FLINE    = 0;0;11
+ FINT     = 0;1.9
+r
+
+ GDPFUN   = add(wxts;wxtz)
+ FLINE    = 0;0;11
+ FINT     = 0;1.9
+r
+
+ GDPFUN   = add(wxtr;wxtp)
+ FLINE    = 0;0;11
+ FINT     = 0;1.9
+r
+
+ex
+EOF
+
+counter=`expr $counter + 1`
+gpend
+done
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

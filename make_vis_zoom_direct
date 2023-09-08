@@ -1,0 +1,108 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+da00=`cut -c 7-14 /com/date/t${cyc}z`
+hr00=`cut -c 15-16 /com/date/t${cyc}z`
+month=`cut -c 11-12 /com/date/t${cyc}z`
+day=`cut -c 13-14 /com/date/t${cyc}z`
+
+mkdir /stmpp1/wx20mg/gempak.rap13/visz
+cd /stmpp1/wx20mg/gempak.rap13/visz
+rm /stmpp1/wx20mg/gempak.rap13/visz/*
+cp /meso/save/wx20mg/casework/coltbl.xwp .
+
+times="00 01 02 03 04 05 06 09 12"
+
+counter=0
+for fhr in $times; do
+
+fmdl1=/com/nawips/prod/ruc2.${da00}/ruc13_${da00}${hr00}f0${fhr}
+fmdl2=/com/nawips/para/rap.${da00}/rap13_${da00}${hr00}f0${fhr}
+echo $fmdl1
+echo $fmdl2
+
+    gdplot2 << EOF
+
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = mul(quo(vsby,1000),0.62137) 
+ CINT     = 1;2;3;4;5;10 
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 0
+ DEVICE   = GIF|comparevisz_${cyc}f${counter}.gif|900;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-83.;25./2;2;1;1
+ GAREA    = 24.;-87.;31.;-79. 
+ CLEAR    = y
+ PANEL    = 0.;.51;1.;1.
+ TEXT     = 1.2/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/V/UL/.15;0.5/.8;.03/-1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 1;2;3;4;5;10 
+ FLINE    = 2;17;5;21;26;28;0 
+ TYPE     = f/c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ TITLE    = 1/1/ ${fhr}-HR RUC2 VISIBILITY (miles)
+ TEXT     = 1.2/11/2
+ CLEAR    = n
+ GDPFUN   = mmsl
+ CINT     = -2000/-2000/-2000
+ CLRBAR   = 0
+r
+
+ TITLE    = 4/-1/ FCST MADE ${cyc}Z  ${month}/$day
+ TEXT     = 1.1/11/1/SW
+r
+
+ TITLE    = 1/1/ ${fhr}-HR RAPX  VISIBILITY (miles)
+ GDFILE   = $fmdl2 
+ TEXT     = 1.2/11/2
+ PANEL    = 0;0;1;.49
+r
+
+ GDFILE   = $fmdl2 
+ GDPFUN   = mul(quo(vsby,1000),0.62137) 
+ TITLE    = 0
+ CINT     = 1;2;3;4;5;10 
+r
+
+ex
+EOF
+
+counter=`expr $counter + 1`
+gpend
+done
+
+. /u/wx20mg/.Utils
+export w1=wd20mg
+export w2=$rzdm
+
+ftp -n -v << EOF > /meso/save/wx20mg/gempak.rap13/rzftp.out
+open rzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/gmanikin/rap/para/${cyc}z/images
+prompt
+mput *.gif
+bye
+EOF
+
+echo abouttoexitvisz
+exit

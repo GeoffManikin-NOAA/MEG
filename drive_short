@@ -1,0 +1,33 @@
+#!/bin/ksh
+
+set -x
+
+cyc=$1
+cd /meso/save/Geoffrey.Manikin/meg/
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`cut -c 7-14 /com/date/t${cyc}z`
+ymdhold="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -30 -1`"
+ymdold=`echo $ymdhold | cut -c1-8`
+rm /meso/save/Geoffrey.Manikin/meg/nam*${ymdhold}*
+rm /meso/save/Geoffrey.Manikin/meg/gfs*${ymdhold}*
+rm /meso/save/Geoffrey.Manikin/meg/hires*${ymdhold}*
+
+if [ $cyc -eq 00 -o $cyc -eq 12 ]; then
+./run_nagrib_pcp $cyc
+./run_nagrib_nestpcp $cyc
+else
+./run_nagrib_pcp_off $cyc
+./run_nagrib_nestpcp $cyc
+fi
+
+if [ $cyc -eq 18 ]; then
+ bsub < /meso/save/Geoffrey.Manikin/monthly_mean/verify_gfs.ksh  
+ bsub < /meso/save/Geoffrey.Manikin/monthly_mean/verify_nam.ksh
+ bsub < /meso/save/Geoffrey.Manikin/monthly_mean/verify_namx.ksh
+fi
+
+cp /com/date/t${cyc}z /meso/save/Geoffrey.Manikin/meg/NMCDATE
+bsub < run_gempak_poe_short
+
+#exit

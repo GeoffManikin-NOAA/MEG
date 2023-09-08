@@ -1,0 +1,138 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+ymdh1=2019021512
+ymd1=`echo $ymdh1 | cut -c1-8`
+cyc1=`echo $ymdh1 | cut -c9-10`
+stnm=724010
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/snd
+rm /stmpp1/Geoffrey.Manikin/meg/snd/*
+cd /stmpp1/Geoffrey.Manikin/meg/snd
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+dayoweek=hold9
+ymdh2="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh1} 24 -1`"
+ymd2=`echo $ymdh2 | cut -c1-8`
+ymdh3="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh2} 24 -1`"
+ymd3=`echo $ymdh3 | cut -c1-8`
+ymdh4="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh3} 24 -1`"
+ymd4=`echo $ymdh4 | cut -c1-8`
+ymdh5="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh4} 24 -1`"
+ymd5=`echo $ymdh5 | cut -c1-8`
+
+DAPATH=/meso/noscrub/Geoffrey.Manikin
+fmdl1=${DAPATH}/fv3.${ymd1}/gfs_${ymdh1}.snd
+fmdl2=${DAPATH}/fv3rt3.${ymd1}/gfs_${ymdh1}.snd
+fmdl3=${DAPATH}/fv3.${ymd2}/gfs_${ymdh2}.snd
+fmdl4=${DAPATH}/fv3rt3.${ymd2}/gfs_${ymdh2}.snd
+fmdl5=${DAPATH}/fv3.${ymd3}/gfs_${ymdh3}.snd
+fmdl6=${DAPATH}/fv3rt3.${ymd3}/gfs_${ymdh3}.snd
+fmdl7=${DAPATH}/fv3.${ymd4}/gfs_${ymdh4}.snd
+fmdl8=${DAPATH}/fv3rt3.${ymd4}/gfs_${ymdh4}.snd
+fmdl9=${DAPATH}/fv3.${ymd5}/gfs_${ymdh5}.snd
+fmdl10=${DAPATH}/fv3rt3.${ymd5}/gfs_${ymdh5}.snd
+echo $fmdl7
+echo $fmdl8
+echo $fmdl9
+echo $fmdl10
+
+times="09 12 15 109 12 15 18"
+times="00 03 06 09 12 15 18 21 24 27 30 33"
+times="105 108 111 114 117 120"
+times="99 102 105 108"
+times="117"
+for time in $times; do
+
+validtime="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh1} $time -1 x`"
+echo validtime = $validtime
+dattim=`echo $validtime | cut -c5-11`
+echo dattim = $dattim
+
+if [ $time -lt 10 ]
+then
+fhr=0${time}
+else
+fhr=$time
+fi
+
+    snprof << EOF
+ SNFILE   = $fmdl1
+ DATTIM   = $dattim
+ AREA     = @${stnm}
+ SNPARM   = tmpc
+ LINE     = 5/1/5
+ PTYPE    = skewt
+ VCOORD   = PRES
+ STNDEX   = cape;cins
+ STNCOL   = 24
+ WIND     = 0 
+ WINPOS   = 0
+ MARKER   = 0
+ BORDER   = 1//2
+ TITLE    = 1//  FV3GFS 
+ DEVICE   = gif|${ymdh}sndfv3evolve${stnm}_$fhr.gif | 800;850
+ YAXIS    = 1050/400/50/1;1;1
+ XAXIS    = -10/25/5/;1
+ FILTER   = 0.9 
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 0.8 
+ THTALN   = 8/3/1/250/500/5
+ THTELN   = 23/1/1/250/500/5
+ MIXRLN   = 17/10/2/0/40./1.
+r
+
+ SNFILE   = $fmdl3
+ CLEAR    = n
+ LINE     = 10/1/5
+r
+
+ SNFILE   = $fmdl5
+ LINE     = 17/1/5
+r
+
+ SNFILE   = $fmdl7
+ LINE     = 2/1/5
+r
+
+ SNFILE   = $fmdl9
+ LINE     = 15/1/5
+r
+
+ SNFILE   = $fmdl2
+ TITLE    = 1//  FV3GFS FULL TEST 
+ PANEL    = b
+ LINE     = 21/1/5
+r
+
+ SNFILE   = $fmdl4
+ LINE     = 23/1/5
+r
+
+ SNFILE   = $fmdl6
+ LINE     = 26/1/5
+r
+
+ SNFILE   = $fmdl8
+ LINE     = 4/1/5
+r
+ 
+ SNFILE   = $fmdl10
+ LINE     = 28/1/5
+r
+ 
+ex
+EOF
+
+done
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+#scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/cases/${ymd}/.
+exit

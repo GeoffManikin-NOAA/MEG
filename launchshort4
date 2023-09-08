@@ -1,0 +1,16 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+cd /stmpp1/Geoffrey.Manikin/meg
+/meso/save/Geoffrey.Manikin/meg/compare_sfccape ${cyc} &
+/meso/save/Geoffrey.Manikin/meg/compare_bestcape ${cyc} &
+wait
+
+echo beforeexit4
+exit
+
+

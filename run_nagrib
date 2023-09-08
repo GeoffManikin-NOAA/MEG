@@ -1,0 +1,137 @@
+#/bin/ksh
+
+set -x
+
+ymdh=2000012400
+hh=`echo $ymdh | cut -c9-10`
+
+DAPATH=/ptmp/wx20mg/awip3d.${ymdh}
+#DAPATH=/ptmp/wx20mg/mtcase
+
+export DAPATH
+. /nwprod/gempak/.gempak
+
+fhrs="00 06 12 18 24 30 36 42 48"
+fhrs="00"
+
+for fhr in $fhrs
+do
+
+nagrib << EOF
+GBFILE  = ${DAPATH}/eta.t${hh}z.awip3d${fhr}.tm00
+INDXFL  =
+GDOUTF  = ${DAPATH}/eta212_${ymdh}f0${fhr}
+PROJ    =
+GRDAREA =
+KXKY    = 
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+exit
+EOF
+
+   gddelt << EOF
+ GDFILE   =  ${DAPATH}/eta212_${ymdh}f0${fhr} 
+ GDATTIM  = f${hr}
+ GLEVEL   = 50
+ GVCORD   = pres
+ GFUNC    = all
+r
+                                                                       
+ GLEVEL   = 75
+r
+                                                                       
+ GLEVEL   = 100
+r
+                                                                       
+ GLEVEL   = 125
+r
+                                                                       
+ GLEVEL   = 150
+r
+                                                                       
+ GLEVEL   = 175
+r
+                                                                       
+ GLEVEL   = 225
+r
+                                                                       
+ GLEVEL   = 275
+r
+
+ GLEVEL   = 325
+r
+ 
+ GLEVEL   = 375
+r
+ 
+ GLEVEL   = 425
+r
+ 
+ GLEVEL   = 475
+r
+ 
+ GLEVEL   = 525
+r
+ 
+ GLEVEL   = 575
+r
+ 
+ GLEVEL   = 600
+r
+ 
+ GLEVEL   = 625
+r
+ 
+ GLEVEL   = 675
+r
+ 
+ GLEVEL   = 725
+r
+ 
+ GLEVEL   = 775
+r
+
+ GLEVEL   = 825
+r
+ 
+ GLEVEL   = 875
+r
+ 
+ GLEVEL  =  925
+r
+ 
+ GLEVEL   = 975
+r
+ 
+ GLEVEL   = 200
+ GFUNC    = omeg
+r
+ 
+ GLEVEL   = 250
+r
+ 
+ GLEVEL   = 300
+r
+ 
+ GLEVEL   = 350
+r
+ 
+ GLEVEL   = 400
+r
+
+ GLEVEL   = all
+ GFUNC    = trke
+r
+ 
+ex
+EOF
+
+done
+exit
+

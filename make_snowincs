@@ -1,0 +1,94 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+ymdh=$1
+ymd=`echo $ymdh | cut -c1-8`
+month=`echo $ymdh | cut -c5-6`
+day=`echo $ymdh | cut -c7-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+mkdir /stmpp1/Geoffrey.Manikin/gempak.rap13/launch8/incs
+cd /stmpp1/Geoffrey.Manikin/gempak.rap13/launch8/incs
+cp /meso/save/Geoffrey.Manikin/gempak.rap13/coltbl.xwp .
+
+times="00 01 02 03 06 09 12 15 18"
+counter=0
+for fhr in $times; do
+
+hrback="`/meso/save/wx20mg/meteograms.nam/advtime ${da00}${hr00} -1 -1`"
+cyc1=`echo $hrback | cut -c9-10`
+mmdd=`echo $da00 | cut -c5-8`
+mmdd2=`echo $hrback | cut -c5-8`
+
+fmdl1=/com/nawips/prod/rap.${ymd1}/rap13_${ymd1}${cyc1}f001
+fmdl2=/com/nawips/prod/rap.${ymd}/rap13_${ymd}${cyc}f0${fhr}
+fmdl3=/ptmpp1/Geoffrey.Manikin/com/nawips/para/rap.${ymd1}/rap13_${ymd1}${cyc1}f001
+fmdl4=/ptmpp1/Geoffrey.Manikin/com/nawips/para/rap.${ymd}/rap13_${ymd}${cyc}f0${fhr}
+
+    gdcntr << EOF
+ GDFILE   = ${fmdl3}+${fmdl4}
+ GDATTIM  = f00
+ GLEVEL   = 0 
+ GVCORD   = none
+ GFUN     = mul(sub(sndm^${mmdd}/${cyc}f00+2,sndm^${mmdd2}/${cyc1}f01),100) 
+ CINT     = 1 
+ LINE     = 0 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/1/ 00-HR RAP  -  1-HR RAP   SNOW COVER DIFF
+ DEVICE   = GIF|comparesnowinc_${cyc}f0.gif|900;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-95.;25./1;1;1;1
+ GAREA    = grid
+ CLEAR    = y
+ PANEL    = t 
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/V/UL/.10;0.82/.55;.015/
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = -6;-4;;-2;-1;1;2;4;6 
+ FLINE    = 15;2;17;5;0;21;23;25;29 
+ CTYPE    = f 
+ LUTFIL   =
+ STNPLT   =
+r
+
+ TITLE    = 7/-1/ FCST MADE ${cyc}Z  ${month}/$day
+ TEXT     = 1.0/11/1/SW
+ CLEAR    = n
+r
+
+ GDFILE   = ${fmdl1}+${fmdl2}
+ TITLE    = 1/1/ 00-HR RAPX  -  1-HR RAPX   SNOW COVER DIFF
+ TEXT     = 1.1/11/2/SW
+ PANEL    = b
+r
+
+ex
+EOF
+gpend
+
+. /u/wx20mg/.Utils
+export w1=wd20mg
+export w2=$rzdm
+export w3=emcmmb
+export w4=$web
+
+ftp -n -v << EOF > /meso/save/wx20mg/gempak.ruc13/rzftp.out
+open rzdm
+user $w1 $w2
+binary
+cd /home/people/emc/www/htdocs/mmb/ruc2/para/${cyc}z/images/today
+prompt
+mput *.gif
+bye
+EOF
+
+exit

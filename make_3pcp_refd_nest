@@ -1,0 +1,87 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+ymdh=2015030100
+ymd=`echo $ymdh | cut -c1-8`
+month=`echo $ymdh | cut -c5-6`
+day=`echo $ymdh | cut -c7-8`
+cyc=`echo $ymdh | cut -c9-10`
+dayoweek=hold2
+
+mkdir /stmpp1/Geoffrey.Manikin/meg/3pcpnest
+cd /stmpp1/Geoffrey.Manikin/meg/3pcpnest
+cp /meso/save/Geoffrey.Manikin/meg/coltbl.xwp .
+
+times="15"
+for fhr in $times; do
+
+fhr2=`expr $fhr - 1`
+fhr3=`expr $fhr - 2`
+
+fmdl=/com/nawips/prod/nam.${ymd}/nam_conusnest_${ymd}${cyc}f0${fhr}
+fmdl2=/com/nawips/prod/nam.${ymd}/nam_conusnest_${ymd}${cyc}f0${fhr2}
+fmdl3=/com/nawips/prod/nam.${ymd}/nam_conusnest_${ymd}${cyc}f0${fhr3}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = p03i
+ CINT     = .01;.1;.2;.3;.4;.5;.75 
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1//~  4KM NAM 3-HR PCP 
+ DEVICE   = GIF|3pcprefdnest_${cyc}f${fhr}.gif|900;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-75.;25./2;2;1;1
+ GAREA    = md
+ CLEAR    = y
+ PANEL    = lr
+ TEXT     = 1.2/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/H/UL/.1;0.95/.8;.03/-2
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = .01;.1;.25;.5;.75;1.;1.5;2.;2.5 
+ FLINE    = 0;21;22;23;28;30;2;15;10;5 
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GLEV     = 1000
+ GDPFUN   = refd
+ GVCORD   = hght
+ CLEAR    = n
+ PANEL    = ll
+ TITLE    = 1//~  4KM NAM  1 KM REFD
+ FINT     = 5;10;15;20;25;30;35;40;45;50;55;60;65;70
+ FLINE    = 0;27;26;4;21;22;23;5;20;17;16;15;14;7;29
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f${fhr2}
+ PANEL    = ur
+ CLRBAR   = 0
+r
+
+ GDFILE   = $fmdl3
+ GDATTIM  = f${fhr3}
+ PANEL    = ul
+r
+ 
+ex
+EOF
+done
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

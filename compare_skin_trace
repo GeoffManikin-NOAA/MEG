@@ -1,0 +1,86 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc1=00
+stnm=722868
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/meteograms
+rm /stmpp1/Geoffrey.Manikin/meg/meteograms/*
+cd /stmpp1/Geoffrey.Manikin/meg/meteograms
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh1=`cut -c 7-16 /com/date/t${cyc1}z`
+ymdh1=2018090500
+ymd1=`echo $ymdh1 | cut -c1-8`
+day1=`echo $ymdh1 | cut -c7-8`
+
+ymdhend="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh1} 72 -1`"
+dayend=`echo $ymdhend | cut -c7-8`
+cycend=`echo $ymdhend | cut -c9-10`
+
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+dayoweek=hold5
+
+fmdl1=/com2/nawips/prod/nam.${ymd1}/nam_${ymdh1}.sfc.tm00
+fmdl2=/gpfs/hps/nco/ops/com/nawips/prod/gfs.${ymd1}/gfs_${ymdh1}.sfc
+fmdl3=/gpfs/hps/nco/ops/com/rap/prod/rap.${ymd1}/nawips/rap_${ymdh1}.sfc
+fmdl4=/ptmpp1/Geoffrey.Manikin/fv3/fv3.${ymd1}/gfs_${ymdh1}.sfc
+
+sfgram << EOF 
+SFFILE	= $fmdl1 
+DATTIM	= ${day1}/${cyc1}-${dayend}/${cycend} 
+STATION = @$stnm
+TRACE1  = sktc:1:4/2/10;60;5
+NTRACE	= 1 
+TAXIS	= ${day1}/${cyc1}-${dayend}/${cycend}
+BORDER	= 1//2
+MARKER	= 0
+TITLE   = 1/+1/ $stnm  SKIN TEMP   NAM-red   GFS-BLUE   RAP-ORNG   FV3GFS-GREEN
+CLEAR	= yes
+DEVICE  = GIF|${stnm}_meteogram.gif | 900;800
+PANEL	= t
+TEXT	= medium/22/2////HW 
+r
+
+SFFILE  = $fmdl2
+TRACE1  = sktc:1:4/25/10;60;5
+CLEAR   = n
+r
+
+SFFILE  = $fmdl3
+TRACE1  = sktc:1:4/17/10;60;5
+r
+
+SFFILE  = $fmdl4
+TRACE1  = sktc:1:4/22/10;60;5
+r
+
+SFFILE  = $fmdl1
+TITLE   = 1/+1/ $stnm  2m TEMP   NAM-red   GFS-BLUE   RAP-ORNG   FV3GFS-GREEN
+TRACE1  = t2ms:1:4/2/10;60;5
+PANEL   = b
+r
+
+SFFILE  = $fmdl2
+TRACE1  = t2ms:1:4/25/10;60;5
+r
+
+SFFILE  = $fmdl3
+TRACE1  = t2ms:1:4/17/10;60;5
+r
+
+SFFILE  = $fmdl4
+TRACE1  = t2ms:1:4/22/10;60;5
+r
+
+ex
+EOF
+gpend
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

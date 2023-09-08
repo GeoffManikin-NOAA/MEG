@@ -1,0 +1,22 @@
+#!/bin/ksh
+
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/bufr
+rm /gpfs/dell1/stmp/Geoffrey.Manikin/bufr/*
+cd /gpfs/dell1/stmp/Geoffrey.Manikin/bufr/
+
+ymd=20210626
+cycles="00 06 12 18"
+OUT=/gpfs/dell2/emc/verification/noscrub/Geoffrey.Manikin/nwheat
+
+for cyc in $cycles; do
+cp /gpfs/dell1/nco/ops/com/gfs/prod/gfs.${ymd}/${cyc}/atmos/gempak/gfs_${ymd}${cyc}.s* $OUT/.
+#cp /gpfs/dell1/nco/ops/com/gfs/para/gfs.${ymd}/${cyc}/atmos/gempak/gfs_${ymd}${cyc}.snd $OUT/gfsx_${ymd}${cyc}.snd
+#cp /gpfs/dell1/nco/ops/com/gfs/para/gfs.${ymd}/${cyc}/atmos/gempak/gfs_${ymd}${cyc}.sfc $OUT/gfsx_${ymd}${cyc}.sfc
+cp /gpfs/dell1/nco/ops/com/nam/prod/nam.${ymd}/nam_${ymd}${cyc}.s* $OUT/.
+cp /gpfs/dell1/nco/ops/com/nam/prod/nam.${ymd}/nam_conusnest_${ymd}${cyc}.s* $OUT/.
+cp /gpfs/hps/nco/ops/com/hrrr/prod/hrrr.${ymd}/conus/gempak/hrrr_${ymd}${cyc}.s* $OUT/.
+cp /gpfs/hps/nco/ops/com/rap/prod/rap.${ymd}/gempak/rap_${ymd}${cyc}.s* $OUT/.
+cp /gpfs/hps/nco/ops/com/hiresw/prod/hiresw.${ymd}/gempak/*${ymd}${cyc}.s* $OUT/.
+done
+exit

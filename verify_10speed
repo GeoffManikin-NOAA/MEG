@@ -1,0 +1,234 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+ymdh=2017031418
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+month=`echo $ymdh | cut -c5-6`
+day=`echo $ymdh | cut -c7-8`
+dayoweek=hold8
+
+mkdir /stmpp1/Geoffrey.Manikin/gempak.rtma
+mkdir /stmpp1/Geoffrey.Manikin/gempak.rtma/test
+rm /stmpp1/Geoffrey.Manikin/gempak.rtma/test/*
+cd /stmpp1/Geoffrey.Manikin/gempak.rtma/test/
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+garea="36.;-86.;46.;-68." 
+garea="nj"
+proj="lcc/25.;-75.;25./2;2;1;1"
+
+     sfmap << EOF
+ AREA     = $garea
+ GAREA    = $garea
+ SATFIL   =
+ RADFIL   =
+ SFPARM   = sknt < 65 
+ DATTIM   = ${day}/${cyc}
+ SFFILE   = /dcom/us007003/ldmdata/gempak/hrly/${ymd}.hrly
+ COLORS   = 15 
+ MAP      = 1
+ LATLON   = 0
+ TITLE    = 1/-1/~   ALL OBS 
+ CLEAR    = no 
+ PANEL    = 0 
+ DEVICE   = GIF|${ymdh}_10w_obs.gif|800;800 
+ PROJ     = $proj 
+ FILTER   = none 
+ TEXT     = 1.0/21/2/SW
+ LUTFIL   =
+ STNPLT   =
+ CLRBAR   =
+r
+
+ SFPARM   = sknt<60
+ COLORS   = 2 
+r
+
+ SFPARM   = sknt<55
+ COLORS   = 17
+r
+
+ SFPARM   = sknt<50
+ COLORS   = 16
+r
+
+ SFPARM   = sknt<45
+ COLORS   = 10 
+r
+                  
+ SFPARM   = sknt<40
+ COLORS   = 5 
+r
+              
+ SFPARM   = sknt<35
+ COLORS   = 21 
+r
+               
+ SFPARM   = sknt<30
+ COLORS   = 23 
+r
+               
+ SFPARM   = sknt<25
+ COLORS   = 25
+r
+
+ SFPARM   = sknt<20
+ COLORS   = 27
+r
+ 
+ SFPARM   = sknt<15
+ COLORS   = 28 
+r
+ 
+ SFPARM   = sknt<10
+ COLORS   = 30
+r
+
+ SFPARM   = sknt < 5
+ COLORS   = 1
+r
+ 
+ SFFILE   = /dcom/us007003/ldmdata/gempak/ship/${ymd}${cyc}.ship
+ SFPARM   = sknt < 65
+ COLORS   = 15
+ TEXT     = 1.0/21/2/SW
+r
+
+ SFPARM   = sknt<60
+ COLORS   = 2
+r
+
+ SFPARM   = sknt<55
+ COLORS   = 17
+r
+
+ SFPARM   = sknt<50
+ COLORS   = 16
+r
+
+ SFPARM   = sknt<45
+ COLORS   = 10
+r
+
+ SFPARM   = sknt<40
+ COLORS   = 5
+r
+
+ SFPARM   = sknt<35
+ COLORS   = 21
+r
+
+ SFPARM   = sknt<30
+ COLORS   = 23
+r
+
+ SFPARM   = sknt<25
+ COLORS   = 25
+r
+
+ SFPARM   = sknt<20
+ COLORS   = 27
+r
+
+ SFPARM   = sknt<15
+ COLORS   = 28
+r
+
+ SFPARM   = sknt<10
+ COLORS   = 30
+r
+
+ SFPARM   = sknt<5
+ COLORS   = 1 
+r
+ 
+ex
+EOF
+
+count="1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20"
+count="1 2 3 4 5 6"
+count=""
+for counter in $count; do
+if [ $counter -lt 10 ]
+  then
+   file="/ptmpp1/Geoffrey.Manikin/mesonet2/msonet${cyc}.gem.00${counter}"
+  else
+   file="/ptmpp1/Geoffrey.Manikin/mesonet2/msonet${cyc}.gem.0${counter}"
+ fi
+
+     sfmap << EOF
+ AREA     = $garea
+ GAREA    = $garea
+ SATFIL   =
+ RADFIL   =
+ SFPARM   = sknt
+ DATTIM   = last
+ SFFILE   = $file
+ COLORS   = 1
+ MAP      = 1
+ LATLON   = 0
+! TITLE    = 0
+ CLEAR    = NO
+ PANEL    = 0
+ DEVICE   = GIF|testcase${cyc}_allobs.gif|800;800
+ PROJ     = $proj
+ FILTER   = none
+ TEXT     = 1.0/21/2/SW
+ LUTFIL   =
+ STNPLT   =
+ CLRBAR   =
+r
+
+ SFPARM   = sknt<60
+ COLORS   = 11
+r
+
+ SFPARM   = sknt<55
+ COLORS   = 17
+
+ SFPARM   = sknt<50
+ COLORS   = 10
+r
+
+ SFPARM   = sknt<45
+ COLORS   = 5
+r
+
+ SFPARM   = sknt<40
+ COLORS   = 21
+r
+ 
+ SFPARM   = sknt<35
+ COLORS   = 23 
+r
+
+ SFPARM   = sknt<30
+ COLORS   = 25
+r
+
+ SFPARM   = sknt<25
+ COLORS   = 27
+r
+
+ SFPARM   = sknt<20
+ COLORS   = 28
+r
+
+ SFPARM   = sknt<15
+ COLORS   = 30
+r
+
+ SFPARM   = sknt<10
+ COLORS   = 1
+r
+
+ex
+EOF
+done
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

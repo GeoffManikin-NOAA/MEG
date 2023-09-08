@@ -1,0 +1,93 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/nestpcp
+rm /stmpp1/Geoffrey.Manikin/meg/nestpcp/*
+cd /stmpp1/Geoffrey.Manikin/meg/nestpcp
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=2015020908
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+dayoweek=hold2
+
+hours="15"
+for fhr in $hours; do
+
+ymdh2="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -1 -1`"
+ymdh3="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -2 -1`"
+ymdh4="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -3 -1`"
+ymd2=`echo $ymdh2 | cut -c1-8`
+ymd3=`echo $ymdh3 | cut -c1-8`
+ymd4=`echo $ymdh4 | cut -c1-8`
+cyc2=`expr $cyc - 1`
+cyc3=`expr $cyc - 2`
+cyc4=`expr $cyc - 3`
+
+fmdl1=/com/nawips/prod/hrrr.${ymd}/hrrr_${ymdh}f0${fhr}00
+fmdl2=/com/nawips/prod/hrrr.${ymd2}/hrrr_${ymdh2}f0${fhr}00
+fmdl3=/com/nawips/prod/hrrr.${ymd3}/hrrr_${ymdh3}f0${fhr}00
+fmdl4=/com/nawips/prod/hrrr.${ymd4}/hrrr_${ymdh4}f0${fhr}00
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0
+ GVCORD   = none
+ GDPFUN   = p15i
+ CINT     = 4
+ LINE     = 1
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   HRRR 15-HR TOTAL PCP
+ DEVICE   = GIF|${ymdh}pcp15hrrrf${fhr}.gif|750;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-70.;25./2;2;1;1
+ GAREA    = 40.4;-84.;46.4;-73.8 
+ GAREA    = ma+
+ CLEAR    = y
+ PANEL    = ul 
+ TEXT     = 0.8/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 0
+ CONTUR   = 0
+ SKIP     = 0
+# FINT     = .01;.1;.25;.5;.75;1;1.5;2;3;4;5
+ FINT     = .01;.1;.25;.5;.75;1.;1.5;2.;2.5;3.;3.5
+ FLINE    = 0;21;22;23;25;27;28;30;2;15;10;5
+# FLINE    = 0;21;22;23;4;25;27;28;29;30;15;2
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl2
+ CLEAR    = n
+ PANEL    = ur
+r
+
+ GDFILE   = $fmdl3
+ PANEL    = ll
+ CLRBAR   = 1/H/UL/.2;0.95/1.6;.03/1
+r
+
+ GDFILE   = $fmdl4
+ PANEL    = lr
+ CLRBAR   = 0
+r
+ 
+ex
+EOF
+done
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+rm *gif
+exit

@@ -1,0 +1,113 @@
+#!/bin/ksh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/slp
+rm /stmpp1/Geoffrey.Manikin/meg/slp/*
+cd /stmpp1/Geoffrey.Manikin/meg/slp
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+verymdh=2016032112
+verymd=`echo $verymdh | cut -c1-8`
+verday=`echo $verymdh | cut -c7-8`
+verhr=`echo $verymdh | cut -c9-10`
+dayoweek=hold3
+
+numl="1;1"
+
+hours="48 72 84 96 108 120 132 144"
+hours="24 36 48 60"
+for fhr in $hours; do
+ymdh1="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${verymdh} -$fhr -1`"
+ymd=`echo $ymdh1 | cut -c1-8`
+
+typeset -Z3 fhr
+
+fmdl1=/com/nawips/prod/nam.${ymd}/nam12_${ymdh1}f${fhr}
+#fmdl2=/ptmpd2/Geoffrey.Manikin/com/nawips/prod/gfs.${ymd}/gfs_0p25_${ymdh1}f${fhr}
+fmdl2=/com/nawips/prod/gfs.${ymd}/gfs_0p25_${ymdh1}f${fhr}
+fmdl3=/com2/nawips/prod/ecmwf.${ymd}/ecmwf_hr_${ymdh1}f${fhr}
+fmdl4=/com/nawips/prod/nam.${ymd}/nam_conusnest_${ymdh1}f${fhr}
+fmdl5=/com/nawips/prod/ukmet.${ymd}/ukmet_hr_${ymdh1}f${fhr}
+fmdl6=/com/nawips/prod/gfs.${verymd}/gfs_0p25_${verymdh}f000
+
+echo $fmdl2
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = pmsl 
+ CINT     = 0 
+ LINE     = 0 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/ NAM-red GFS-green ECMWF-blue UK-pur OBS-bro 
+ DEVICE   = GIF|lowplot1_${fhr}.gif|850;950
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-72;25;/1;1;1;1
+# GAREA    = 32.;-82.;46;-60. 
+# GAREA    = 31.;-88.;43.;-66.
+ GAREA    = 36.;-92.;49.;-74.
+ GAREA    = 36.;-78.;48.;-54. 
+ CLEAR    = y
+ PANEL    = 0
+ TEXT     = 0.8/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = ;2/;S13#/;920-1015/5/${numl}/yes
+ HLSYM    = 1;1/3/1;1/3;2/HW
+ CLRBAR   = 0
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 0 
+ FLINE    = 0
+ TYPE     = c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl2
+ GDPFUN   = emsl
+ CLEAR    = n
+ TITLE    = 1/1/  ${fhr}-HR FCSTS  VERIFYING at   $verymdh
+ HILO     = ;22/;S13#/;920-1015/5/${numl}/yes 
+r
+
+ GDFILE   = $fmdl3
+ GDPFUN   = pmsl
+ HILO     = ;4/;S13#/;920-1015/5/${numl}/yes
+ TITLE    = 1/-1/ NAM-red GFS-green ECMWF-blue UK-pur NEST-org OBS-bro 
+r
+
+ GDFILE   = $fmdl4
+ HILO     = ;17/;S13#/;920-1015/5/${numl}/yes
+ TITLE    = 0
+r
+
+ GDFILE   = $fmdl5
+ HILO     = ;29/;S13#/;920-1015/5/${numl}/yes
+ TITLE    = 0
+r
+
+ GDFILE   = $fmdl6
+ GDATTIM  = f00 
+ HILO     = ;8/;S13#/;920-1015/5/${numl}/yes
+r
+
+ex
+EOF
+done
+gpend
+
+for fhr in $hours; do
+CONV=/usrx/local/ImageMagick/6.8.3-3/bin
+$CONV/convert -crop 0x0 lowplot1_${fhr}.gif allslp_f${fhr}_${verymdh}.gif
+done
+
+scp all*gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

@@ -1,0 +1,301 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/skin
+rm /stmpp1/Geoffrey.Manikin/meg/skin/*
+cd /stmpp1/Geoffrey.Manikin/meg/skin
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`cut -c 7-14 /com/date/t${cyc}z`
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+#ymdh=2014011600
+#ymd=20140116
+#dayoweek=Thu
+
+echo gtl
+ymdhs="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -3 -1`"
+ymds=`echo $ymdhs | cut -c1-8`
+cycs=`echo $ymdhs | cut -c9-10`
+DAPATH=/com/sref/prod/sref.${ymds}/${cycs}/pgrb/
+DAPATH2=/com/sref/para/sref.${ymds}/${cycs}/pgrb/
+
+times="00"
+for fhr in $times; do
+
+fmdl1=/com/nawips/prod/nam.${ymd}/nam32_${ymdh}f0${fhr}
+fmdl2=/com/nawips/prod/gfs.${ymd}/gfs40_${ymdh}f0${fhr}
+fmdl3=/com/nawips/prod/rap.${ymd}/rap13_${ymdh}f0${fhr}
+fmdl4=/com/nawips/para/rap.${ymd}/rap13_${ymdh}f0${fhr}
+fmdl5=/meso/noscrub/Eric.Rogers/com/nawips/para/nam.${ymd}/nam32_${ymdh}f0${fhr}
+
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = none 
+ GDPFUN   = tmpf
+ CINT     = 4 
+ LINE     = 0 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   NAM SKIN T 
+ DEVICE   = GIF|1skin_f0${fhr}.gif|850;950
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-84.;25./2;2;1;1
+ GAREA    = 40.;-94.;50.;-74.
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/V/UL/.08;.4/.8;.02/-1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = -30;-25;-20;-15;-10;-5;0;5;10;15;20;25;30;35;40;45;50;55;60;65;70
+ FINT     = -33;-28;-23;-18;-13;-8;-3;2;7;12;17;22;27;32;37;42;47;52;57;62;67
+ FLINE    = 0;11;12;30;29;28;4;25;26;27;24;23;22;21;5;20;10;17;16;2;15;14
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f$fhr
+ CINT     = 4 
+ LINE     = 4/1/3/2 
+ CLEAR    = n
+ TITLE    = 1/-1/~   GFS SKINT T 
+ PANEL    = b
+ CLRBAR   = 0 
+r
+
+ex
+EOF
+
+   gdplot2 << EOF
+ GDFILE   = $fmdl3
+ GDATTIM  = f$fhr
+ GLEVEL   = 0
+ GVCORD   = none
+ GDPFUN   = tmpf
+ CINT     = 4
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   RAP SKIN T
+ DEVICE   = GIF|2skin_f0${fhr}.gif|850;950
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-84.;25./2;2;1;1
+ GAREA    = 40.;-94.;50.;-74.
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/V/UL/.08;.4/.8;.02/-1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = -30;-25;-20;-15;-10;-5;0;5;10;15;20;25;30;35;40;45;50;55;60;65;70
+ FINT     = -33;-28;-23;-18;-13;-8;-3;2;7;12;17;22;27;32;37;42;47;52;57;62;67
+ FLINE    = 0;11;12;30;29;28;4;25;26;27;24;23;22;21;5;20;10;17;16;2;15;14
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl4
+ GDATTIM  = f$fhr
+ CINT     = 4
+ LINE     = 4/1/3/2
+ CLEAR    = n
+ TITLE    = 1/-1/~   RAPX SKINT T
+ PANEL    = b
+ CLRBAR   = 0
+r
+
+ex
+EOF
+
+   gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0
+ GVCORD   = none
+ GDPFUN   = tmpf
+ CINT     = 4
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   NAM SKIN T
+ DEVICE   = GIF|3skin_f0${fhr}.gif|850;950
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-84.;25./2;2;1;1
+ GAREA    = 40.;-94.;50.;-74.
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/V/UL/.08;.4/.8;.02/-1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = -30;-25;-20;-15;-10;-5;0;5;10;15;20;25;30;35;40;45;50;55;60;65;70
+ FINT     = -33;-28;-23;-18;-13;-8;-3;2;7;12;17;22;27;32;37;42;47;52;57;62;67
+ FLINE    = 0;11;12;30;29;28;4;25;26;27;24;23;22;21;5;20;10;17;16;2;15;14
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl5
+ GDATTIM  = f$fhr
+ CINT     = 4
+ LINE     = 4/1/3/2
+ CLEAR    = n
+ TITLE    = 1/-1/~   NAMX SKINT T
+ PANEL    = b
+ CLRBAR   = 0
+r
+
+ex
+EOF
+
+wgrib ${DAPATH}/sref_em.t${cycs}z.pgrb212.ctl.f${fhr} | grep kpds5=11:kpds6=1:kpds7=0:TR=0 | wgrib ${DAPATH}/sref_em.t${cycs}z.pgrb212.ctl.f${fhr} -i -grib -o mdl1
+wgrib ${DAPATH}/sref_nmm.t${cycs}z.pgrb212.ctl.f${fhr} | grep kpds5=11:kpds6=1:kpds7=0:TR=0 | wgrib ${DAPATH}/sref_nmm.t${cycs}z.pgrb212.ctl.f${fhr} -i -grib -o mdl2
+wgrib ${DAPATH}/sref_nmb.t${cycs}z.pgrb212.ctl.f${fhr} | grep kpds5=11:kpds6=1:kpds7=0:TR=0 | wgrib ${DAPATH}/sref_nmb.t${cycs}z.pgrb212.ctl.f${fhr} -i -grib -o mdl3
+wgrib ${DAPATH2}/sref_em.t${cycs}z.pgrb212.ctl.f${fhr} | grep kpds5=11:kpds6=1:kpds7=0:TR=0 | wgrib ${DAPATH2}/sref_em.t${cycs}z.pgrb212.ctl.f${fhr} -i -grib -o mdl4
+wgrib ${DAPATH2}/sref_nmm.t${cycs}z.pgrb212.ctl.f${fhr} | grep kpds5=11:kpds6=1:kpds7=0:TR=0 | wgrib ${DAPATH2}/sref_nmm.t${cycs}z.pgrb212.ctl.f${fhr} -i -grib -o mdl5
+wgrib ${DAPATH2}/sref_nmb.t${cycs}z.pgrb212.ctl.f${fhr} | grep kpds5=11:kpds6=1:kpds7=0:TR=0 | wgrib ${DAPATH2}/sref_nmb.t${cycs}z.pgrb212.ctl.f${fhr} -i -grib -o mdl6
+
+
+nagrib << EOF
+GBFILE  = mdl1
+INDXFL  =
+GDOUTF  = emops.gem
+PROJ    =
+GRDAREA =
+KXKY    =
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+GBFILE  = mdl2
+GDOUTF  = nmmops.gem
+r
+
+GBFILE  = mdl3
+GDOUTF  = nmbops.gem
+r
+
+GBFILE  = mdl4
+GDOUTF  = empara.gem
+r
+
+GBFILE  = mdl5
+GDOUTF  = nmmpara.gem
+r
+
+GBFILE  = mdl6
+GDOUTF  = nmbpara.gem
+r
+
+ex
+EOF
+
+    gdplot2 << EOF
+ GDFILE   = emops.gem 
+ GDATTIM  = f$fhr
+ CLEAR    = y
+ TITLE    = 1/-1/~   SREF EM CTL SKINT T
+ PANEL    = t
+ CLRBAR   = 0
+ DEVICE   = GIF|4skin_f0${fhr}.gif|850;950
+ PROJ     = lcc/25.;-84.;25./2;2;1;1
+ GAREA    = 40.;-94.;50.;-74.
+ CLRBAR   = 1/V/UL/.08;.4/.8;.02/-1
+
+r
+
+ GDFILE   = empara.gem
+ CLEAR    = n
+ TITLE    = 1/-1/~  SREFX EM CTL SKINT T
+ PANEL    = b
+ CLRBAR   = 0
+r
+
+ GDFILE   = nmmops.gem
+ GDATTIM  = f$fhr
+ CLEAR    = y
+ TITLE    = 1/-1/~   SREF NMM CTL SKINT T
+ PANEL    = t
+ CLRBAR   = 0
+ DEVICE   = GIF|5skin_f0${fhr}.gif|850;950
+ CLRBAR   = 1/V/UL/.08;.4/.8;.02/-1
+
+r
+
+ GDFILE   = nmmpara.gem
+ CLEAR    = n
+ TITLE    = 1/-1/~  SREFX NM CTL SKINT T
+ PANEL    = b
+ CLRBAR   = 0
+r
+
+ GDFILE   = nmbops.gem
+ GDATTIM  = f$fhr
+ CLEAR    = y
+ TITLE    = 1/-1/~   SREF NMB CTL SKINT T
+ PANEL    = t
+ CLRBAR   = 0
+ DEVICE   = GIF|6skin_f0${fhr}.gif|850;950
+ CLRBAR   = 1/V/UL/.08;.4/.8;.02/-1
+r
+
+ GDFILE   = nmbpara.gem
+ CLEAR    = n
+ TITLE    = 1/-1/~  SREFX NMB CTL SKINT T
+ PANEL    = b
+ CLRBAR   = 0
+r
+
+ex
+EOF
+done
+gpend
+
+CONV=/usrx/local/ImageMagick/6.8.3-3/bin
+for fhr in $times; do
+$CONV/convert -crop 0x0 1skin_f0${fhr}.gif ${cyc}namgfsskingtl${fhr}.gif
+$CONV/convert -crop 0x0 2skin_f0${fhr}.gif ${cyc}rapxskinigtl${fhr}.gif
+$CONV/convert -crop 0x0 3skin_f0${fhr}.gif ${cyc}namxskingtl${fhr}.gif
+$CONV/convert -crop 0x0 4skin_f0${fhr}.gif ${cyc}emskingtl${fhr}.gif
+$CONV/convert -crop 0x0 5skin_f0${fhr}.gif ${cyc}nmmskingtl${fhr}.gif
+$CONV/convert -crop 0x0 6skin_f0${fhr}.gif ${cyc}nmbskingtl${fhr}.gif
+done
+
+scp ${cyc}*gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/today/.
+scp ${cyc}*gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

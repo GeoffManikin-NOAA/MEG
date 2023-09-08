@@ -1,0 +1,67 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+ymdh=2017012223
+ymd=`echo $ymdh | cut -c1-8`
+dayoweek=hold6
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/hlcy
+rm /stmpp1/Geoffrey.Manikin/meg/hlcy/*
+cd /stmpp1/Geoffrey.Manikin/meg/hlcy
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+fmdl1=/com2/nawips/prod/rap.${ymd}/rap13_${ymdh}f000
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f00
+ GLEVEL   = 3000:0 
+ GVCORD   = hght 
+ GDPFUN   = hlcy 
+ CINT     = 500 
+ LINE     = 1 
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   RAP  0-3 KM HLCY 
+ DEVICE   = GIF|hlcyerf_${ymdh}.gif|750;900
+ SATFIL   =
+ RADFIL   =
+# PROJ     = lcc/25;-75;25;/1;1;1;1
+# GAREA    = 21.;-120.;51.;-66. 
+ PROJ     = lcc/25;-82;25;/1;1;1;1
+ GAREA    = 33.;-108.;51.;-84. 
+ GAREA    = 27.;-88.;35.6;-76.
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0 
+ HLSYM    = 0 
+ CLRBAR   = 1/V/UL/.01;0.4/0.8;.03/1 
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 50;100;150;200;250;300;400;500;600;700;800;900 
+ FLINE    = 0;24;25;21;22;23;5;10;17;16;2;15;32 
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ TITLE    = 1/-1/~  RAP  0-1 KM HLCY 
+ GLEVEL   = 1000:0
+ PANEL    = b
+ CLRBAR   = 0
+ CLEAR    = n
+r
+
+ex
+EOF
+gpend
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

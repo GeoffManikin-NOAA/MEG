@@ -1,0 +1,69 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+ymdh=$1
+ymd=`echo $ymdh | cut -c1-8`
+month=`echo $ymdh | cut -c5-6`
+day=`echo $ymdh | cut -c7-8`
+cyc=`echo $ymdh | cut -c9-10`
+dayoweek=hold2
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/shallow
+cd /stmpp1/Geoffrey.Manikin/meg/shallow
+cp /meso/save/Geoffrey.Manikin/meg/coltbl.xwp .
+
+times="00 01 02 03 06 09 12 15 18"
+times="12 15 18 21 24"
+for fhr in $times; do
+
+fmdl=/com/nawips/prod/nam.${ymd}/nam20_${ymd}${cyc}f0${fhr}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl
+ GDATTIM  = f$fhr
+ GLEVEL   = 0 
+ GVCORD   = scbl 
+ GDPFUN   = pres 
+ CINT     = 5 
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~ ${fhr}-HR NAM SHALLOW BASE PRESSURE
+ DEVICE   = GIF|shallowdeep_${ymdh}f${fhr}.gif|900;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-75.;25./2;2;1;1
+ GAREA    = de 
+ CLEAR    = y
+ PANEL    = t 
+ TEXT     = 1.0/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/V/UL/.15;0.5/.8;.03/-1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 0;300;400;500;600;700;800;900;950;1000 
+ FLINE    = 0;30;28;27;26;23;21;5;10;17;2 
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ CLEAR    = n
+ GVCORD   = dcbl
+ PANEL    = b
+ TITLE    = 1/-1/~ ${fhr}-HR NAM DEEP BASE PRESSURE
+ CLRBAR   = 0
+r
+
+ex
+EOF
+done
+gpend
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

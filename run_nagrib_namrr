@@ -1,0 +1,61 @@
+#!/bin/ksh
+
+set -x
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/nagrib
+rm /stmpp1/Geoffrey.Manikin/nagrib/*
+cd /stmpp1/Geoffrey.Manikin/nagrib
+cp /meso/save/Geoffrey.Manikin/gempak/nagrib2/* .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+
+ymdh=2015091406
+ymd=`echo $ymdh | cut -c1-8`
+
+COMOUT=/ptmpd2/Geoffrey.Manikin/com2/nawips/para/nam.${ymd}
+DAPATH=/ptmpp2/Geoffrey.Manikin/hold
+DAPATH=/meso2/noscrub/Jacob.Carley/com/namrr/rt/namrr.${ymd}
+
+export DAPATH
+. /nwprod/gempak/.gempak
+
+fhrs="00 03 06 09 12 15 18 21 24 27 30 33 36"
+fhrs="00 03 06 09 12 15 18 21 24"
+for fhr in $fhrs
+do
+
+fhrr=$fhr
+fhr1=`expr $fhr - 1`
+if [ $fhr -lt 10 ]; then
+ typeset -Z1 fhrr
+else
+ typeset -Z2 fhrr
+fi
+echo $fhr $fhrr
+
+   nagrib << EOF
+GBFILE  = ${DAPATH}/namrr.t${cyc}z.conusnest.hr187f${fhr}.tm00 
+INDXFL  =
+GDOUTF  = namrr_conusnest_${ymdh}f0${fhr}
+PROJ    =
+GRDAREA =
+KXKY    = 
+GAREA   = grid
+MAXGRD  = 5000
+CPYFIL  = gds
+OUTPUT  = T
+GBTBLS  =
+GBDIAG  =
+r
+
+exit
+EOF
+done
+
+mv namrr* ${COMOUT}/.
+exit
+

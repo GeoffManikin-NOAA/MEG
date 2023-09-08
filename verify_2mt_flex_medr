@@ -1,0 +1,398 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+ymdh=2015021512
+ymd=`echo $ymdh | cut -c1-8`
+cyc=`echo $ymdh | cut -c9-10`
+day=`echo $ymdh | cut -c7-8`
+dayoweek=hold2
+
+mkdir /stmpp1/Geoffrey.Manikin/gempak.rtma
+mkdir /stmpp1/Geoffrey.Manikin/gempak.rtma/test
+rm /stmpp1/Geoffrey.Manikin/gempak.rtma/test/*
+cd /stmpp1/Geoffrey.Manikin/gempak.rtma/test
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+base=112
+incr=8
+incr1=`expr $incr \* 1`
+incr2=`expr $incr \* 2`
+incr3=`expr $incr \* 3`
+incr4=`expr $incr \* 4`
+incr5=`expr $incr \* 5`
+incr6=`expr $incr \* 6`
+incr7=`expr $incr \* 7`
+incr8=`expr $incr \* 8`
+incr9=`expr $incr \* 9`
+incr10=`expr $incr \* 10`
+incr11=`expr $incr \* 11`
+incr12=`expr $incr \* 12`
+incr13=`expr $incr \* 13`
+incr14=`expr $incr \* 14`
+incr15=`expr $incr \* 15`
+incr16=`expr $incr \* 16`
+incr17=`expr $incr \* 17`
+incr18=`expr $incr \* 18`
+incr19=`expr $incr \* 19`
+incr20=`expr $incr \* 20`
+
+basem1=`expr $base - $incr1 `
+basem2=`expr $base - $incr2`
+basem3=`expr $base - $incr3`
+basem4=`expr $base - $incr4`
+basem5=`expr $base - $incr5`
+basem6=`expr $base - $incr6`
+basem7=`expr $base - $incr7`
+basem8=`expr $base - $incr8`
+basem9=`expr $base - $incr9`
+basem10=`expr $base - $incr10`
+basem11=`expr $base - $incr11`
+basem12=`expr $base - $incr12`
+basem13=`expr $base - $incr13`
+basem14=`expr $base - $incr14`
+basem15=`expr $base - $incr15`
+basem16=`expr $base - $incr16`
+basem17=`expr $base - $incr17`
+basem18=`expr $base - $incr18`
+basem19=`expr $base - $incr19`
+basem20=`expr $base - $incr20`
+
+garea="25.;-105.;49.;-68."
+#garea="29.;-112.;49.;-70."
+garea="22.;-123.;52.;-67."
+garea="ny-"
+proj="lcc/25.;-75.;25./1;1;1;1"
+
+     sfmap << EOF
+ AREA     = $garea
+ GAREA    = $garea
+ SATFIL   =
+ RADFIL   =
+ SFPARM   = tmpf
+ DATTIM   = ${day}/${cyc}
+! SFFILE   = /ptmpp1/Geoffrey.Manikin/obs/${ymd}.sfc 
+ SFFILE   = /ptmpp1/wpc.ops/obs/${ymd}.hrly
+ COLORS   = 1 
+ MAP      = 1
+ LATLON   = 0
+ TITLE    = 1/-1/~   TEMPERATURE OBSERVATIONS 
+ CLEAR    = no 
+ PANEL    = 0 
+ DEVICE   = GIF|${ymdh}_2mt2.gif|750;850 
+ PROJ     = $proj 
+ FILTER   = none 
+ TEXT     = 0.9/21/2.0/SW
+ LUTFIL   =
+ STNPLT   =
+ CLRBAR   =
+r
+
+ SFPARM   = tmpf<$base
+ COLORS   = 14
+ TITLE    = 0
+r
+
+ SFPARM   = tmpf<$basem1
+ COLORS   = 15
+r
+
+ SFPARM   = tmpf<$basem2
+ COLORS   = 2
+r
+
+ SFPARM   = tmpf<$basem3
+ COLORS   = 16
+r
+
+ SFPARM   = tmpf<$basem4
+ COLORS   = 17
+r
+
+ SFPARM   = tmpf<$basem5
+ COLORS   = 10
+r
+
+ SFPARM   = tmpf<$basem6
+ COLORS   = 20 
+r
+
+ SFPARM   = tmpf<$basem7
+ COLORS   = 5 
+r
+
+ SFPARM   = tmpf<$basem8
+ COLORS   = 21 
+r
+
+ SFPARM   = tmpf<$basem9
+ COLORS   = 22
+r
+
+ SFPARM   = tmpf<$basem10
+ COLORS   = 23
+r
+
+ SFPARM   = tmpf<$basem11
+ COLORS   = 24
+r
+           
+ SFPARM   = tmpf<$basem12
+ COLORS   = 27
+r
+
+ SFPARM   = tmpf<$basem13
+ COLORS   = 26
+r
+
+ SFPARM   = tmpf<$basem14
+ COLORS   = 25
+r
+
+ SFPARM   = tmpf<$basem15
+ COLORS   = 4 
+r
+
+ SFPARM   = tmpf<$basem16
+ COLORS   = 28 
+r
+           
+ SFPARM   = tmpf<$basem17
+ COLORS   = 29
+r
+
+ SFPARM   = tmpf<$basem18
+ COLORS   = 30 
+r
+
+ SFPARM   = tmpf<$basem19
+ COLORS   = 12 
+r
+
+ SFPARM   = tmpf<$basem20
+ COLORS   = 1
+r
+
+ SFFILE   = /ptmpp1/hpcops/obs/${ymd}${cyc}.ship
+ SFPARM   = tmpf<$base
+ COLORS   = 14
+ TITLE    = 0
+r
+  
+ SFPARM   = tmpf<$basem1
+ COLORS   = 15
+r
+  
+ SFPARM   = tmpf<$basem2
+ COLORS   = 2
+r
+  
+ SFPARM   = tmpf<$basem3
+ COLORS   = 16
+r
+  
+ SFPARM   = tmpf<$basem4
+ COLORS   = 17
+r
+  
+ SFPARM   = tmpf<$basem5
+ COLORS   = 10
+r
+
+ SFPARM   = tmpf<$basem5
+ COLORS   = 10
+r
+
+ SFPARM   = tmpf<$basem6
+ COLORS   = 20
+r
+
+ SFPARM   = tmpf<$basem7
+ COLORS   = 5
+r
+
+ SFPARM   = tmpf<$basem8
+ COLORS   = 21
+r
+
+ SFPARM   = tmpf<$basem9
+ COLORS   = 22
+r
+
+ SFPARM   = tmpf<$basem10
+ COLORS   = 23
+r
+
+ SFPARM   = tmpf<$basem11
+ COLORS   = 24
+r
+
+ SFPARM   = tmpf<$basem12
+ COLORS   = 27
+r
+
+ SFPARM   = tmpf<$basem13
+ COLORS   = 26
+r
+
+ SFPARM   = tmpf<$basem14
+ COLORS   = 25
+r
+
+ SFPARM   = tmpf<$basem15
+ COLORS   = 4
+r
+
+ SFPARM   = tmpf<$basem16
+ COLORS   = 28
+r
+
+ SFPARM   = tmpf<$basem17
+ COLORS   = 29
+r
+
+ SFPARM   = tmpf<$basem18
+ COLORS   = 30
+r
+
+ SFPARM   = tmpf<$basem19
+ COLORS   = 12
+r
+
+ SFPARM   = tmpf<$basem20
+ COLORS   = 1
+r
+  
+ex
+EOF
+
+count="1 2 3 4 5 6 7"
+for counter in $count; do
+ if [ $counter -lt 10 ]
+  then
+   file="/ptmpp1/Geoffrey.Manikin/mesonet2/msonet${cyc}.gem.00${counter}"
+  else
+   file="/ptmpp1/Geoffrey.Manikin/mesonet2/msonet${cyc}.gem.0${counter}"
+ fi
+ 
+     sfmap << EOF
+ AREA     = $garea
+ GAREA    = $garea
+ SATFIL   =
+ RADFIL   =
+ SFPARM   = tmpf
+ DATTIM   = last
+ SFFILE   = $file 
+ COLORS   = 1
+ MAP      = 1
+ LATLON   = 0
+ TITLE    = 1/1/~  TEMPERATURE OBS 
+ CLEAR    = $clear 
+ PANEL    = $panel 
+ DEVICE   = GIF|${ymdh}_2mt2.gif|750;850
+ PROJ     = $proj
+ FILTER   = none
+ TEXT     = 0.9/21/2.0/SW
+ LUTFIL   =
+ STNPLT   =
+ CLRBAR   =
+r
+          
+ SFPARM   = tmpf<$base
+ COLORS   = 14
+ CLEAR    = n
+ TITLE    = 0
+r
+
+ SFPARM   = tmpf<$basem1
+ COLORS   = 15
+r
+          
+ SFPARM   = tmpf<$basem2
+ COLORS   = 2
+r
+          
+ SFPARM   = tmpf<$basem3
+ COLORS   = 16
+r
+          
+ SFPARM   = tmpf<$basem4
+ COLORS   = 17
+r
+          
+ SFPARM   = tmpf<$basem5
+ COLORS   = 10
+r
+          
+ SFPARM   = tmpf<$basem5
+ COLORS   = 10
+r
+
+ SFPARM   = tmpf<$basem6
+ COLORS   = 20
+r
+
+ SFPARM   = tmpf<$basem7
+ COLORS   = 5
+r
+
+ SFPARM   = tmpf<$basem8
+ COLORS   = 21
+r
+
+ SFPARM   = tmpf<$basem9
+ COLORS   = 22
+r
+
+ SFPARM   = tmpf<$basem10
+ COLORS   = 23
+r
+
+ SFPARM   = tmpf<$basem11
+ COLORS   = 24
+r
+
+ SFPARM   = tmpf<$basem12
+ COLORS   = 27
+r
+
+ SFPARM   = tmpf<$basem13
+ COLORS   = 26
+r
+
+ SFPARM   = tmpf<$basem14
+ COLORS   = 25
+r
+
+ SFPARM   = tmpf<$basem15
+ COLORS   = 4
+r
+
+ SFPARM   = tmpf<$basem16
+ COLORS   = 28
+r
+
+ SFPARM   = tmpf<$basem17
+ COLORS   = 29
+r
+
+ SFPARM   = tmpf<$basem18
+ COLORS   = 30
+r
+
+ SFPARM   = tmpf<$basem19
+ COLORS   = 12
+r
+
+ SFPARM   = tmpf<$basem20
+ COLORS   = 1
+r
+
+ex
+EOF
+done
+
+gpend
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+exit

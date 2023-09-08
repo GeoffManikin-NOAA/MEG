@@ -1,0 +1,131 @@
+#!/bin/ksh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/500trgfs
+rm /stmpp1/Geoffrey.Manikin/meg/500trgfs/*
+cd /stmpp1/Geoffrey.Manikin/meg/500trgfs
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd1=`echo $ymdh | cut -c1-8`
+ymdh2="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -6 -1`"
+ymdh3="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -12 -1`"
+ymdh4="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${ymdh} -18 -1`"
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+
+ymd2=`echo $ymdh2 | cut -c1-8`
+ymd3=`echo $ymdh3 | cut -c1-8`
+ymd4=`echo $ymdh4 | cut -c1-8`
+cyc2=`echo $ymdh2 | cut -c9-10`
+cyc3=`echo $ymdh3 | cut -c9-10`
+cyc4=`echo $ymdh4 | cut -c9-10`
+
+times="00 06 12 18 24 30 36 42 48 54 60 66 72 78 84"
+for fhr1 in $times; do
+
+fhr2=`expr $fhr1 + 6`
+fhr3=`expr $fhr1 + 12`
+fhr4=`expr $fhr1 + 18`
+typeset -Z2 fhr2 fhr3 fhr4
+
+fmdl1=/com2/nawips/prod/gfs.${ymd1}/gfs40_${ymdh}f0${fhr1}
+fmdl2=/com2/nawips/prod/gfs.${ymd2}/gfs40_${ymdh2}f0${fhr2}
+fmdl3=/com2/nawips/prod/gfs.${ymd3}/gfs40_${ymdh3}f0${fhr3}
+fmdl4=/com2/nawips/prod/gfs.${ymd4}/gfs40_${ymdh4}f0${fhr4}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f${fhr1} 
+ GLEVEL   = 500 
+ GVCORD   = pres
+ GDPFUN   = avor(wnd)
+ CINT     = 2/10/46
+ LINE     = 0
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1//  GFS 500 mb  $ymd1 ${cyc}z  F${fhr1}
+ DEVICE   = GIF|gfs500tr${fhr1}.gif | 800;850
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-95.;25./2;2;1;1
+ GAREA    = grid
+ CLEAR    = y
+ PANEL    = 0.;0.42;0.48;1.
+ TEXT     = 0.8/11/2/SW
+ SCALE    = 5
+ LATLON   = 0
+ HILO     = 2/x#;/24-46;/5//yes
+ HLSYM    = 1//21;//HW
+ CLRBAR   = 0
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = 16;20;24;28;32;36
+ FLINE    = 0;23;21;5;19;17;16
+ TYPE     = f/c
+ LUTFIL   =
+ STNPLT   =
+r
+
+ CLEAR    = n
+ GDFILE   = $fmdl2
+ GDATTIM  = f${fhr2}
+ TITLE    = 1//  GFS 500 mb  $ymd2 ${cyc2}z  F${fhr2}
+ PANEL    = 0.52;0.42;1.;1.
+ CLRBAR   = 0
+ CLEAR    = n
+r
+
+ GDFILE   = $fmdl3
+ GDATTIM  = f${fhr3}
+ TITLE    = 1//  GFS 500 mb  $ymd3 ${cyc3}z  F${fhr3}
+ PANEL    = 0;0;0.48;0.58
+r
+
+ GDFILE   = $fmdl4
+ GDATTIM  = f${fhr4}
+ TITLE    = 1//  GFS 500 mb  $ymd4 ${cyc4}z  F${fhr4}
+ PANEL    = 0.52;0;1.;0.58
+r
+
+ GDPFUN   = quo(hght,10)
+ CINT     = 6
+ LINE     = 4/1/3/3
+ TITLE    = 0
+ SCALE    = 0
+ HILO     = 0
+ HLSYM    = 2;2//2/4/SW
+ TEXT     = 1.0/11/2
+ FINT     = 0
+ FLINE    = 0
+ TYPE     = c
+r
+
+ GDFILE   = $fmdl3
+ GDATTIM  = f${fhr3}
+ PANEL    = 0;0;0.48;0.58
+r
+
+ GDFILE   = $fmdl2
+ GDATTIM  = f${fhr2}
+ PANEL    = 0.52;0.42;1.;1.
+r
+
+ GDFILE   = $fmdl1
+ GDATTIM  = f${fhr1}
+ PANEL    = 0.;0.42;0.48;1.
+r
+
+ex
+EOF
+gpend
+done
+mv *gif /stmpp1/Geoffrey.Manikin/meg/holdshort/.
+exit

@@ -1,0 +1,176 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+dayoweek=hold
+mdlymdh=2014101700
+mdlymd=`echo $mdlymdh | cut -c1-8`
+stations="744550 726320 722150"
+stations="723570 723400 724560 726590"
+stations="723270 724400 723400"
+stations="725620 722080 726450 722300 722150 722350"
+stations="724560 744550 725580 724400"
+stations="725580 724560 744550 745600 726490"
+stations="725580 724560 723630" 
+stations="725620 724510 727470 726450 726320"
+stations="723570 724510 722490 724400"
+stations="744550 722150 724510"
+stations="722510 722500 722400 723400 722480"
+stations="724510 722650 723630"
+
+mkdir /stmpp1/Geoffrey.Manikin/gempak.sound
+rm /stmpp1/Geoffrey.Manikin/gempak.sound/*
+cd /stmpp1/Geoffrey.Manikin/gempak.sound
+cp /meso/save/Geoffrey.Manikin/casework/*xwp .
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+fmdl1=/com/nawips/prod/gfs.${mdlymd}/gfs_${mdlymdh}.snd
+fmdl2=/com/nawips/prod/nam.${mdlymd}/nam_${mdlymdh}.snd
+fmdl3=/com/nawips/prod/nam.${mdlymd}/nam_conusnest_${mdlymdh}.snd
+fmdl4=/ptmpp1/Geoffrey.Manikin/hold/rap_${mdlymdh}.snd
+fmdl5=/ptmpp1/Geoffrey.Manikin/hold/hrrr_${mdlymdh}.snd
+echo $fmdl
+
+for stnm in $stations; do
+
+fhr=06
+dattim="`/meso/save/Geoffrey.Manikin/meteograms.nam/advtime ${mdlymdh} $fhr -1 x`"
+validtime=`echo $dattim | cut -c1-11`
+ymd=`echo $validtime | cut -c1-8`
+cyc=`echo $validtime | cut -c10-11`
+fmdlobs=/ptmpp1/wpc.ops/obs/$ymd.snd
+
+stn=`echo $stnm | cut -c1-5`
+if [ $fhr -lt 10 ]
+then
+fhr=0${fhr}
+else
+fhr=$fhr
+fi
+
+    snprof << EOF
+ SNFILE   = $fmdl1
+ DATTIM   = $ymd/$cyc
+ AREA     = @${stnm}
+ SNPARM   = tmpc;dwpc
+ LINE     = 2;4/2/6
+ PTYPE    = skewt
+ VCOORD   = PRES
+# STNDEX   = lift;cape;cins
+ STNDEX   = capv;cinv;lclp
+ STNCOL   = 24
+ WIND     = bk1
+ WINPOS   = 2
+ MARKER   = 0
+ BORDER   = 1//2
+ TITLE    = 1//  OPS GFS DASHED   OBS SOLID/LEFT WINDS
+ DEVICE   = gif|gfsz${stnm}_${mdlymdh}f$fhr.gif|1000;1000
+ YAXIS    = 1025/550/50/1;1;1
+ XAXIS    = -20/35/10/;1
+ FILTER   = 0.7
+ CLEAR    = y
+ PANEL    = 0
+! TEXT     = 1.0/11/2/SW
+ TEXT     = 1.1/23/SW
+ THTALN   = 8/3/1/250/500/5
+ THTELN   = 23/1/1/250/500/5
+ MIXRLN   = 17/10/2/0/40./1.
+r
+
+ SNFILE   = $fmdlobs
+ CLEAR    = n
+ WINPOS   = 1
+ LINE     = 2;4/1/5 
+ AREA     = @${stn}
+r
+
+ex
+EOF
+
+    snprof << EOF
+ SNFILE   = $fmdl2
+ TITLE    = 1//  OPS NAM DASHED   OBS SOLID/LEFT WINDS
+ LINE     = 2;4/2/6
+ DEVICE   = gif|namz${stnm}_${mdlymdh}f$fhr.gif|1000;1000
+ CLEAR    = y
+ WINPOS   = 2
+ AREA     = @${stnm}
+r
+
+ SNFILE   = $fmdlobs
+ CLEAR    = n
+ WINPOS   = 1
+ LINE     = 2;4/1/5
+ AREA     = @${stn}
+r
+
+ex
+EOF
+
+   snprof << EOF
+ SNFILE   = $fmdl3
+ TITLE    = 1//  OPS NAM4 DASHED   OBS SOLID/LEFT WINDS
+ LINE     = 2;4/2/6
+ DEVICE   = gif|nestz${stnm}_${mdlymdh}f$fhr.gif|1000;1000
+ CLEAR    = y
+ WINPOS   = 2
+ AREA     = @${stnm}
+r
+
+ SNFILE   = $fmdlobs
+ CLEAR    = n
+ WINPOS   = 1
+ LINE     = 2;4/1/5
+ AREA     = @${stn}
+r
+
+ex
+EOF
+
+   snprof << EOF
+ SNFILE   = $fmdl4
+ TITLE    = 1//  OPS RAP DASHED   OBS SOLID/LEFT WINDS
+ LINE     = 2;4/2/6
+ DEVICE   = gif|rapz${stnm}_${mdlymdh}f$fhr.gif|1000;1000
+ CLEAR    = y
+ WINPOS   = 2
+ AREA     = @${stnm}
+r
+
+ SNFILE   = $fmdlobs
+ CLEAR    = n
+ WINPOS   = 1
+ LINE     = 2;4/1/5
+ AREA     = @${stn}
+r
+
+ex
+EOF
+
+   snprof << EOF
+ SNFILE   = $fmdl5
+ TITLE    = 1//  OPS HRRR DASHED   OBS SOLID/LEFT WINDS
+ LINE     = 2;4/2/6
+ DEVICE   = gif|hrrrz${stnm}_${mdlymdh}f$fhr.gif|1000;1000
+ CLEAR    = y
+ WINPOS   = 2
+ AREA     = @${stnm}
+r
+
+ SNFILE   = $fmdlobs
+ CLEAR    = n
+ WINPOS   = 1
+ LINE     = 2;4/1/5
+ AREA     = @${stn}
+r
+
+ex
+EOF
+
+
+done
+gpend
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+
+exit

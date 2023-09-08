@@ -1,0 +1,63 @@
+#!/bin/sh
+echo 'into'
+
+mkdir /lfs/h2/emc/stmp/geoffrey.manikin/gempak
+rm /lfs/h2/emc/stmp/geoffrey.manikin/gempak/*
+cd /lfs/h2/emc/stmp/geoffrey.manikin/gempak
+cp /lfs/h2/emc/vpppg/save/geoffrey.manikin/meg/coltbl.xwp .
+
+ymd=20220728
+day=`echo $ymd | cut -c7-8`
+dayoweek=hold11
+
+times="00 03 06 09 10 11 12 13 14 15"
+times="03 06 08 12"
+times="00 06"
+for fhr in $times; do
+
+area='39.2;-75.8;42.4;-69.8'
+area='42.;-124.;46.;-118.'
+area="24.;-93.;37.;-71."
+#area="32.;-105.;42.;-91."
+area='36.;-102.;50.;-80.'
+area="33.;-100.;43.;-84."
+area="ky"
+
+DAPATH=/lfs/h1/ops/prod/dcom/ldmdata/gempak/
+
+     sfmap << EOF
+ AREA     = $area 
+ GAREA    = $area 
+ SATFIL   =  
+ RADFIL   =  
+ SFPARM   = SKYC;TMPF;WSYM;SMSL;;DWPF;BRBK
+# SFPARM   = tmpf
+ DATTIM   = ${day}/$fhr
+ SFFILE   = ${DAPATH}/hrly/${ymd}.hrly
+ COLORS   = 1 
+ MAP      = 1
+ LATLON   = 0 
+ TITLE    = 1 
+ CLEAR    = YES
+ PANEL    = 0
+ DEVICE   = GIF|${ymd}${fhr}.gif|800;800 
+ PROJ     = MER
+ FILTER   = 0.7 
+ TEXT     = 0.6 
+ LUTFIL   =  
+ STNPLT   =  
+ CLRBAR   =  
+r
+
+SFFILE   = ${DAPATH}/ship/${ymd}${fhr}.ship
+CLEAR    = n
+r
+
+ex
+EOF
+
+gpend
+done
+#scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/meg/short/images_short/$dayoweek/.
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test8/.
+exit

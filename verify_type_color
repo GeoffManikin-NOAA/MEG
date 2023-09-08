@@ -1,0 +1,92 @@
+#!/bin/sh
+echo 'into'
+
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/plots
+mkdir /gpfs/dell1/stmp/Geoffrey.Manikin/plots/sfc
+rm /gpfs/dell1/stmp/Geoffrey.Manikin/plots/sfc/*
+cd /gpfs/dell1/stmp/Geoffrey.Manikin/plots/sfc
+cp /gpfs/dell2/emc/verification/save/Geoffrey.Manikin/meg/coltbl.xwp .
+
+ymdh=2022022506
+day=`echo $ymdh | cut -c7-8`
+hr=`echo $ymdh | cut -c9-10`
+ymd=`echo $ymdh | cut -c1-8`
+area="32.;-99.;46.;-77."
+area="33.5;-81.4;40.;-75."
+area="25.;-102.;35.;-86."
+area="29.;-89.2;37.;-75.4"
+area="39.;-80.;47.;-64."
+area=" 35.;-85.;47.;-69. "
+area="30.;-107.5;40.;-90."
+area="md"
+
+   sfmap << EOF
+ AREA      = $area 
+ GAREA     = $area 
+ SATFIL    =       
+ RADFIL    =         
+ SFPARM    = wsym<80 
+ DATTIM    = ${day}/${hr}
+ SFFILE    = /gpfs/dell2/emc/verification/noscrub/Geoffrey.Manikin/obs/hrly/${ymd}.hrly
+ DEVICE    = GIF|${ymd}${hr}_obstype.gif | 800;850
+ COLORS    = 29 
+ MAP       = 1
+ LATLON    = 0
+ TITLE     = 1/-1/~
+ CLEAR     = y 
+ PANEL     = 0 
+ PROJ      = MER/0;0;0/2;2;0;1
+ FILTER    = n 
+ TEXT      = 0.9/11/2/HW
+ LUTFIL    = 
+ STNPLT    =  
+ CLRBAR    =
+r
+
+ SFPARM    = wsym < 76
+ COLORS    = 4
+ CLEAR     = n
+r
+
+ SFPARM    = wsym < 69 
+ COLORS    = 11
+r
+
+ SFPARM    = wsym < 67 
+ COLORS    = 2
+r
+
+ SFPARM    = wsym < 65 
+ COLORS    = 3 
+r
+
+ SFPARM    = wsym < 60
+ COLORS    = 1
+r
+
+ SFPARM    = wsym < 58
+ COLORS    = 2
+r
+
+ SFPARM    = wsym < 55
+ COLORS    = 3
+r
+
+ SFPARM    = wsym < 50 
+ COLORS    = 2
+r
+
+ SFPARM    = wsym < 47
+ COLORS    = 3
+r
+
+ SFPARM    = wsym < 11 
+ COLORS    = 5 
+r
+
+ex
+EOF
+gpend
+
+scp *gif wd20mg@emcrzdm:/home/people/emc/www/htdocs/mmb/gmanikin/test6/.
+exit

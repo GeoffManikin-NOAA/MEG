@@ -1,0 +1,127 @@
+#!/bin/sh
+echo 'into'
+#.gempak
+. /nwprod/gempak/.gempak
+
+cyc=$1
+
+mkdir /stmpp1/Geoffrey.Manikin/meg
+mkdir /stmpp1/Geoffrey.Manikin/meg/24pcpmr
+rm /stmpp1/Geoffrey.Manikin/meg/24pcpmr/*
+cd /stmpp1/Geoffrey.Manikin/meg/24pcpmr
+cp /meso/save/Geoffrey.Manikin/casework/coltbl.xwp .
+
+ymdh=`cut -c 7-16 /com/date/t${cyc}z`
+ymd=`cut -c 7-14 /com/date/t${cyc}z`
+date
+date > holddate
+echo $holddate
+dayoweek=`cut -c 1-3 holddate`
+
+ymdh=2013030600
+ymd=20130306
+dayoweek=Wed
+
+hours="24"
+for fhr in $hours; do
+
+fhr24=`expr $fhr - 24`
+typeset -Z3 fhr fhr24
+fmdl1=/com2/nawips/prod/ecmwf.${ymd}/ecmwf_hr_${ymdh}f${fhr}
+fmdl2=/meso/save/Geoffrey.Manikin/meg/gfspcpmr_${ymdh}
+
+    gdplot2 << EOF
+ GDFILE   = $fmdl1
+ GDATTIM  = f$fhr
+ GLEVEL   = 0
+ GVCORD   = none
+ GDPFUN   = quo(mul(pxxm,1000),25.4) 
+ CINT     = 4
+ LINE     = 1
+ MAP      = 1
+ WIND     = 0
+ TITLE    = 1/-1/~   ECMWF 24-HR TOTAL PCP
+ DEVICE   = GIF|24pcpmodels_f$fhr.gif|750;900
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25;-75;25;/1;1;1;1
+# GAREA    = 21.;-121.;51.;-65.
+ GAREA    = md-
+ CLEAR    = y
+ PANEL    = t
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/V/UL/.01;0.45/0.9;.03/1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = .01;.1;.25;.5;.75;1;1.5;2;2.5;3;4;5;6;8
+ FLINE    = 0;21;22;23;4;25;27;28;29;30;2;15;17;10;5
+ TYPE     = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ GDFILE   = $fmdl2
+ TITLE    = 1/-1/~  GFS 24-HR TOTAL PCP
+ GDPFUN   = p24i
+ PANEL    = b
+ CLRBAR   = 0
+ CLEAR    = n
+r
+
+ex
+EOF
+
+    gdcntr << EOF
+ GDFILE   = $fmdl1 + $fmdl2
+ GDATTIM  = f$fhr
+ GLEVEL   = 0
+ GVCORD   = none
+ GFUNC    = sub(p24i+2,quo(mul(pxxm,1000),25.4))
+ CINT     = 2
+ LINE     = 1
+ MAP      = 1
+ WIND     = bk1/0.7/2/122
+ TITLE    = 1//~ 24-HR TOTAL PCP   GFS - ECMWF
+ DEVICE   = GIF|24pcpdiff_f${fhr}.gif | 600;650
+ SATFIL   =
+ RADFIL   =
+ PROJ     = lcc/25.;-95.;25./2;2;1;1
+ GAREA    = 21.;-121.;51.;-65.
+ CLEAR    = y
+ PANEL    = 0
+ TEXT     = 1.1/11/2/SW
+ SCALE    = 0
+ LATLON   = 0
+ HILO     = 0
+ HLSYM    = 0
+ CLRBAR   = 1/H/UL/.06;.9/.87;.02/-1
+ CONTUR   = 0
+ SKIP     = 0
+ FINT     = -1.5;-1.;-0.75;-0.5;-0.25;0.25;0.5;0.75;1.;1.5
+ FLINE    = 30;28;26;27;22;0;5;10;17;2;15
+ CTYPE    = f
+ LUTFIL   =
+ STNPLT   =
+r
+
+ex
+EOF
+done
+gpend
+
+for fhr in $hours; do
+
+/usrx/local/im_beta/bin/convert -crop 0x0 24pcpmodels_f${fhr}.gif 24pcp1.gif
+/usrx/local/im_beta/bin/convert -crop 0x0 24pcpdiff_f${fhr}.gif 24pcp2.gif
+
+CONV=/usrx/local/imajik/bin
+$CONV/montage -geometry 700x750 24pcp1.gif 24pcp2.gif ${cyc}24pcp${fhr}.gif
+done
+
+mv ${cyc}*gif /stmpp1/Geoffrey.Manikin/meg/holdmedr/.
+rm *gif
+exiT
